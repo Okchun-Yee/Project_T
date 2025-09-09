@@ -40,12 +40,12 @@ public class InputManager : Singleton<InputManager>
     private void HandleMove(InputAction.CallbackContext context)
     {
         Vector2 moveValue = context.ReadValue<Vector2>();
-        Debug.Log("InputManager Move: " + moveValue);
         OnMoveInput?.Invoke(moveValue);
     }
     // 플레이어 회피 이벤트 매서드
     private void HandleDodge(InputAction.CallbackContext context)
     {
+        Debug.Log("HandleDodge called!"); // 입력 확인
         OnDodgeInput?.Invoke();
     }
 }

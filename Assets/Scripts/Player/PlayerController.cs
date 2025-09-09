@@ -6,15 +6,25 @@ using System;
 public class PlayerController : Singleton<PlayerController>
 {
     public bool FacingLeft { get { return facingLeft; } }
+    [Header("Player Settings")]
     [SerializeField] private float moveSpeed = 4f;  // 플레이어 이동 속도
-    [SerializeField] private float dashSpeed = 4f;  // 대쉬 추가 이동 속도
+
+    [Header("Dash Settings")]
+    [SerializeField] private float dashForce = 15f;    // 대시 힘
+    [SerializeField] private float dashDuration = 0.2f; // 대시 지속시간
+
     private Vector2 movement;
+    private Vector2 lastMovement;
     private Rigidbody2D rb;
     private Animator myAnim;
     private SpriteRenderer mySprite;
+    private Dash dash;  // Dash 컴포넌트 참조 추가
+    private Ghost ghostEffect; // Ghost 컴포넌트 참조 추가
     private float startingMoveSpeed;    // 기본 이동 속도 (증가 후 복귀 할 원본 이동 속도)
+
+    // 플레이어 상태 변수 목록
     private bool facingLeft = false;    // 플레이어 왼쪽 / 오른쪽 판별
-    private bool isDashing = false;     // 플레이어 대쉬 판별
+
     protected override void Awake()
     {
         base.Awake();
@@ -22,6 +32,8 @@ public class PlayerController : Singleton<PlayerController>
         rb = GetComponent<Rigidbody2D>();
         myAnim = GetComponent<Animator>();
         mySprite = GetComponent<SpriteRenderer>();
+        dash = GetComponent<Dash>(); // Dash 컴포넌트 참조
+        ghostEffect = GetComponent<Ghost>(); // Ghost 컴포넌트 참조
     }
     private void Start()
     {
@@ -50,60 +62,61 @@ public class PlayerController : Singleton<PlayerController>
     }
     private void FixedUpdate()
     {
-        SetPlayerDirection();   // 물리 프레임 당 플레이어 방향 계산
         PlayerMovement();           // 물리 프레임 당 플레이어 이동 계산
     }
 
     public void Move(Vector2 moveInput) // Input Manager 키보드 이벤트 구독용 메서드
     {
-        movement = moveInput;
-        Debug.Log("Move: " + movement);
+        movement = moveInput.normalized; // 정규화하여 저장
+        // 플레이어 이동 애니메이션 및 방향 설정
+        if (movement.magnitude > 0.1f)
+        {
+            lastMovement = movement.normalized;  // 정규화하여 저장
+            myAnim.SetFloat("moveX", movement.x);
+            myAnim.SetFloat("moveY", movement.y);
+        }
+        else
+        {
+            // 키를 뗄 때 정규화된 마지막 입력 값을 전달
+            myAnim.SetFloat("LastmoveX", lastMovement.x);
+            myAnim.SetFloat("LastmoveY", lastMovement.y);
 
-        myAnim.SetFloat("moveX", movement.x);
-        myAnim.SetFloat("moveY", movement.y);
+            // 이동 입력이 없을 때는 0으로 설정
+            myAnim.SetFloat("moveX", 0f);
+            myAnim.SetFloat("moveY", 0f);
+        }
     }
     public void Dodge() // Input Manager 키보드 이벤트 구독용 메서드
     {
-        if (!isDashing)
-        {
-            isDashing = true;
-            moveSpeed *= dashSpeed;
+        Debug.Log("Dodge called - Simple test");
 
-            StartCoroutine(EndDodgeRoutine());
+        if (!dash.IsDashing)  // Dash 컴포넌트의 대시 상태 확인
+        {
+            Vector2 dashDirection = GetDashDirection();
+            
+            // 잔상 효과 시작 (대시 지속시간 동안)
+            if (ghostEffect != null)
+            {
+                ghostEffect.StartGhostEffect(dashDuration);
+            }
+            
+            dash.Dash_(dashDirection, dashForce, dashDuration);
         }
     }
-
-    private IEnumerator EndDodgeRoutine()
+    private Vector2 GetDashDirection()
     {
-        float dodgeTime = .2f;
-        float dodgeCD = .25f;
-        yield return new WaitForSeconds(dodgeTime);
-        moveSpeed = startingMoveSpeed;
-
-        yield return new WaitForSeconds(dodgeCD);
-        isDashing = false;
+        if (movement.magnitude > 0.1f)
+            return movement;
+        else if (lastMovement.magnitude > 0.1f)
+            return lastMovement;
+        else
+            return facingLeft ? Vector2.left : Vector2.right;
     }
+
     private void PlayerMovement()
     {
-        if (false)  // (스킬 시전 중, 공격 중, 죽음 중) 이동 불가
+        if (dash.IsDashing)  // (스킬 시전 중, 공격 중, 죽음 중) 이동 불가
             return;
         rb.MovePosition(rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
-    }
-    private void SetPlayerDirection()
-    {
-        if (false)  // (스킬 시전 중, 공격 중, 죽음 중) 건너뛰기
-            return;
-
-        if (movement != Vector2.zero)
-        {
-            // 단순한 4방향 처리
-            if (Mathf.Abs(movement.x) > Mathf.Abs(movement.y))
-            {
-                // 좌우가 더 강한 경우
-                facingLeft = movement.x < 0;
-                mySprite.flipX = facingLeft;
-            }
-            // 상하 방향일 때는 현재 방향 유지
-        }
     }
 }
