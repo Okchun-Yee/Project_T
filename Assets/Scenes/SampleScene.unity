@@ -335,9 +335,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 473729b34cf499b4d8f1a8638c4beb91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ghostTemplate: {fileID: 0}
-  ghostDelay: 0.05
-  ghostLifetime: 0.5
+  ghostTemplate: {fileID: 1705703691}
+  ghostDelay: 0.03
+  ghostLifetime: 0.3
   ghostAlpha: 0.3
 --- !u!1 &519420028
 GameObject:
