@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class ActiveWeapon : Singleton<ActiveWeapon>
 {
-    private IWeapon currentWeapon; // 현재 활성화된 무기
     private bool attackButtonDown = false; // 공격 버튼 상태
     private int? currentSkillIndex = 0; // 현재 스킬 인덱스 (Nullable int)
+
+    public IWeapon currentWeapon; // 현재 활성화된 무기
 
     protected override void Awake()
     {
@@ -18,7 +19,6 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
         if (attackButtonDown && currentWeapon != null)
         {
             currentWeapon.Attack();     // 공격 메서드 호출
-            attackButtonDown = false;   // 공격 버튼 상태 초기화
         }
 
     }
@@ -34,6 +34,22 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
         currentWeapon = weapon;     // 현재 무기 설정
         currentSkillIndex = null;   // 현재 스킬 인덱스 초기화 (NULLABLE)
         attackButtonDown = false;   // 공격 버튼 상태 초기화
+    }
+    // 무기 상태 초기화 매서드
+    public void ClearWeapon()
+    {
+        currentWeapon = null;
+        attackButtonDown = false;
+    }
+    // 공격 버튼 입력 상태 관리 매서드
+    private void OnAttackStarted()
+    {
+        attackButtonDown = true;
+    }
+    // 공격 버튼 입력 상태 관리 매서드
+    private void OnAttackCanceled()
+    {
+        attackButtonDown = false;
     }
 
     // 스킬 시전 취소 매서드

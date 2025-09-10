@@ -10,6 +10,7 @@ public class InputManager : Singleton<InputManager>
     public event Action<Vector2> OnMoveInput;
     public event Action OnDodgeInput;
     private PlayerControls playerControls;
+
     protected override void Awake()
     {
         base.Awake();
