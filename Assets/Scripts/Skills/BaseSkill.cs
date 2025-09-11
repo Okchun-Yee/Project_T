@@ -10,7 +10,7 @@ public abstract class BaseSkill : MonoBehaviour, ISkill
 
     [HideInInspector] public int skillIndex;        // 스킬 인덱스 (무기에서 자동 설정)
 
-    public virtual void Initialized(SkillSO info)
+    public virtual void Skill_Initialized(SkillSO info)
     {
         if (info == null)
         {
@@ -117,7 +117,7 @@ public abstract class BaseSkill : MonoBehaviour, ISkill
     public void SetupDamageSource(GameObject target, float damage)
     {
         DamageSource damageSource = target.GetComponent<DamageSource>();
-        damageSource?.Initialize(damage);
+        damageSource?.SetDamage(damage);
     }
     public SkillSO GetSkillInfo() => skillInfo;
 }

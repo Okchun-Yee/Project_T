@@ -48,14 +48,14 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
         skills = GetComponents<ISkill>();               // ISkill 인터페이스를 구현한 모든 컴포넌트 가져오기
         skillCastingTime = new float[skills.Length];    // 스킬 시전 시간 배열 초기화
         // 스킬 개수 검증
-        if (skills.Length != info.Skills.Length)
-            Debug.LogWarning($"[BaseWeapon] SkillInfo length ({info.Skills.Length}) != ISkill components ({skills.Length}) on {name}");
+        if (skills.Length != info.skillInfos.Length)
+            Debug.LogWarning($"[BaseWeapon] SkillInfo length ({info.skillInfos.Length}) != ISkill components ({skills.Length}) on {name}");
 
         // 2) 각 스킬에 정보 주입 및 시전 시간 저장
         for (int i = 0; i < skills.Length; i++)
         {
-            skills[i].Skill_Initialized(info.Skills[i]);               // 스킬 초기화
-            skillCastingTime[i] = info.Skills[i].chargingTime;  // 캐스팅 시간 설정
+            skills[i].Skill_Initialized(info.skillInfos[i]);               // 스킬 초기화
+            skillCastingTime[i] = info.skillInfos[i].chargingTime;  // 캐스팅 시간 설정
 
             // 스킬 인덱스 자동 설정
             if (skills[i] is BaseSkill baseSkill)
