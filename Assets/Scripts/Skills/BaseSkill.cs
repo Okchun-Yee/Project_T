@@ -119,5 +119,6 @@ public abstract class BaseSkill : MonoBehaviour, ISkill
         DamageSource damageSource = target.GetComponent<DamageSource>();
         damageSource?.SetDamage(damage);
     }
+    // 스킬 데이터 반환 매서드
     public SkillSO GetSkillInfo() => skillInfo;
 }

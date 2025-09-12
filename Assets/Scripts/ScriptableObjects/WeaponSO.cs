@@ -7,7 +7,7 @@ public enum WeaponCategory
 {
     Melee,
     Range,
-    Staff
+    Magic
 }
 
 [CreateAssetMenu(menuName = "New Weapon")]

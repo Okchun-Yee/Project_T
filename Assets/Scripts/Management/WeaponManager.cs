@@ -8,7 +8,7 @@ public class WeaponManager : Singleton<WeaponManager>
     [Header("Weapon Icons")]
     [SerializeField] private Sprite meleeIcon;
     [SerializeField] private Sprite rangedIcon;
-    [SerializeField] private Sprite staffIcon;
+    [SerializeField] private Sprite magicIcon;
 
     [Header("Weapon Settings")]
     [SerializeField] private Transform weaponMountPoint;        // 무기 장착 위치
@@ -45,7 +45,7 @@ public class WeaponManager : Singleton<WeaponManager>
             Destroy(gameObj);
             return;
         }
-        bw.Initialize(info);    // 무기 정보로 초기화
+        bw.Weapoon_Initialized(info);    // 무기 정보로 초기화
         currentWeapon = bw;     // 현재 무기 참조 저장
 
         // 4) ActiveWeapon에 장착 통보
@@ -56,7 +56,7 @@ public class WeaponManager : Singleton<WeaponManager>
         {
             WeaponCategory.Melee => meleeIcon,
             WeaponCategory.Range => rangedIcon,
-            WeaponCategory.Staff => staffIcon,
+            WeaponCategory.Magic => magicIcon,
             _ => null
         };
         onCategoryIconChanged?.Invoke(icon);

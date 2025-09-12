@@ -13,6 +13,28 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
     {
         base.Awake();
     }
+    private void OnEnable()
+    {
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.OnAttackInput += OnAttackStarted;               // 공격 입력 이벤트 구독
+            InputManager.Instance.OnAttackInput += OnAttackCanceled;              // 공격 입력 취소 이벤트 구독
+
+            InputManager.Instance.OnSkillInput += OnSkillStarted;                 // 스킬 입력 이벤트 구독
+            InputManager.Instance.OnSkillInput += OnSkillCanceled;                // 스킬 입력 취소 이벤트 구독
+        }
+    }
+    private void OnDisable()
+    {
+        if (InputManager.Instance != null)
+        {
+            InputManager.Instance.OnAttackInput -= OnAttackStarted;               // 공격 입력 이벤트 구독 해제
+            InputManager.Instance.OnAttackInput -= OnAttackCanceled;              // 공격 입력 취소 이벤트 구독 해제
+
+            InputManager.Instance.OnSkillInput -= OnSkillStarted;                 // 스킬 입력 이벤트 구독 해제
+            InputManager.Instance.OnSkillInput -= OnSkillCanceled;                // 스킬 입력 취소 이벤트 구독 해제
+        }
+    }
 
     private void Update()
     {
@@ -50,35 +72,56 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
     private void OnAttackCanceled()
     {
         attackButtonDown = false;
+        ActionCancel();                // 차징 or 홀딩 종료
+    }
+    // 스킬 시전 매서드
+    private void OnSkillStarted(int skillIndex)
+    {
+        if (currentWeapon == null) return;
+
+        // 이전 활성 스킬 구독 해제
+        if (currentSkillIndex.HasValue)
+        {
+            UnsubscribeSkill(currentSkillIndex.Value);
+        }
+
+        // 새 스킬 구독
+        SubscribeSkill(skillIndex);
+        currentSkillIndex = skillIndex;
+
+        // 스킬 사용
+        currentWeapon.Skill(skillIndex);
     }
 
     // 스킬 시전 취소 매서드
     private void OnSkillCanceled(int skillIndex)
     {
         if (currentWeapon == null) return;
-
-        // 해당 스킬 구독 해제
-        UnsubscribeSkill(skillIndex);
+        UnsubscribeSkill(skillIndex);           // 해당 스킬 구독 해제
 
         if (currentSkillIndex == skillIndex)
         {
-            currentSkillIndex = null;   // 현재 스킬 인덱스 초기화 (NULLABLE)
+            currentSkillIndex = null;           // 현재 스킬 인덱스 초기화 (NULLABLE)
         }
-
-        // 차징 or 홀딩 종료
-        ChargingManager.Instance?.EndCharging();
-        HoldingManager.Instance?.EndHolding();
+        ActionCancel();                         // 차징 or 홀딩 종료
     }
     // 스킬 구독 매서드
     private void SubscribeSkill(int skillIndex)
     {
-        var skills = (currentWeapon as BaseWeapon)?.GetSkills();
+        ISkill[] skills = (currentWeapon as BaseWeapon)?.GetSkills();
         skills?[skillIndex]?.SubscribeSkillEvents();
     }
     // 스킬 구독 해제 매서드
     private void UnsubscribeSkill(int skillIndex)
     {
-        var skills = (currentWeapon as BaseWeapon)?.GetSkills();
+        ISkill[] skills = (currentWeapon as BaseWeapon)?.GetSkills();
         skills?[skillIndex]?.UnsubscribeSkillEvents();
+    }
+    
+    // 차징 or 홀딩 종료 매서드
+    private void ActionCancel()
+    {
+        ChargingManager.Instance?.EndCharging();        // 차징 종료
+        HoldingManager.Instance?.EndHolding();          // 홀딩 종료
     }
 }

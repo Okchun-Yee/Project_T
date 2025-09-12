@@ -20,13 +20,13 @@ public class DamageSource : MonoBehaviour
     }
 
     // 1) 즉시 데미지 (특정 대상)
-    public void DealInstantDamage(float damage, EnemyHealth target)
+    public void InstantDamage(float damage, EnemyHealth target)
     {
         target?.TakeDamage(damage);
     }
 
     // 2) 지속 데미지 (단일 대상)
-    public void StartContinuousDamage(float damagePerTick, float interval, float duration, EnemyHealth target)
+    public void ContinuousDamage(float damagePerTick, float interval, float duration, EnemyHealth target)
     {
         StartCoroutine(ContinuousDamageCoroutine(damagePerTick, interval, duration, target));
     }
@@ -37,14 +37,14 @@ public class DamageSource : MonoBehaviour
         
         while (elapsed < duration && target != null)
         {
-            DealInstantDamage(damagePerTick, target);
+            InstantDamage(damagePerTick, target);
             yield return new WaitForSeconds(interval);
             elapsed += interval;
         }
     }
 
     // 3) 지속 데미지 (범위 대상)
-    public void StartAreaContinuousDamage(float damagePerTick, float interval, float duration, float radius, LayerMask targetLayers)
+    public void AreaContinuousDamage(float damagePerTick, float interval, float duration, float radius, LayerMask targetLayers)
     {
         StopContinuousDamage();
         continuousDamageCoroutine = StartCoroutine(AreaContinuousDamageCoroutine(damagePerTick, interval, duration, radius, targetLayers));
@@ -63,7 +63,7 @@ public class DamageSource : MonoBehaviour
                 EnemyHealth enemy = hit.GetComponent<EnemyHealth>();
                 if (enemy != null)
                 {
-                    DealInstantDamage(damagePerTick, enemy);
+                    InstantDamage(damagePerTick, enemy);
                 }
             }
             
@@ -85,7 +85,7 @@ public class DamageSource : MonoBehaviour
     }
 
     // 4) 범위 데미지 (AoE)
-    public void DealAreaDamage(float damage, float radius, Vector3? center = null)
+    public void AreaDamage(float damage, float radius, Vector3? center = null)
     {
         Vector3 damageCenter = center ?? transform.position;
         Collider2D[] hits = Physics2D.OverlapCircleAll(damageCenter, radius);
@@ -95,7 +95,7 @@ public class DamageSource : MonoBehaviour
             EnemyHealth enemy = hit.GetComponent<EnemyHealth>();
             if (enemy != null)
             {
-                DealInstantDamage(damage, enemy);
+                InstantDamage(damage, enemy);
             }
         }
     }
