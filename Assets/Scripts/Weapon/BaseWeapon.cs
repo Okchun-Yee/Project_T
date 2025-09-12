@@ -17,7 +17,7 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     private DamageSource ds;                               // 데미지 소스 컴포넌트
 
     // 초기화 매서드 (weaponSO & skillSO 주입)
-    public virtual void Weapoon_Initialized(WeaponSO info)
+    public virtual void Weapon_Initialize(WeaponSO info)
     {
         if (info == null)
         {
@@ -54,7 +54,7 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
         // 2) 각 스킬에 정보 주입 및 시전 시간 저장
         for (int i = 0; i < skills.Length; i++)
         {
-            skills[i].Skill_Initialized(info.skillInfos[i]);               // 스킬 초기화
+            skills[i].Skill_Initialize(info.skillInfos[i]);               // 스킬 초기화
             skillCastingTime[i] = info.skillInfos[i].chargingTime;  // 캐스팅 시간 설정
 
             // 스킬 인덱스 자동 설정
@@ -74,9 +74,6 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
         OnAttack();
         CooldownCoroutine = StartCoroutine(CooldownRoutine());
     }
-
-    // 파생 무기 클래스에서 구현할 공격 매서드
-    protected abstract void OnAttack();
 
     // 무기 쿨다운 코루틴
     private IEnumerator CooldownRoutine()
@@ -109,5 +106,9 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     // 무기의 스킬 정보 반환 매서드
     public ISkill[] GetSkills() => skills;
     public WeaponSO GetWeaponInfo() => weaponInfo;    // 무기 정보 반환 메서드
+
+    // 추상 매서드
+    // 파생 무기 클래스에서 구현할 공격 매서드
+    protected abstract void OnAttack();
 
 }

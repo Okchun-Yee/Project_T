@@ -10,7 +10,7 @@ public abstract class BaseSkill : MonoBehaviour, ISkill
 
     [HideInInspector] public int skillIndex;        // 스킬 인덱스 (무기에서 자동 설정)
 
-    public virtual void Skill_Initialized(SkillSO info)
+    public virtual void Skill_Initialize(SkillSO info)
     {
         if (info == null)
         {
@@ -61,26 +61,6 @@ public abstract class BaseSkill : MonoBehaviour, ISkill
         yield return new WaitForSeconds(skillInfo.skillCooldown);
         isOnCooldown = false;
     }
-    // 스킬 발동 시 이벤트 매서드 (파생 클래스에서 구현)
-    protected abstract void OnSkillActivated();
-    //<차징용>
-    // 차징 완료 시 호출
-    protected virtual void OnChargingCompleted() { }
-    // 차징 취소 시 호출
-    protected virtual void OnChargingCanceled() { }
-    // 차징 중
-    protected virtual void OnChargingProgress(float elapsed, float duration) { }
-
-    // <홀딩용>
-    // 홀딩 시작 시 호출
-    protected virtual void OnHoldingStarted(float maxDuration) { }
-    // 홀딩 종료 시 호출
-    protected virtual void OnHoldingEnded() { }
-    // 홀딩 중
-    protected virtual void OnHoldingProgress(float elapsed, float duration) { }
-    // 홀딩 시간이 최대치에 도달했을 때 호출
-    protected virtual void OnHoldingCanceled() { }
-
     // 스킬 이벤트 구독
     public virtual void SubscribeSkillEvents()
     {
@@ -121,4 +101,8 @@ public abstract class BaseSkill : MonoBehaviour, ISkill
     }
     // 스킬 데이터 반환 매서드
     public SkillSO GetSkillInfo() => skillInfo;
+
+    // 추상 매서드 정리
+    // 파생 클래스에서 구체화할 스킬 매서드
+    protected abstract void OnSkillActivated();
 }
