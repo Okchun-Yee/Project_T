@@ -41,11 +41,11 @@ public class WeaponManager : Singleton<WeaponManager>
         BaseWeapon bw = gameObj.GetComponent<BaseWeapon>();
         if (bw == null)
         {
-            Debug.LogError("[WeaponManager] Step 3: WeaponPrefab missing BaseWeapon component");
+            Debug.LogError("[WeaponManager] WeaponPrefab missing BaseWeapon component");
             Destroy(gameObj);
             return;
         }
-        bw.Weapoon_Initialized(info);    // 무기 정보로 초기화
+        bw.Weapon_Initialize(info);    // 무기 정보로 초기화
         currentWeapon = bw;     // 현재 무기 참조 저장
 
         // 4) ActiveWeapon에 장착 통보

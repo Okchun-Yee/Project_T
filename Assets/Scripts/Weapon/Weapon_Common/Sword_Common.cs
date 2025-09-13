@@ -13,7 +13,7 @@ public class Sword_Common : BaseWeapon, ICharging
 {
     [Header("Weapon Setting")]
     [SerializeField] private float comboDelay;                  // 다음 콤보 입력 허용 시간
-    private Transform[] weaponColliders;                        // 콤보 무기 콜라이더
+    [SerializeField] private Transform[] weaponColliders;       // 콤보 무기 콜라이더
 
     [Header("VFX Setting")]
     [SerializeField] private GameObject[] slashAnimPrefab;      // 콤보 슬래시 애니메이션 프리팹
@@ -40,7 +40,7 @@ public class Sword_Common : BaseWeapon, ICharging
     protected override void OnAttack()
     {
         if (false) return;                                              // 공격 중에는 입력 무시
-        Debug.Log("Sword Attacking");
+
 
         // 1) 콤보 인덱스 계산
         int idx = currentComboIndex % comboTriggers.Length;             // 총 길이 % 현재 인덱스로 최종 인덱스 계산
@@ -58,8 +58,10 @@ public class Sword_Common : BaseWeapon, ICharging
         // 4) 콤보 리셋 코루틴 활성화 (콤보 제한 시간)
         if (comboResetCoroutine != null)
             StopCoroutine(comboResetCoroutine);                         // 기존 코루틴 중지
-         comboResetCoroutine = StartCoroutine(ComboResetTimer());       // 콤보 중지 코루틴 실행
-        currentComboIndex++;                                            // 콤보 인덱스 증가
+        comboResetCoroutine = StartCoroutine(ComboResetTimer());       // 콤보 중지 코루틴 실행
+        currentComboIndex++;                                           // 콤보 인덱스 증가
+
+        Debug.Log($"Sword Attacking {currentComboIndex}");
     }
     // 콤보별 해당하는 콜라이더 활성화
     private void ActivateCollider(int index)
