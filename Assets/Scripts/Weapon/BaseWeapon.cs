@@ -12,9 +12,9 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
 
     // SO 에서 주입받는 무기 값 목록
     private float weaponCooldown;                           // SO에서 주입받는 쿨다운 시간
-    private bool isCooldown;                                //무기 쿨타임 검사 (공격 속도)
+    private bool isCooldown = false;                        //무기 쿨타임 검사 (공격 속도)
     private float[] skillCastingTime;                       // 스킬 시전 시간
-    private DamageSource ds;                               // 데미지 소스 컴포넌트
+    private DamageSource ds;                                // 데미지 소스 컴포넌트
 
     // 초기화 매서드 (weaponSO & skillSO 주입)
     public virtual void Weapon_Initialize(WeaponSO info)
@@ -31,15 +31,25 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     private void WeaponInitialization(WeaponSO info)
     {
         // 1) 무기 정보 주입
-        weaponInfo = info;                              // 무기 정보 주입
-        weaponCooldown = info.weaponCooldown;           // SO에서 무기 쿨타임 주입
+        weaponInfo = info;
+        weaponCooldown = info.weaponCooldown;
 
-        // 2) 데미지 및 스킬 주입
-        ds = GetComponentInChildren<DamageSource>();    // 하위 게임 오브젝트에서 DamageSource 컴포넌트 참조
-        if (ds == null)
-            Debug.LogError($"[BaseWeapon] DamageSource component not found in children of {name}");
+        // 2) 모든 DamageSource 컴포넌트 찾아서 초기화
+        DamageSource[] allDamageSources = GetComponentsInChildren<DamageSource>();
+        if (allDamageSources.Length == 0)
+        {
+            Debug.LogError($"[BaseWeapon] No DamageSource components found in children of {name}");
+        }
         else
-            ds.DamageAmount = info.weaponDamage;        // 데미지 소스에 무기 데미지 주입
+        {            
+            // 모든 DamageSource에 데미지 설정
+            foreach (DamageSource damageSource in allDamageSources)
+            {
+                damageSource.DamageAmount = info.weaponDamage;
+            }
+        }
+        // 첫 번째 DamageSource를 대표로 저장 (기존 호환성을 위해)
+        ds = allDamageSources.Length > 0 ? allDamageSources[0] : null;
     }
     // 스킬 초기화 매서드
     private void SkillInitialization(WeaponSO info)

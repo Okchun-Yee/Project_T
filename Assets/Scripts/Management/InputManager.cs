@@ -10,7 +10,9 @@ public class InputManager : Singleton<InputManager>
     public event Action<Vector2> OnMoveInput;           // 이동 입력 이벤트
     public event Action OnDodgeInput;                   // 회피 입력 이벤트
     public event Action OnAttackInput;                  // 기본 공격 입력 이벤트
-    public event Action<int> OnSkillInput;              // 스킬 입력 이벤트 (int Index : 스킬 번호9)
+    public event Action OnAttackCanceled;               // 공격 취소 이벤트
+    public event Action<int> OnSkillInput;              // 스킬 입력 이벤트 (int Index : 스킬 번호)
+    public event Action<int> OnSkillCanceled;           // 스킬 취소 이벤트 (int Index : 스킬 번호)
     public event Action OnPickupInput;                  // 아이템 획득 입력 이벤트
     public event Action OnInventoryInput;               // 인벤토리 UI 입력 이벤트
     private PlayerControls playerControls;
@@ -103,7 +105,7 @@ public class InputManager : Singleton<InputManager>
     }
     private void HandleAttack_Canceled(InputAction.CallbackContext context)
     {
-        // 공격 취소 시 필요한 로직 추가
+        OnAttackCanceled?.Invoke();
     }
     // 플레이어 스킬 이벤트 매서드
     private void HandleSkill_Started(int index)
@@ -112,7 +114,7 @@ public class InputManager : Singleton<InputManager>
     }
     private void HandleSkill_Canceled(int index)
     {
-        // 스킬 취소 시 필요한 로직 추가
+        OnSkillCanceled?.Invoke(index);
     }
     // 플레이어 아이템 획득 이벤트 매서드
     private void HandlePickup(InputAction.CallbackContext context)

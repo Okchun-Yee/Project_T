@@ -42,6 +42,7 @@ public class WeaponManager : Singleton<WeaponManager>
         if (bw == null)
         {
             Debug.LogError("[WeaponManager] WeaponPrefab missing BaseWeapon component");
+            
             Destroy(gameObj);
             return;
         }

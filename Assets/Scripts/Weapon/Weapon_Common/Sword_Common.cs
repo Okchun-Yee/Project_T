@@ -45,7 +45,8 @@ public class Sword_Common : BaseWeapon, ICharging
         // 1) 콤보 인덱스 계산
         int idx = currentComboIndex % comboTriggers.Length;             // 총 길이 % 현재 인덱스로 최종 인덱스 계산
 
-        // 2) 해당 하는 콜라이더 활성화
+        // 2) 해당 하는 콜라이더 활성화 & 애니메이션 트리거
+        anim.SetTrigger(comboTriggers[idx]);
         ActivateCollider(idx);
 
         // 3) 콤보별 해당하는 프리펩 생성

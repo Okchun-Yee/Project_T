@@ -18,10 +18,10 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
         if (InputManager.Instance != null)
         {
             InputManager.Instance.OnAttackInput += OnAttackStarted;               // 공격 입력 이벤트 구독
-            InputManager.Instance.OnAttackInput += OnAttackCanceled;              // 공격 입력 취소 이벤트 구독
+            InputManager.Instance.OnAttackCanceled += OnAttackCanceled;              // 공격 입력 취소 이벤트 구독
 
             InputManager.Instance.OnSkillInput += OnSkillStarted;                 // 스킬 입력 이벤트 구독
-            InputManager.Instance.OnSkillInput += OnSkillCanceled;                // 스킬 입력 취소 이벤트 구독
+            InputManager.Instance.OnSkillCanceled += OnSkillCanceled;                // 스킬 입력 취소 이벤트 구독
         }
     }
     private void OnDisable()
@@ -29,10 +29,10 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
         if (InputManager.Instance != null)
         {
             InputManager.Instance.OnAttackInput -= OnAttackStarted;               // 공격 입력 이벤트 구독 해제
-            InputManager.Instance.OnAttackInput -= OnAttackCanceled;              // 공격 입력 취소 이벤트 구독 해제
+            InputManager.Instance.OnAttackCanceled -= OnAttackCanceled;              // 공격 입력 취소 이벤트 구독 해제
 
             InputManager.Instance.OnSkillInput -= OnSkillStarted;                 // 스킬 입력 이벤트 구독 해제
-            InputManager.Instance.OnSkillInput -= OnSkillCanceled;                // 스킬 입력 취소 이벤트 구독 해제
+            InputManager.Instance.OnSkillCanceled -= OnSkillCanceled;                // 스킬 입력 취소 이벤트 구독 해제
         }
     }
 
