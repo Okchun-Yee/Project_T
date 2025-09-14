@@ -167,15 +167,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27cd5ce1edfd1ad4dbbbf3f442881158, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  comboDelay: 0
+  comboDelay: 0.4
   weaponColliders:
   - {fileID: 1257009501085977604}
   - {fileID: 5556507982144077976}
   - {fileID: 5792439597046328249}
   slashAnimPrefab:
   - {fileID: 6462850459302737587, guid: 3fc0bbb8038de8142a5a00485ad7ed9e, type: 3}
-  - {fileID: 6462850459302737587, guid: 3fc0bbb8038de8142a5a00485ad7ed9e, type: 3}
-  - {fileID: 6462850459302737587, guid: 3fc0bbb8038de8142a5a00485ad7ed9e, type: 3}
+  - {fileID: 6462850459302737587, guid: 815e2489dcdac4c40ba99b1fccb65cb7, type: 3}
+  - {fileID: 6462850459302737587, guid: 2e76feee7b0f62744980e016c2ae6c2b, type: 3}
 --- !u!1 &5139112384521918852
 GameObject:
   m_ObjectHideFlags: 0

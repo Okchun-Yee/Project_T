@@ -88,6 +88,7 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     // 무기 쿨다운 코루틴
     private IEnumerator CooldownRoutine()
     {
+        // 공격 애니메이션 종료 후 isAttacking false로 변경 (애니메이션 이벤트에서 호출)
         isCooldown = true;
         yield return new WaitForSeconds(weaponCooldown);
         isCooldown = false;

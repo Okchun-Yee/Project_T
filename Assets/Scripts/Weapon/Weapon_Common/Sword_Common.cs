@@ -19,35 +19,40 @@ public class Sword_Common : BaseWeapon, ICharging
     [SerializeField] private GameObject[] slashAnimPrefab;      // 콤보 슬래시 애니메이션 프리팹
     private Transform slashAnimSpawnPoint;                      // 슬래시 애니메이션 생성 위치
 
+
     private int activeColliderIndex = -1;       // 현재 활성 콜라이더 추적
     private int currentComboIndex = 0;          // 0~4 인덱스
     private Animator anim;                      // 애니메이션
     private Coroutine comboResetCoroutine;      // 콤보 초기화 코루틴 참조
     private GameObject slashAnim;               // 현재 활성화된 슬래시 애니메이션 인스턴스
+    private Combo combo;                        // 콤보 관리 컴포넌트
 
     private static readonly string[] comboTriggers = new[] { "Attack1", "Attack2", "Attack3" };
-
+    private static readonly int HASH_ATTACK = Animator.StringToHash("isAttack");
     private void Awake()
     {
         anim = GetComponent<Animator>();
+        combo = new Combo(weaponColliders, comboTriggers.Length, comboDelay, this);
     }
     private void Start()
     {
-        ResetCombo();
         slashAnimSpawnPoint = GameObject.Find("Slash SpawnPoint").transform;
     }
     // 무기 공격 매서드
     protected override void OnAttack()
     {
-        if (false) return;                                              // 공격 중에는 입력 무시
-
-
+        Debug.Log("Sword OnAttack");
+        if (isAttacking) return;                                              // 공격 중에는 입력 무시
+        
         // 1) 콤보 인덱스 계산
-        int idx = currentComboIndex % comboTriggers.Length;             // 총 길이 % 현재 인덱스로 최종 인덱스 계산
+        if (!combo.isComboActive)
+            combo.StartCombo();                     // (콤보가 시작 상태가 아니면) 콤보 시작
+        int idx = combo.NextCombo();                // idx = 다음 콤보 인덱스
 
         // 2) 해당 하는 콜라이더 활성화 & 애니메이션 트리거
-        anim.SetTrigger(comboTriggers[idx]);
-        ActivateCollider(idx);
+        anim.SetBool(HASH_ATTACK, true);        // 공격 상태 true
+        anim.SetTrigger(comboTriggers[idx]);    // 콤보 애니메이션 트리거    
+        ActivateCollider(idx);                  // 콤보별 해당하는 콜라이더 활성화
 
         // 3) 콤보별 해당하는 프리펩 생성
         if (slashAnimPrefab != null && idx < slashAnimPrefab.Length && slashAnimSpawnPoint != null)
@@ -56,50 +61,16 @@ public class Sword_Common : BaseWeapon, ICharging
             slashAnim.transform.parent = this.transform.parent;         // 생성 후 플레이어 오브젝트 자식 오브젝트로 변경
         }
 
-        // 4) 콤보 리셋 코루틴 활성화 (콤보 제한 시간)
-        if (comboResetCoroutine != null)
-            StopCoroutine(comboResetCoroutine);                         // 기존 코루틴 중지
-        comboResetCoroutine = StartCoroutine(ComboResetTimer());       // 콤보 중지 코루틴 실행
-        currentComboIndex++;                                           // 콤보 인덱스 증가
-
         Debug.Log($"Sword Attacking {currentComboIndex}");
     }
     // 콤보별 해당하는 콜라이더 활성화
     private void ActivateCollider(int index)
     {
-        // 1) 이전 콜라이더 비활성화
-        if (activeColliderIndex >= 0)
-        {
-            weaponColliders[activeColliderIndex].gameObject.SetActive(false);
-        }
-        // 2) 해당 하는 콜라이더 활성화
-        weaponColliders[index].gameObject.SetActive(true);
-        // 3) 해당 콜라이더에 데미지 설정
+        for (int i = 0; i < weaponColliders.Length; i++)
+            weaponColliders[i].gameObject.SetActive(i == index);
         DamageSource damageSource = weaponColliders[index].GetComponent<DamageSource>();
-        damageSource?.SetDamage(weaponInfo.weaponDamage); // 데미지 설정
-        // 4) 이전 콜라이더 추적
-        activeColliderIndex = index;
+        damageSource?.SetDamage(weaponInfo.weaponDamage);
     }
-    // 콤보 중지 코루틴
-    private IEnumerator ComboResetTimer()
-    {
-        float timer = 0f;
-        while (timer < comboDelay)
-        {
-            timer += Time.deltaTime;
-            yield return null;
-        }
-        ResetCombo();
-    }
-    private void ResetCombo()
-    {
-        // 인덱스 초기화
-        currentComboIndex = 0;
-        // 모든 콜라이더 비활성화
-        foreach (var col in weaponColliders)
-            col.gameObject.SetActive(false);
-    }
-
     void ICharging.OnChargingCanceled()
     {
         throw new System.NotImplementedException();
