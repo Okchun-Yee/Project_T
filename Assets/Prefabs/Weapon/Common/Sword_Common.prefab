@@ -57,6 +57,7 @@ GameObject:
   - component: {fileID: 7957910477754399695}
   - component: {fileID: 1180950364503382699}
   - component: {fileID: 3441963054075074123}
+  - component: {fileID: 4736115377012529944}
   m_Layer: 0
   m_Name: Sword_Common
   m_TagString: Untagged
@@ -175,7 +176,21 @@ MonoBehaviour:
   slashAnimPrefab:
   - {fileID: 6462850459302737587, guid: 3fc0bbb8038de8142a5a00485ad7ed9e, type: 3}
   - {fileID: 6462850459302737587, guid: 815e2489dcdac4c40ba99b1fccb65cb7, type: 3}
-  - {fileID: 6462850459302737587, guid: 2e76feee7b0f62744980e016c2ae6c2b, type: 3}
+  - {fileID: 6462850459302737587, guid: e3a1050f97b997d44965bb8db30fa929, type: 3}
+--- !u!114 &4736115377012529944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4528167299006447994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bda11f66e83afac45bc4da536c064bb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isComboActive: 0
+  isComboEnabled: 0
 --- !u!1 &5139112384521918852
 GameObject:
   m_ObjectHideFlags: 0

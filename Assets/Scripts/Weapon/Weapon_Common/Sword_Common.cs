@@ -27,12 +27,13 @@ public class Sword_Common : BaseWeapon, ICharging
     private GameObject slashAnim;               // 현재 활성화된 슬래시 애니메이션 인스턴스
     private Combo combo;                        // 콤보 관리 컴포넌트
 
-    private static readonly string[] comboTriggers = new[] { "Attack1", "Attack2", "Attack3" };
-    private static readonly int HASH_ATTACK = Animator.StringToHash("isAttack");
+    private static readonly int HASH_COMBO = Animator.StringToHash("NextCombo");
+    private static readonly int HASH_ATTACK = Animator.StringToHash("Attack");
     private void Awake()
     {
         anim = GetComponent<Animator>();
-        combo = new Combo(weaponColliders, comboTriggers.Length, comboDelay, this);
+        combo = gameObject.GetComponent<Combo>();
+        combo.Initialize(weaponColliders, HASH_COMBO, comboDelay, this);
     }
     private void Start()
     {
@@ -42,17 +43,16 @@ public class Sword_Common : BaseWeapon, ICharging
     protected override void OnAttack()
     {
         Debug.Log("Sword OnAttack");
-        if (isAttacking) return;                                              // 공격 중에는 입력 무시
+        if (isAttacking) return;                        // 공격 중에는 입력 무시
         
         // 1) 콤보 인덱스 계산
         if (!combo.isComboActive)
-            combo.StartCombo();                     // (콤보가 시작 상태가 아니면) 콤보 시작
-        int idx = combo.NextCombo();                // idx = 다음 콤보 인덱스
+            combo.StartCombo();                         // (콤보가 시작 상태가 아니면) 콤보 시작
+        int idx = combo.NextComboIndex();               // idx = 다음 콤보 인덱스
 
         // 2) 해당 하는 콜라이더 활성화 & 애니메이션 트리거
-        anim.SetBool(HASH_ATTACK, true);        // 공격 상태 true
-        anim.SetTrigger(comboTriggers[idx]);    // 콤보 애니메이션 트리거    
-        ActivateCollider(idx);                  // 콤보별 해당하는 콜라이더 활성화
+        if (idx == 0) anim.SetTrigger(HASH_ATTACK);     // 첫 공격
+        ActivateCollider(idx);                          // 콤보별 해당하는 콜라이더 활성화
 
         // 3) 콤보별 해당하는 프리펩 생성
         if (slashAnimPrefab != null && idx < slashAnimPrefab.Length && slashAnimSpawnPoint != null)
@@ -60,7 +60,7 @@ public class Sword_Common : BaseWeapon, ICharging
             slashAnim = Instantiate(slashAnimPrefab[idx], slashAnimSpawnPoint.position, Quaternion.identity);
             slashAnim.transform.parent = this.transform.parent;         // 생성 후 플레이어 오브젝트 자식 오브젝트로 변경
         }
-
+ 
         Debug.Log($"Sword Attacking {currentComboIndex}");
     }
     // 콤보별 해당하는 콜라이더 활성화
@@ -71,17 +71,21 @@ public class Sword_Common : BaseWeapon, ICharging
         DamageSource damageSource = weaponColliders[index].GetComponent<DamageSource>();
         damageSource?.SetDamage(weaponInfo.weaponDamage);
     }
-    void ICharging.OnChargingCanceled()
+    // 애니메이션 이벤트 호출
+    public void ComboEnable() { combo.OnComboEnable(); }
+    public void ComboDisable() { combo.OnComboDisable();}
+    public void NextCombo() { combo.NextCombo(); }
+    public void OnChargingCanceled()
     {
         throw new System.NotImplementedException();
     }
 
-    void ICharging.OnChargingCompleted()
+    public void OnChargingCompleted()
     {
         throw new System.NotImplementedException();
     }
 
-    void ICharging.OnChargingProgress(float elapsed, float duration)
+    public void OnChargingProgress(float elapsed, float duration)
     {
         throw new System.NotImplementedException();
     }
