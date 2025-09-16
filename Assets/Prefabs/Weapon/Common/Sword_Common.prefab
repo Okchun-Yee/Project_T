@@ -57,7 +57,6 @@ GameObject:
   - component: {fileID: 7957910477754399695}
   - component: {fileID: 1180950364503382699}
   - component: {fileID: 3441963054075074123}
-  - component: {fileID: 4736115377012529944}
   m_Layer: 0
   m_Name: Sword_Common
   m_TagString: Untagged
@@ -80,7 +79,6 @@ Transform:
   m_Children:
   - {fileID: 1257009501085977604}
   - {fileID: 5556507982144077976}
-  - {fileID: 5792439597046328249}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &7957910477754399695
@@ -172,25 +170,10 @@ MonoBehaviour:
   weaponColliders:
   - {fileID: 1257009501085977604}
   - {fileID: 5556507982144077976}
-  - {fileID: 5792439597046328249}
   slashAnimPrefab:
   - {fileID: 6462850459302737587, guid: 3fc0bbb8038de8142a5a00485ad7ed9e, type: 3}
   - {fileID: 6462850459302737587, guid: 815e2489dcdac4c40ba99b1fccb65cb7, type: 3}
-  - {fileID: 6462850459302737587, guid: e3a1050f97b997d44965bb8db30fa929, type: 3}
---- !u!114 &4736115377012529944
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4528167299006447994}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bda11f66e83afac45bc4da536c064bb4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isComboActive: 0
-  isComboEnabled: 0
+  comboLength: 2
 --- !u!1 &5139112384521918852
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,51 +213,6 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5139112384521918852}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fd54b8d616c6c9468b464ce559b85fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damageAmount: 1
---- !u!1 &5458772056710146346
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5792439597046328249}
-  - component: {fileID: 1065783899137162646}
-  m_Layer: 0
-  m_Name: weaponCollider_3
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5792439597046328249
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5458772056710146346}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4762599443593870852}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1065783899137162646
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5458772056710146346}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6fd54b8d616c6c9468b464ce559b85fd, type: 3}
