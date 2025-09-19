@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,12 +22,15 @@ public class Sword_Common : BaseWeapon, ICharging
     // 클래스 레벨에 추가할 필드
     [SerializeField] private int comboLength = 3;   // 에디터에서 단계 수 설정 (예: 3 -> 인덱스 0,1,2)
     private int comboIndex = -1;                    // 내부 모듈러 인덱스
+    private int currentDirection = 0;               // 현재 방향 인덱스 (0=R,1=U,2=L,3=D)
     private Coroutine comboTimeoutCoroutine;        // 콤보 초기화 코루틴 참조
     private Animator anim;                          // 애니메이션
     private GameObject slashAnim;                   // 현재 활성화된 슬래시 애니메이션 인스턴스
+    private SetWeaponAnim weaponAnimSetter;         // 방향 설정 컴포넌트
 
     private static readonly int HASH_INDEX = Animator.StringToHash("AttackIndex");  // 현재 콤보 인덱스
     private static readonly int HASH_ATTACK = Animator.StringToHash("Attack");      // 다음 콤보 트리거
+    private static readonly int HASH_DIRECTION = Animator.StringToHash("Direction"); // 현재 방향 인덱스
 
     // 현재 콤보 인덱스 프로퍼티
     // get: 애니메이터에서 현재 콤보 인덱스 읽기
@@ -40,7 +44,11 @@ public class Sword_Common : BaseWeapon, ICharging
     private void Awake()
     {
         anim = GetComponent<Animator>();
+        weaponAnimSetter = GetComponent<SetWeaponAnim>();
+        if (weaponAnimSetter != null)
+            weaponAnimSetter.OnDirectionChanged += HandleDirectionChanged;
     }
+
     private void Start()
     {
         slashAnimSpawnPoint = GameObject.Find("Slash SpawnPoint").transform;
@@ -117,6 +125,13 @@ public class Sword_Common : BaseWeapon, ICharging
             weaponColliders[i].gameObject.SetActive(i == index);
         DamageSource damageSource = weaponColliders[index].GetComponent<DamageSource>();
         damageSource?.SetDamage(weaponInfo.weaponDamage);
+    }
+    // 방향 변경 이벤트 핸들러
+    private void HandleDirectionChanged(int obj)
+    {
+        currentDirection = Mathf.Clamp(obj, 0, 3);
+        if (anim != null)
+            anim.SetInteger(HASH_DIRECTION, currentDirection);
     }
 
     // 애니메이션 이벤트에서 호출

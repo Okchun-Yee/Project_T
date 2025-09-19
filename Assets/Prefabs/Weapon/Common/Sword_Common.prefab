@@ -57,6 +57,7 @@ GameObject:
   - component: {fileID: 7957910477754399695}
   - component: {fileID: 1180950364503382699}
   - component: {fileID: 3441963054075074123}
+  - component: {fileID: 6602028424730637352}
   m_Layer: 0
   m_Name: Sword_Common
   m_TagString: Untagged
@@ -121,7 +122,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: -1967855225, guid: fcb66af2379fa104f89a2b083c25eaec, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -174,6 +175,19 @@ MonoBehaviour:
   - {fileID: 6462850459302737587, guid: 3fc0bbb8038de8142a5a00485ad7ed9e, type: 3}
   - {fileID: 6462850459302737587, guid: 815e2489dcdac4c40ba99b1fccb65cb7, type: 3}
   comboLength: 2
+--- !u!114 &6602028424730637352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4528167299006447994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2615e903264c3244793805b817d670d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  deadzone: 0.1
 --- !u!1 &5139112384521918852
 GameObject:
   m_ObjectHideFlags: 0
