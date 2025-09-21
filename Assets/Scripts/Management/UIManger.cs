@@ -14,12 +14,22 @@ public class UIManger : Singleton<UIManger>
         base.Awake();
         currentHealth = maxHealth;
     }
-    
+    private void Start()
+    {   
+        Debug.Log("테스트 시작");
+        currentHealth = maxHealth;
+        UpdateHealthSlider();
+        
+        // 1초마다 TakeDamage() 실행
+        InvokeRepeating("TakeDamage", 2, 2);
+    }
+
 
     private void TakeDamage()
     {
         currentHealth -= 10;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth); // 0 이하로는 안 떨어지게
+        Debug.Log("Hp감소");
         UpdateHealthSlider();
     }
     private void UpdateHealthSlider()
