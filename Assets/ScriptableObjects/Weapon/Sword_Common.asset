@@ -20,3 +20,5 @@ MonoBehaviour:
   weaponCooldown: 0.25
   weaponDamage: 10
   weaponRange: 0
+  chargeDuration: 1
+  chargedDamageMultiplier: 1.5

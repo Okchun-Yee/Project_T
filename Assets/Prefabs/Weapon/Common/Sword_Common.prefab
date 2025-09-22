@@ -58,7 +58,6 @@ GameObject:
   - component: {fileID: 1180950364503382699}
   - component: {fileID: 3441963054075074123}
   - component: {fileID: 3081766751056721914}
-  - component: {fileID: 6602028424730637352}
   - component: {fileID: -2804920404835181486}
   - component: {fileID: -4130662377126144079}
   m_Layer: 0
@@ -169,7 +168,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27cd5ce1edfd1ad4dbbbf3f442881158, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponColliders: {fileID: 1257009501085977604}
   slashAnimPrefab:
   - {fileID: 6462850459302737587, guid: 3fc0bbb8038de8142a5a00485ad7ed9e, type: 3}
   - {fileID: 6462850459302737587, guid: 815e2489dcdac4c40ba99b1fccb65cb7, type: 3}
@@ -188,19 +186,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   comboLength: 2
   comboDelay: 0.4
---- !u!114 &6602028424730637352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4528167299006447994}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2615e903264c3244793805b817d670d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  deadzone: 0.1
 --- !u!114 &-2804920404835181486
 MonoBehaviour:
   m_ObjectHideFlags: 0

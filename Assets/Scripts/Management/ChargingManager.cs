@@ -8,6 +8,7 @@ public class ChargingManager : Singleton<ChargingManager>
     private IEnumerator chargingSkill; // 현재 충전 중인 스킬 코루틴
     private float chargeTime = 0f; // 충전 시간
     private float chargeTimeElapsed = 0f;
+    private bool isChargingComplete = false;
 
 
     //차징 완료 or 취소 이벤트
@@ -21,7 +22,8 @@ public class ChargingManager : Singleton<ChargingManager>
             EndCharging(); // 중복 차징 방지
 
         chargeTime = skillChargeTime;
-        chargeTimeElapsed = 0f; // 차징 시작 시 초기화
+        chargeTimeElapsed = 0f;         // 차징 시작 시 초기화
+        isChargingComplete = false;     // 차징 시작 시 초기화
 
         // Start charging logic
         chargingSkill = ChargingRoutine();
@@ -37,7 +39,8 @@ public class ChargingManager : Singleton<ChargingManager>
             chargingSkill = null;
         }
         chargeTimeElapsed = 0f; // 차징 취소 시 초기화
-        OnChargingCanceled?.Invoke();
+        if(!isChargingComplete)
+            OnChargingCanceled?.Invoke();
     }
     private IEnumerator ChargingRoutine()
     {
@@ -50,7 +53,8 @@ public class ChargingManager : Singleton<ChargingManager>
             yield return null; // Wait for the next frame
         }
         chargingSkill = null;
-        chargeTimeElapsed = 0f; // 차징 완료 시 초기화
+        chargeTimeElapsed = 0f;     // 차징 완료 시 초기화
+        isChargingComplete = true;  // 차징 완료 상태 업데이트
 
         OnChargingCompleted?.Invoke();
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -11,22 +12,19 @@ using UnityEngine;
 /// </summary>
 public class Sword_Common : BaseWeapon, ICharging
 {
-    [Header("Weapon Setting")]
-    [SerializeField] private Transform weaponColliders;       // 콤보 무기 콜라이더
-
     [Header("VFX Setting")]
     [SerializeField] private GameObject[] slashAnimPrefab;      // 콤보 슬래시 애니메이션 프리팹
     private Transform slashAnimSpawnPoint;                      // 슬래시 애니메이션 생성 위치
 
-    // 클래스 레벨에 추가할 필드
-    [SerializeField] private Combo comboController; // 에디터로 연결하거나 GetComponent로 확보
-    private float currentDirection = 0;             // 현재 방향 인덱스 (0=R,1=U,2=L,3=D)
+    [Header("Weapon Setting")]
+
+    [SerializeField] private Combo comboController; // 콤보 컨트롤러
+    private Transform weaponColliders;              // 콤보 무기 콜라이더
     private Animator anim;                          // 애니메이션
     private GameObject slashAnim;                   // 현재 활성화된 슬래시 애니메이션 인스턴스
 
     private static readonly int HASH_INDEX = Animator.StringToHash("AttackIndex");  // 현재 콤보 인덱스
     private static readonly int HASH_ATTACK = Animator.StringToHash("Attack");      // 다음 콤보 트리거
-    private static readonly int HASH_DIRECTION = Animator.StringToHash("Direction"); // 현재 방향 인덱스
 
     // 현재 콤보 인덱스 프로퍼티
     // get: 애니메이터에서 현재 콤보 인덱스 읽기
@@ -54,13 +52,31 @@ public class Sword_Common : BaseWeapon, ICharging
 
     private void Start()
     {
-        slashAnimSpawnPoint = GameObject.Find("Slash SpawnPoint").transform;
+        slashAnimSpawnPoint = GameObject.Find("Slash SpawnPoint")?.transform;
         if (slashAnimSpawnPoint == null)
         {
             // Null 방어 코드
             Debug.LogWarning("[Sword_Common] 'Slash SpawnPoint' not found in scene. Slash VFX will not be spawned.");
         }
-        weaponColliders.gameObject.SetActive(false); // 시작 시 모든 콜라이더 비활성화
+        weaponColliders = GameObject.Find("Sword_Colliders")?.transform;
+        if (weaponColliders == null)
+        {
+            // Null 방어 코드
+            Debug.LogWarning($"[Sword_Common] WeaponColliders child not found on {name}. Combo colliders will not function.");
+        }
+
+        // 안전하게 SetActive 호출
+        if (weaponColliders != null)
+            weaponColliders.gameObject.SetActive(false); // 시작 시 모든 콜라이더 비활성화
+    }
+    private void OnEnable()
+    {
+        if (ChargingManager.Instance != null)
+        {
+            ChargingManager.Instance.OnChargingProgress += OnChargingProgress;
+            ChargingManager.Instance.OnChargingCompleted += OnChargingCompleted;
+            ChargingManager.Instance.OnChargingCanceled += OnChargingCanceled;
+        }
     }
     private void Update()
     {
@@ -72,6 +88,12 @@ public class Sword_Common : BaseWeapon, ICharging
         {
             comboController.OnComboAdvanced -= OnComboAdvanced;
             comboController.OnComboReset -= OnComboReset;
+        }
+        if (ChargingManager.Instance != null)
+        {
+            ChargingManager.Instance.OnChargingProgress -= OnChargingProgress;
+            ChargingManager.Instance.OnChargingCompleted -= OnChargingCompleted;
+            ChargingManager.Instance.OnChargingCanceled -= OnChargingCanceled;
         }
         base.OnDisable(); // 기본 비활성화 로직 호출
     }
@@ -89,6 +111,11 @@ public class Sword_Common : BaseWeapon, ICharging
         {
             anim.SetTrigger(HASH_ATTACK);
         }
+    }
+    // 무기 공격 매서드 (차징용)
+    protected override void OnAttack_Charged()
+    {
+        Debug.Log($"Sword OnAttack_Charged");
     }
 
     // Combo state and timing delegated to Combo component; local timer/index removed.
@@ -196,16 +223,21 @@ public class Sword_Common : BaseWeapon, ICharging
     // 차징 이벤트 콜백 매서드 모음
     public void OnChargingCanceled()
     {
-        throw new NotImplementedException();
+        if (ActiveWeapon.Instance == null) return;
+        Debug.Log("Charging Canceled");
+        // 차징 취소 시 공격 실행
+        _Attack();
     }
 
     public void OnChargingCompleted()
     {
-        throw new NotImplementedException();
+        if (ActiveWeapon.Instance == null) return;
+        Debug.Log("Charging Completed");
+        _Attack_Charged();
     }
 
     public void OnChargingProgress(float elapsed, float duration)
     {
-        throw new NotImplementedException();
+        if (ActiveWeapon.Instance == null) return;
     }
 }
