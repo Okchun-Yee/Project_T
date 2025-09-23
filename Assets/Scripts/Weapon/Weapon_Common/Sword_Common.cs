@@ -100,7 +100,7 @@ public class Sword_Common : BaseWeapon, ICharging
     // 무기 공격 매서드
     protected override void OnAttack()
     {
-        Debug.Log($"Sword OnAttack");
+        Debug.Log($"[Sword]: OnAttack");
 
         // Advance combo on the Combo component if present; otherwise just trigger the attack animation
         if (comboController != null)
@@ -233,7 +233,7 @@ public class Sword_Common : BaseWeapon, ICharging
     {
         if (ActiveWeapon.Instance == null) return;
         Debug.Log("Charging Completed");
-        _Attack_Charged();
+        _AttackCharged();
     }
 
     public void OnChargingProgress(float elapsed, float duration)

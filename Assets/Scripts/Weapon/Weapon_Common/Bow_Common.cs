@@ -1,0 +1,83 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+/// <summary>
+/// 기본 활 무기 클래스
+/// * 기본 공격, 차징 공격 구현
+/// * 홀딩 공격, 콤보 공격 미구현
+/// </summary>
+public class Bow_Common : BaseWeapon, ICharging
+{
+    [Header("VFX Setting")]
+    [SerializeField] private GameObject arrowPrefab;       // 화살 프리팹
+    [SerializeField] private Transform arrowSpawnPoint;    // 화살 생성 위치
+
+    [Header("Weapon Setting")]
+    private Animator anim;                                  // 애니메이터
+    private static readonly int HASH_ATTACK = Animator.StringToHash("Attack");      // 기본 공격 트리거
+    private void Awake()
+    {
+        anim = GetComponent<Animator>();
+    }
+    private void OnEnable()
+    {
+        if (ChargingManager.Instance != null)
+        {
+            ChargingManager.Instance.OnChargingProgress += OnChargingProgress;
+            ChargingManager.Instance.OnChargingCompleted += OnChargingCompleted;
+            ChargingManager.Instance.OnChargingCanceled += OnChargingCanceled;
+        }
+    }
+    protected override void OnDisable()
+    {
+        if (ChargingManager.Instance != null)
+        {
+            ChargingManager.Instance.OnChargingProgress -= OnChargingProgress;
+            ChargingManager.Instance.OnChargingCompleted -= OnChargingCompleted;
+            ChargingManager.Instance.OnChargingCanceled -= OnChargingCanceled;
+        }
+        base.OnDisable();
+    }
+
+
+    protected override void OnAttack()
+    {
+        Debug.Log($"[Bow]: OnAttack");
+        anim.SetTrigger(HASH_ATTACK);
+
+        SpawnArrow();
+    }
+
+    protected override void OnAttack_Charged()
+    {
+        Debug.Log($"[Bow]: OnAttack_Charged");
+    }
+    // ICharging 인터페이스 구현
+    // 차징 공격 관련 매서드
+    public void OnChargingCanceled()
+    {
+        Debug.Log($"[Bow]: OnChargingCanceled");
+        _Attack();
+    }
+
+    public void OnChargingCompleted()
+    {
+        Debug.Log($"[Bow]: OnChargingCompleted");
+        _AttackCharged();
+    }
+
+    public void OnChargingProgress(float elapsed, float duration)
+    {
+        return;
+    }
+    private void SpawnArrow()
+    {
+        GameObject newArrow = Instantiate(arrowPrefab, arrowSpawnPoint.position, ActiveWeapon.Instance.transform.rotation);
+
+        newArrow.GetComponent<Projectile>().UpdateProjectileRange(weaponInfo.weaponRange);
+        newArrow.GetComponent<Projectile>().Initialize(weaponInfo.weaponDamage); // Initialize로 데미지 설정
+
+        Debug.Log($"[Bow] weaponInfo.weaponDamage: {weaponInfo.weaponDamage}");
+    }
+}

@@ -83,7 +83,7 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
         if (isCooldown) { return; }
         if (weaponInfo != null && weaponInfo.chargeDuration > 0f)
         {
-            // 차징 무기인 경우 차징 매니저에 등록
+            // 기본적으로 차징 시작
             ChargingManager.Instance?.StartCharging(weaponInfo.chargeDuration);
             return;
         }
@@ -99,7 +99,7 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
         OnAttack();
         CooldownCoroutine = StartCoroutine(CooldownRoutine());
     }
-    protected void _Attack_Charged()
+    protected void _AttackCharged()
     {
         if (isCooldown) { return; }
         OnAttack_Charged();
