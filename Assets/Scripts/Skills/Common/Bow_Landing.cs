@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Sword_Blade : BaseSkill
+public class Bow_Landing : BaseSkill
 {
     private float damage;
     private void Start()
@@ -18,6 +18,7 @@ public class Sword_Blade : BaseSkill
     }
     protected override void OnSkillActivated()
     {
-        Debug.Log($"[Sword]: Blade Skill Activated, Damage {damage} ");
+        // Implement the skill activation logic here
+        Debug.Log("[Bow_Landing] Skill Activated");
     }
 }

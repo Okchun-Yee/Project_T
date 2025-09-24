@@ -12,8 +12,20 @@ public class Sword_Dash : BaseSkill
         rb = GetComponentInParent<Rigidbody2D>();
         dash = GetComponent<Dash>(); // Dash 컴포넌트 참조
     }
+    private float damage;
+    private void Start()
+    {
+        if (skillInfo != null)
+        {
+            damage = GetSkillDamage();
+        }
+        else
+        {
+            Debug.LogError("[Sword_Dash] SkillInfo is not set.");
+        }
+    }
     protected override void OnSkillActivated()
     {
-        Debug.Log("[Sword]: Dash Skill Activated");
+        Debug.Log($"[Sword]: Dash Skill Activated, Damage {damage}");
     }
 }
