@@ -39,7 +39,10 @@ public class Bow_Common : BaseWeapon, ICharging
         }
         base.OnDisable();
     }
-
+    private void Update()
+    {
+        
+    }
 
     protected override void OnAttack()
     {
@@ -51,25 +54,31 @@ public class Bow_Common : BaseWeapon, ICharging
 
     protected override void OnAttack_Charged()
     {
+        if (ActiveWeapon.Instance == null) return;
+
         Debug.Log($"[Bow]: OnAttack_Charged");
     }
     // ICharging 인터페이스 구현
     // 차징 공격 관련 매서드
     public void OnChargingCanceled()
     {
+        if (ActiveWeapon.Instance == null) return;
+
         Debug.Log($"[Bow]: OnChargingCanceled");
         _Attack();
     }
 
     public void OnChargingCompleted()
     {
+        if (ActiveWeapon.Instance == null) return;
+
         Debug.Log($"[Bow]: OnChargingCompleted");
         _AttackCharged();
     }
 
     public void OnChargingProgress(float elapsed, float duration)
     {
-        return;
+        if (ActiveWeapon.Instance == null) return;
     }
     private void SpawnArrow()
     {

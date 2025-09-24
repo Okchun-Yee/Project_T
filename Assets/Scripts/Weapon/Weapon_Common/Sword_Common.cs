@@ -22,6 +22,7 @@ public class Sword_Common : BaseWeapon, ICharging
     private Transform weaponColliders;              // 콤보 무기 콜라이더
     private Animator anim;                          // 애니메이션
     private GameObject slashAnim;                   // 현재 활성화된 슬래시 애니메이션 인스턴스
+    private InGame_MouseFollow mouseFollow;         // 마우스 추적 스크립트
 
     private static readonly int HASH_INDEX = Animator.StringToHash("AttackIndex");  // 현재 콤보 인덱스
     private static readonly int HASH_ATTACK = Animator.StringToHash("Attack");      // 다음 콤보 트리거
@@ -38,6 +39,7 @@ public class Sword_Common : BaseWeapon, ICharging
     private void Awake()
     {
         anim = GetComponent<Animator>();
+        mouseFollow = GetComponent<InGame_MouseFollow>();
         if (anim == null)
         {
             // Null 방어 코드
@@ -80,7 +82,7 @@ public class Sword_Common : BaseWeapon, ICharging
     }
     private void Update()
     {
-        MouseFollowWithOffset();
+        mouseFollow.MeleeWeaponMouseFollow();
     }
     protected override void OnDisable()
     {
@@ -122,7 +124,16 @@ public class Sword_Common : BaseWeapon, ICharging
     // 콤보별 해당하는 콜라이더 활성화
     private void ActivateCollider(int index)
     {
-        weaponColliders.gameObject.SetActive(index == 0);
+        if (weaponColliders == null) return;
+
+        weaponColliders.gameObject.SetActive(index >= 0);
+        // PlayerController의 FacingLeft를 읽어 콜라이더 좌우 반전 적용 (로컬 스케일 사용)
+        bool facingLeft = PlayerController.Instance != null && PlayerController.Instance.FacingLeft;
+
+        if(facingLeft)
+            weaponColliders.transform.rotation = Quaternion.Euler(0, 180, 0);
+        else
+            weaponColliders.transform.rotation = Quaternion.Euler(0, 0, 0);
 
         DamageSource damageSource = weaponColliders.GetComponent<DamageSource>();
         damageSource?.SetDamage(weaponInfo.weaponDamage);
@@ -198,27 +209,6 @@ public class Sword_Common : BaseWeapon, ICharging
             if (sr != null) sr.flipX = true;
         }
     }
-    private void MouseFollowWithOffset()
-    {
-        Vector3 mousePos = Input.mousePosition;
-        Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(PlayerController.Instance.transform.position);
-
-        float angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
-
-        if (mousePos.x < playerScreenPoint.x)
-        {
-            transform.parent.rotation = Quaternion.Euler(0, -180, angle);
-            ActiveWeapon.Instance.transform.rotation = Quaternion.Euler(0, -180, angle);
-            weaponColliders.transform.rotation = Quaternion.Euler(0, -180, 0);
-        }
-        else
-        {
-            transform.parent.rotation = Quaternion.Euler(0, 0, angle);
-            ActiveWeapon.Instance.transform.rotation = Quaternion.Euler(0, 0, angle);
-            weaponColliders.transform.rotation = Quaternion.Euler(0, 0, 0);
-        }
-    }
-
 
     // 차징 이벤트 콜백 매서드 모음
     public void OnChargingCanceled()

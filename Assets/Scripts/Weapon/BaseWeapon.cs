@@ -87,9 +87,12 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
             ChargingManager.Instance?.StartCharging(weaponInfo.chargeDuration);
             return;
         }
-
-        OnAttack();
-        CooldownCoroutine = StartCoroutine(CooldownRoutine());
+        else
+        {
+            // 차징이 필요 없는 무기의 경우 즉시 공격 시전
+            OnAttack();
+            CooldownCoroutine = StartCoroutine(CooldownRoutine());
+        }
     }
     // 새 헬퍼: 무기가 (차징 취소 시) 직접 즉시 공격을 트리거할 때 사용.
     // ForceAttack은 공격 쿨다운 검사를 포함하고 CooldownRoutine을 시작합니다.
