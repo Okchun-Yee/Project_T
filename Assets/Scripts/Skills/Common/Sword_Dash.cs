@@ -29,3 +29,4 @@ public class Sword_Dash : BaseSkill
         Debug.Log($"[Sword]: Dash Skill Activated, Damage {damage}");
     }
 }
+ 

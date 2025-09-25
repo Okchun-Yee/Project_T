@@ -60,7 +60,7 @@ public class Bow_Common : BaseWeapon, ICharging
     }
     // ICharging 인터페이스 구현
     // 차징 공격 관련 매서드
-    public void OnChargingCanceled()
+    public void OnChargingCanceled(ChargingType type)
     {
         if (ActiveWeapon.Instance == null) return;
 
@@ -68,7 +68,7 @@ public class Bow_Common : BaseWeapon, ICharging
         _Attack();
     }
 
-    public void OnChargingCompleted()
+    public void OnChargingCompleted(ChargingType type)
     {
         if (ActiveWeapon.Instance == null) return;
 
@@ -76,7 +76,7 @@ public class Bow_Common : BaseWeapon, ICharging
         _AttackCharged();
     }
 
-    public void OnChargingProgress(float elapsed, float duration)
+    public void OnChargingProgress(ChargingType type, float elapsed, float duration)
     {
         if (ActiveWeapon.Instance == null) return;
     }
@@ -86,7 +86,5 @@ public class Bow_Common : BaseWeapon, ICharging
 
         newArrow.GetComponent<Projectile>().UpdateProjectileRange(weaponInfo.weaponRange);
         newArrow.GetComponent<Projectile>().Initialize(weaponInfo.weaponDamage); // Initialize로 데미지 설정
-
-        Debug.Log($"[Bow] weaponInfo.weaponDamage: {weaponInfo.weaponDamage}");
     }
 }

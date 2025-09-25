@@ -211,22 +211,38 @@ public class Sword_Common : BaseWeapon, ICharging
     }
 
     // 차징 이벤트 콜백 매서드 모음
-    public void OnChargingCanceled()
+    public void OnChargingCanceled(ChargingType type)
     {
         if (ActiveWeapon.Instance == null) return;
         Debug.Log("Charging Canceled");
-        // 차징 취소 시 공격 실행
-        _Attack();
+        // 기본 공격 & 스킬 구분
+        if (type == ChargingType.Attack)
+        {
+            // 차징 취소 시 공격 실행
+            _Attack();
+        }
+        else if (type == ChargingType.Skill)
+        {
+            Debug.Log("Skill Charging Canceled");
+        }
     }
 
-    public void OnChargingCompleted()
+    public void OnChargingCompleted(ChargingType type)
     {
         if (ActiveWeapon.Instance == null) return;
         Debug.Log("Charging Completed");
-        _AttackCharged();
+        // 기본 공격 & 스킬 구분
+        if (type == ChargingType.Attack)
+        {
+            _AttackCharged();
+        }
+        else if (type == ChargingType.Skill)
+        {
+            Debug.Log("Skill Charging Completed");
+        }
     }
 
-    public void OnChargingProgress(float elapsed, float duration)
+    public void OnChargingProgress(ChargingType type, float elapsed, float duration)
     {
         if (ActiveWeapon.Instance == null) return;
     }

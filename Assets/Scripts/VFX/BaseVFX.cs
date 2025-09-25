@@ -44,8 +44,6 @@ public abstract class BaseVFX : MonoBehaviour
 
         damageSource?.SetDamage(assignedDamage); // DamageSource에 데미지 설정 (즉시 데미지 용도)
 
-        Debug.Log($"BaseVFX [{gameObject.name}]: Initialized with damage {damage}");
-
         // 각 VFX별 초기화 로직 실행
         OnVFXInitialized();
     }

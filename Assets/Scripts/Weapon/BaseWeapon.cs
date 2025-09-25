@@ -84,7 +84,7 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
         if (weaponInfo != null && weaponInfo.chargeDuration > 0f)
         {
             // 기본적으로 차징 시작
-            ChargingManager.Instance?.StartCharging(weaponInfo.chargeDuration);
+            ChargingManager.Instance?.StartCharging(ChargingType.Attack, weaponInfo.chargeDuration);
             return;
         }
         else
