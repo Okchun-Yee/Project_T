@@ -64,8 +64,11 @@ public class Bow_Common : BaseWeapon, ICharging
     {
         if (ActiveWeapon.Instance == null) return;
 
-        Debug.Log($"[Bow]: OnChargingCanceled");
-        _Attack();
+        Debug.Log($"[Bow]: OnChargingCanceled: {type}");
+        if (type == ChargingType.Attack)
+        {
+            _Attack();
+        }
     }
 
     public void OnChargingCompleted(ChargingType type)
@@ -73,7 +76,10 @@ public class Bow_Common : BaseWeapon, ICharging
         if (ActiveWeapon.Instance == null) return;
 
         Debug.Log($"[Bow]: OnChargingCompleted");
-        _AttackCharged();
+        if( type == ChargingType.Attack)
+        {
+            _AttackCharged();
+        }
     }
 
     public void OnChargingProgress(ChargingType type, float elapsed, float duration)
