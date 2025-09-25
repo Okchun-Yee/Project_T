@@ -33,15 +33,17 @@ public abstract class BaseSkill : MonoBehaviour, ISkill
         if (skillInfo.skillCategory == SkillCategory.Charging)      // 차징 스킬
         {
             SubscribeSkillEvents();
-            ChargingManager.Instance.StartCharging(skillInfo.chargingTime);
+            ChargingManager.Instance.StartCharging(ChargingType.Skill, skillInfo.chargingTime);
         }
         else if (skillInfo.skillCategory == SkillCategory.Holding)  // 홀딩 스킬
         {
             SubscribeSkillEvents();
-            HoldingManager.Instance.StartHolding(skillInfo.chargingTime);
+            HoldingManager.Instance.StartHolding(HoldingType.Skill, skillInfo.chargingTime);
         }
         else // 즉시 발동 스킬
         {
+            ChargingManager.Instance.SetType(ChargingType.Skill);
+            HoldingManager.Instance.SetType(HoldingType.Skill);
             OnSkill();
         }
     }

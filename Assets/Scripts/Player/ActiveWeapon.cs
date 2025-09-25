@@ -36,14 +36,6 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
         }
     }
 
-    private void Update()
-    {
-        if (attackButtonDown && currentWeapon != null)
-        {
-            currentWeapon.Attack();     // 공격 메서드 호출
-        }
-
-    }
     // 무기 상태 초기화 매서드
     public void NewWeapon(IWeapon weapon)
     {
@@ -66,13 +58,18 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
     // 공격 버튼 입력 상태 관리 매서드
     private void OnAttackStarted()
     {
+        if(currentWeapon == null) return;
+
         attackButtonDown = true;
+        currentWeapon.Attack();     // 공격 메서드 호출
     }
     // 공격 버튼 입력 상태 관리 매서드
     private void OnAttackCanceled()
     {
+        if(currentWeapon == null) return;
+        
         attackButtonDown = false;
-        ActionCancel();                // 차징 or 홀딩 종료
+        ActionCancel();             // 차징 or 홀딩 종료
     }
     // 스킬 시전 매서드
     private void OnSkillStarted(int skillIndex)

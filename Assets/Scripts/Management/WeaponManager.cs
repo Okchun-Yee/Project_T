@@ -57,7 +57,7 @@ public class WeaponManager : Singleton<WeaponManager>
         {
             WeaponCategory.Melee => meleeIcon,
             WeaponCategory.Range => rangedIcon,
-            WeaponCategory.Magic => magicIcon,
+            WeaponCategory.Magical => magicIcon,
             _ => null
         };
         onCategoryIconChanged?.Invoke(icon);

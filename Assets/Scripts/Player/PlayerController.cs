@@ -25,6 +25,10 @@ public class PlayerController : Singleton<PlayerController>
     // 플레이어 상태 변수 목록
     private bool facingLeft = false;    // 플레이어 왼쪽 / 오른쪽 판별
 
+    // 무기 애니메이션 방향 결정 프로터피
+    public Vector2 CurrentMovement => movement;     // 현재 이동 방향 벡터
+    public Vector2 LastMovement => lastMovement;    // 마지막 이동 방향 벡터
+
     protected override void Awake()
     {
         base.Awake();
@@ -63,6 +67,7 @@ public class PlayerController : Singleton<PlayerController>
     private void FixedUpdate()
     {
         PlayerMovement();           // 물리 프레임 당 플레이어 이동 계산
+        PlayerDirection();          // 플레이어 방향 계산
     }
 
     public void Move(Vector2 moveInput) // Input Manager 키보드 이벤트 구독용 메서드
@@ -86,6 +91,21 @@ public class PlayerController : Singleton<PlayerController>
             myAnim.SetFloat("moveY", 0f);
         }
     }
+    void PlayerDirection()
+    {
+        Vector3 mousePos = Input.mousePosition;
+        Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(transform.position);
+        if (mousePos.x < playerScreenPoint.x)
+        {
+            mySprite.flipX = true;
+            facingLeft = true;
+        }
+        else
+        {
+            mySprite.flipX = false;
+            facingLeft = false;
+        }
+    }
     public void Dodge() // Input Manager 키보드 이벤트 구독용 메서드
     {
         Debug.Log("Dodge called - Simple test");
@@ -93,13 +113,13 @@ public class PlayerController : Singleton<PlayerController>
         if (!dash.IsDashing)  // Dash 컴포넌트의 대시 상태 확인
         {
             Vector2 dashDirection = GetDashDirection();
-            
+
             // 잔상 효과 시작 (대시 지속시간 동안)
             if (ghostEffect != null)
             {
                 ghostEffect.StartGhostEffect(dashDuration);
             }
-            
+
             dash.Dash_(dashDirection, dashForce, dashDuration);
         }
     }
