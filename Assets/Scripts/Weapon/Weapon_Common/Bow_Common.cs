@@ -15,10 +15,12 @@ public class Bow_Common : BaseWeapon, ICharging
 
     [Header("Weapon Setting")]
     private Animator anim;                                  // 애니메이터
+    private Flash flash;                                    // 피격시 깜빡임 스크립트
     private static readonly int HASH_ATTACK = Animator.StringToHash("Attack");      // 기본 공격 트리거
     private void Awake()
     {
         anim = GetComponent<Animator>();
+        flash = GetComponent<Flash>();
     }
     private void OnEnable()
     {
@@ -78,6 +80,7 @@ public class Bow_Common : BaseWeapon, ICharging
         Debug.Log($"[Bow]: OnChargingCompleted");
         if( type == ChargingType.Attack)
         {
+            StartCoroutine(flash.FlashRoutine()); // 피격시 깜빡임 효과
             _AttackCharged();
         }
     }
