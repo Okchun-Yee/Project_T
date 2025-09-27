@@ -82,10 +82,6 @@ public class PlayerController : Singleton<PlayerController>
         }
         else
         {
-            // 키를 뗄 때 정규화된 마지막 입력 값을 전달
-            myAnim.SetFloat("LastmoveX", lastMovement.x);
-            myAnim.SetFloat("LastmoveY", lastMovement.y);
-
             // 이동 입력이 없을 때는 0으로 설정
             myAnim.SetFloat("moveX", 0f);
             myAnim.SetFloat("moveY", 0f);
@@ -105,6 +101,8 @@ public class PlayerController : Singleton<PlayerController>
             mySprite.flipX = false;
             facingLeft = false;
         }
+        bool isBack = mousePos.y > playerScreenPoint.y;
+        myAnim?.SetBool("isBack", isBack);
     }
     public void Dodge() // Input Manager 키보드 이벤트 구독용 메서드
     {
