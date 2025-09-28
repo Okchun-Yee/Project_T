@@ -87,7 +87,7 @@ public class PlayerController : Singleton<PlayerController>
             myAnim.SetFloat("moveY", 0f);
         }
     }
-    void PlayerDirection()
+    private void PlayerDirection()
     {
         Vector3 mousePos = Input.mousePosition;
         Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(transform.position);

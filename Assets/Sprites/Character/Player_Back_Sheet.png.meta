@@ -150,8 +150,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f72789b2d883b0244b4937ab98a76a0d
-      internalID: 598748195
+      spriteID: b06c82262e5459d4bb64f99a1eae8875
+      internalID: -239959445
       vertices: []
       indices: 
       edges: []
@@ -171,71 +171,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: aaf058086219e8747b71776cb8acd28b
-      internalID: -809133524
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Player_Back_Sheet_2
-      rect:
-        serializedVersion: 2
-        x: 48
-        y: 0
-        width: 24
-        height: 24
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 2be93c05699da654dab0fbf85d1da2fd
-      internalID: -769078760
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Player_Back_Sheet_3
-      rect:
-        serializedVersion: 2
-        x: 72
-        y: 0
-        width: 24
-        height: 24
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9063d8cc464617f4f915601f0a1313f7
-      internalID: 444490234
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Player_Back_Sheet_4
-      rect:
-        serializedVersion: 2
-        x: 96
-        y: 0
-        width: 24
-        height: 24
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 4b1c05fe89242884ea36430b29132991
-      internalID: -1961046232
+      spriteID: 99ba95dc2680fc7479d3991a82bbe43a
+      internalID: -115343916
       vertices: []
       indices: 
       edges: []
@@ -251,11 +188,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Player_Back_Sheet_0: 598748195
-      Player_Back_Sheet_1: -809133524
-      Player_Back_Sheet_2: -769078760
-      Player_Back_Sheet_3: 444490234
-      Player_Back_Sheet_4: -1961046232
+      Player_Back_Sheet_0: -239959445
+      Player_Back_Sheet_1: -115343916
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
