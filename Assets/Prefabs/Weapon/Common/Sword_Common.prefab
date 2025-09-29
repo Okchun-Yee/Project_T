@@ -61,6 +61,7 @@ GameObject:
   - component: {fileID: 3081766751056721914}
   - component: {fileID: -2804920404835181486}
   - component: {fileID: -4130662377126144079}
+  - component: {fileID: 4079569388737643027}
   m_Layer: 0
   m_Name: Sword_Common
   m_TagString: Untagged
@@ -226,3 +227,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skillIndex: 0
+--- !u!114 &4079569388737643027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4528167299006447994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46085622b88b7ba4eb5766112a8951ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  whiteFlashMat: {fileID: 2100000, guid: 978b214c36181d54a8ba568bea9fd507, type: 2}
+  restoreDefaultMatTime: 0.2
