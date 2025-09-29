@@ -6,6 +6,7 @@ using System;
 public class PlayerController : Singleton<PlayerController>
 {
     public bool FacingLeft { get { return facingLeft; } }
+    public bool FacingBack {get { return facingBack; }}
     [Header("Player Settings")]
     [SerializeField] private float moveSpeed = 4f;  // 플레이어 이동 속도
 
@@ -24,6 +25,7 @@ public class PlayerController : Singleton<PlayerController>
 
     // 플레이어 상태 변수 목록
     private bool facingLeft = false;    // 플레이어 왼쪽 / 오른쪽 판별
+    private bool facingBack = false;    // 플레이어 앞 / 뒤 판별
 
     // 무기 애니메이션 방향 결정 프로터피
     public Vector2 CurrentMovement => movement;     // 현재 이동 방향 벡터
@@ -101,8 +103,8 @@ public class PlayerController : Singleton<PlayerController>
             mySprite.flipX = false;
             facingLeft = false;
         }
-        bool isBack = mousePos.y > playerScreenPoint.y;
-        myAnim?.SetBool("isBack", isBack);
+        facingBack = mousePos.y > playerScreenPoint.y;
+        myAnim?.SetBool("isBack", facingBack);
     }
     public void Dodge() // Input Manager 키보드 이벤트 구독용 메서드
     {

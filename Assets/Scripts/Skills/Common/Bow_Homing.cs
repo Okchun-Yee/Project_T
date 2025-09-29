@@ -13,7 +13,7 @@ public class Bow_Homing : BaseSkill
         }
         else
         {
-            Debug.LogError("[Sword_Blade] SkillInfo is not set.");
+            Debug.LogError("[Bow_Homing] SkillInfo is not set.");
         }
     }
     protected override void OnSkillActivated()

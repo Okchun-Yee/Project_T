@@ -131,11 +131,17 @@ public class Sword_Common : BaseWeapon, ICharging
         weaponColliders.gameObject.SetActive(index >= 0);
         // PlayerController의 FacingLeft를 읽어 콜라이더 좌우 반전 적용 (로컬 스케일 사용)
         bool facingLeft = PlayerController.Instance != null && PlayerController.Instance.FacingLeft;
+        // 추가: 앞/뒤 판별
+        bool facingBack = PlayerController.Instance != null && PlayerController.Instance.FacingBack;
 
-        if(facingLeft)
+        if (facingLeft)
             weaponColliders.transform.rotation = Quaternion.Euler(0, 180, 0);
         else
             weaponColliders.transform.rotation = Quaternion.Euler(0, 0, 0);
+        if(facingBack)
+            weaponColliders.transform.rotation *= Quaternion.Euler(-180, 0, 0);
+        else 
+            weaponColliders.transform.rotation *= Quaternion.Euler(0, 0, 0);
 
         DamageSource damageSource = weaponColliders.GetComponent<DamageSource>();
         damageSource?.SetDamage(weaponInfo.weaponDamage);
