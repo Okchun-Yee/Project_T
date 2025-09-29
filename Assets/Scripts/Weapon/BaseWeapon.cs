@@ -33,23 +33,6 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
         // 1) 무기 정보 주입
         weaponInfo = info;
         weaponCooldown = info.weaponCooldown;
-
-        // 2) 모든 DamageSource 컴포넌트 찾아서 초기화
-        DamageSource[] allDamageSources = GetComponentsInChildren<DamageSource>();
-        if (allDamageSources.Length == 0)
-        {
-            Debug.LogError($"[BaseWeapon] No DamageSource components found in children of {name}");
-        }
-        else
-        {
-            // 모든 DamageSource에 데미지 설정
-            foreach (DamageSource damageSource in allDamageSources)
-            {
-                damageSource.DamageAmount = info.weaponDamage;
-            }
-        }
-        // 첫 번째 DamageSource를 대표로 저장 (기존 호환성을 위해)
-        ds = allDamageSources.Length > 0 ? allDamageSources[0] : null;
     }
     // 스킬 초기화 매서드
     private void SkillInitialization(WeaponSO info)
@@ -64,8 +47,8 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
         // 2) 각 스킬에 정보 주입 및 시전 시간 저장
         for (int i = 0; i < skills.Length; i++)
         {
-            skills[i].Skill_Initialize(info.skillInfos[i]);               // 스킬 초기화
-            skillCastingTime[i] = info.skillInfos[i].chargingTime;  // 캐스팅 시간 설정
+            skills[i].Skill_Initialize(info.skillInfos[i]);             // 스킬 초기화
+            skillCastingTime[i] = info.skillInfos[i].chargingTime;      // 캐스팅 시간 설정
 
             // 스킬 인덱스 자동 설정
             if (skills[i] is BaseSkill baseSkill)

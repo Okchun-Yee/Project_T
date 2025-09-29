@@ -38,8 +38,8 @@ public class PlayerController : Singleton<PlayerController>
         rb = GetComponent<Rigidbody2D>();
         myAnim = GetComponent<Animator>();
         mySprite = GetComponent<SpriteRenderer>();
-        dash = GetComponent<Dash>(); // Dash 컴포넌트 참조
-        ghostEffect = GetComponent<Ghost>(); // Ghost 컴포넌트 참조
+        dash = GetComponent<Dash>();                            // Dash 컴포넌트 참조
+        ghostEffect = GetComponent<Ghost>();                    // Ghost 컴포넌트 참조
     }
     private void Start()
     {

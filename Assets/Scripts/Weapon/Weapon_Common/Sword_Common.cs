@@ -62,7 +62,9 @@ public class Sword_Common : BaseWeapon, ICharging
             // Null 방어 코드
             Debug.LogWarning("[Sword_Common] 'Slash SpawnPoint' not found in scene. Slash VFX will not be spawned.");
         }
-        weaponColliders = GameObject.Find("Sword_Colliders")?.transform;
+        // Unity 2020.1+ : 모든 활성/비활성 GameObject 검색
+        GameObject[] all = FindObjectsOfType<GameObject>(true);
+        weaponColliders = Array.Find(all, g => g.name == "MeleeColliders")?.transform;
         if (weaponColliders == null)
         {
             // Null 방어 코드
@@ -104,8 +106,6 @@ public class Sword_Common : BaseWeapon, ICharging
     // 무기 공격 매서드
     protected override void OnAttack()
     {
-        Debug.Log($"[Sword]: OnAttack");
-
         // Advance combo on the Combo component if present; otherwise just trigger the attack animation
         if (comboController != null)
         {
@@ -220,7 +220,6 @@ public class Sword_Common : BaseWeapon, ICharging
     public void OnChargingCanceled(ChargingType type)
     {
         if (ActiveWeapon.Instance == null) return;
-        Debug.Log("Charging Canceled");
         // 기본 공격 & 스킬 구분
         if (type == ChargingType.Attack)
         {
@@ -232,16 +231,11 @@ public class Sword_Common : BaseWeapon, ICharging
     public void OnChargingCompleted(ChargingType type)
     {
         if (ActiveWeapon.Instance == null) return;
-        Debug.Log("Charging Completed");
         // 기본 공격 & 스킬 구분
         if (type == ChargingType.Attack)
         {
             StartCoroutine(flash.FlashRoutine()); // 피격시 깜빡임 효과
             _AttackCharged();
-        }
-        else if (type == ChargingType.Skill)
-        {
-            Debug.Log("Skill Charging Completed");
         }
     }
 
