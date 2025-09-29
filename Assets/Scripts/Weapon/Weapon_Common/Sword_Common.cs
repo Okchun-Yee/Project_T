@@ -140,8 +140,6 @@ public class Sword_Common : BaseWeapon, ICharging
             weaponColliders.transform.rotation = Quaternion.Euler(0, 0, 0);
         if(facingBack)
             weaponColliders.transform.rotation *= Quaternion.Euler(-180, 0, 0);
-        else 
-            weaponColliders.transform.rotation *= Quaternion.Euler(0, 0, 0);
 
         DamageSource damageSource = weaponColliders.GetComponent<DamageSource>();
         damageSource?.SetDamage(weaponInfo.weaponDamage);
