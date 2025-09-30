@@ -78,6 +78,7 @@ public class Projectile : BaseVFX
 
         if (enemyHealth != null && !isEnemyProjectile)
         {
+            Debug.Log($"Projectile hit enemy: {enemyHealth.gameObject.name}");
             EnemyHit(enemyHealth);
             return;
         }

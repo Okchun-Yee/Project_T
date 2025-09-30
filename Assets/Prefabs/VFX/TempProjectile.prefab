@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 703500644318651830}
   - component: {fileID: 4330515513686813912}
-  - component: {fileID: 8394179461081621522}
   - component: {fileID: 2060131092192536841}
+  - component: {fileID: 8394179461081621522}
+  - component: {fileID: -7065711494882762583}
   m_Layer: 0
   m_Name: TempProjectile
   m_TagString: Untagged
@@ -86,24 +87,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &8394179461081621522
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 791695264422601474}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfa31b55d67a3e748b2678478ac42aa6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lifetime: 2
-  autoDestroy: 1
-  moveSpeed: 22
-  particleOnHitPrefabVFX: {fileID: 0}
-  isEnemyProjectile: 0
-  projectileRange: 10
 --- !u!58 &2060131092192536841
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -139,3 +122,34 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!114 &8394179461081621522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 791695264422601474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfa31b55d67a3e748b2678478ac42aa6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lifetime: 2
+  autoDestroy: 1
+  moveSpeed: 22
+  particleOnHitPrefabVFX: {fileID: 0}
+  isEnemyProjectile: 0
+  projectileRange: 10
+--- !u!114 &-7065711494882762583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 791695264422601474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd54b8d616c6c9468b464ce559b85fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageAmount: 1

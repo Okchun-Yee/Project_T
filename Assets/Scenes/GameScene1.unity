@@ -122,6 +122,63 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &144135380
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1370280646996081302, guid: 1aff3c6ff03e84541addfd3d04efbd76, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.7162477
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370280646996081302, guid: 1aff3c6ff03e84541addfd3d04efbd76, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.079914324
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370280646996081302, guid: 1aff3c6ff03e84541addfd3d04efbd76, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370280646996081302, guid: 1aff3c6ff03e84541addfd3d04efbd76, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370280646996081302, guid: 1aff3c6ff03e84541addfd3d04efbd76, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370280646996081302, guid: 1aff3c6ff03e84541addfd3d04efbd76, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370280646996081302, guid: 1aff3c6ff03e84541addfd3d04efbd76, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370280646996081302, guid: 1aff3c6ff03e84541addfd3d04efbd76, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370280646996081302, guid: 1aff3c6ff03e84541addfd3d04efbd76, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1370280646996081302, guid: 1aff3c6ff03e84541addfd3d04efbd76, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6673783582213301963, guid: 1aff3c6ff03e84541addfd3d04efbd76, type: 3}
+      propertyPath: m_Name
+      value: Bow_Item
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1aff3c6ff03e84541addfd3d04efbd76, type: 3}
 --- !u!1 &805223798
 GameObject:
   m_ObjectHideFlags: 0
@@ -459,7 +516,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!58 &1864099525
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -489,7 +546,7 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -602,22 +659,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 140298615346881187, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
-      propertyPath: m_Name
-      value: MeleeColliders
-      objectReference: {fileID: 0}
-    - target: {fileID: 140298615346881187, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 140298615346881187, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 631691174386708509, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2137351331253322357, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -658,21 +699,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2739958482673637408, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
-      propertyPath: m_IsTrigger
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3969855821128286577, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 5530722734385261089, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
-      propertyPath: m_Name
-      value: Sword_Collider
-      objectReference: {fileID: 0}
-    - target: {fileID: 5530722734385261089, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -745,3 +774,4 @@ SceneRoots:
   - {fileID: 486956623857947533}
   - {fileID: 7138645979232300907}
   - {fileID: 1864099527}
+  - {fileID: 144135380}
