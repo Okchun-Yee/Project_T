@@ -17,10 +17,12 @@ public class Bow_Common : BaseWeapon, ICharging
     private Animator anim;                                  // 애니메이터
     private Flash flash;                                    // 피격시 깜빡임 스크립트
     private static readonly int HASH_ATTACK = Animator.StringToHash("Attack");      // 기본 공격 트리거
+    private BaseVFX currentVFX;                               // 현재 재생 중인 VFX
     private void Awake()
     {
         anim = GetComponent<Animator>();
         flash = GetComponent<Flash>();
+        currentVFX = GetComponentInChildren<BaseVFX>();
     }
     private void OnEnable()
     {
