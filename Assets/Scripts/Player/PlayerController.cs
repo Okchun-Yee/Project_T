@@ -21,6 +21,7 @@ public class PlayerController : Singleton<PlayerController>
     private SpriteRenderer mySprite;
     private Dash dash;  // Dash 컴포넌트 참조 추가
     private Ghost ghostEffect; // Ghost 컴포넌트 참조 추가
+    private Knockback knockback; // Knockback 컴포넌트 참조 추가
     private float startingMoveSpeed;    // 기본 이동 속도 (증가 후 복귀 할 원본 이동 속도)
 
     // 플레이어 상태 변수 목록
@@ -39,6 +40,7 @@ public class PlayerController : Singleton<PlayerController>
         mySprite = GetComponent<SpriteRenderer>();
         dash = GetComponent<Dash>();                            // Dash 컴포넌트 참조
         ghostEffect = GetComponent<Ghost>();                    // Ghost 컴포넌트 참조
+        knockback = GetComponent<Knockback>();                  // Knockback 컴포넌트 참조
     }
     private void Start()
     {
@@ -134,8 +136,13 @@ public class PlayerController : Singleton<PlayerController>
 
     private void PlayerMovement()
     {
-        if (dash.IsDashing)  // (스킬 시전 중, 공격 중, 죽음 중) 이동 불가
+        // (스킬 시전 중, 공격 중, 죽음 중) 이동 불가 상태 관리
+        if (dash.IsDashing ||
+        knockback.isKnockback ||
+        PlayerHealth.Instance.isDead)
+        {
             return;
+        }
         rb.MovePosition(rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
     }
 }

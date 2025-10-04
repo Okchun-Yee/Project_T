@@ -121,7 +121,7 @@ public class Projectile : BaseVFX
     private void PlayerHit(PlayerHealth player)
     {
         // 적 투사체가 플레이어를 맞춤
-        //player?.TakeDamage(1, transform);
+        player?.TakeDamage(1, transform);
         DestroyProjectile();
     }
     // 투사체 충돌 시 파괴 VFX 생성 및 오브젝트 제거
