@@ -92,6 +92,13 @@ public class PlayerController : Singleton<PlayerController>
     }
     private void PlayerDirection()
     {
+        // (스킬 시전 중, 공격 중, 죽음 중) 방향 전환 불가 상태 관리
+        if (dash.IsDashing ||
+        knockback.isKnockback ||
+        PlayerHealth.Instance.isDead)
+        {
+            return;
+        }
         Vector3 mousePos = Input.mousePosition;
         Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(transform.position);
         if (mousePos.x < playerScreenPoint.x)
@@ -109,7 +116,13 @@ public class PlayerController : Singleton<PlayerController>
     }
     public void Dodge() // Input Manager 키보드 이벤트 구독용 메서드
     {
-        Debug.Log("Dodge called - Simple test");
+        // (스킬 시전 중, 공격 중, 죽음 중) 대시 불가 상태 관리
+        if (dash.IsDashing ||
+        knockback.isKnockback ||
+        PlayerHealth.Instance.isDead)
+        {
+            return;
+        }
 
         if (!dash.IsDashing)  // Dash 컴포넌트의 대시 상태 확인
         {
