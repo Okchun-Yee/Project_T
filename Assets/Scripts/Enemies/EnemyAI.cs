@@ -123,4 +123,25 @@ public class EnemyAI : MonoBehaviour
         // Generate a random direction and normalize it to get a unit vector
         return new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
     }
+
+    private void OnDrawGizmos()
+    {
+        Vector3 pos = transform.position;
+
+        // 추적 범위: 반투명 노란(녹색 계열 유지)
+        Gizmos.color = new Color(0f, 1f, 0f, 0.2f);
+        Gizmos.DrawWireSphere(pos, trackingRange);
+
+        // 공격 범위: 반투명 빨간
+        if (attackRange > 0f)
+        {
+            Gizmos.color = new Color(1f, 0f, 0f, 0.2f);
+            Gizmos.DrawWireSphere(pos, attackRange);
+        }
+        else
+        {
+            Gizmos.color = new Color(1f, 0f, 0f, 0.2f);
+            Gizmos.DrawWireSphere(pos, 0.25f);
+        }
+    }
 }
