@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,8 +15,35 @@ public class InventoryManager : MonoBehaviour
             InventoryItem item = Instantiate(itemPrefab, Vector3.zero, Quaternion.identity);
             item.transform.SetParent(contentPanel);
             listOfItems.Add(item);
+            item.OnItemClicked += HandleItemSelection;
+            item.OnItemBeginDrag += HandleBeginDrag;
+            item.OnItemDroppedOn += HandleSwap;
+            item.OnItemEndDrag += HandleEndDrag;
+            item.OnRightMouseBtnClick += HandleShowItemActions;
         }
     }
+
+    private void HandleShowItemActions(InventoryItem item)
+    {
+    }
+
+    private void HandleEndDrag(InventoryItem item)
+    {
+    }
+
+    private void HandleSwap(InventoryItem item)
+    {
+    }
+
+    private void HandleBeginDrag(InventoryItem item)
+    {
+    }
+
+    private void HandleItemSelection(InventoryItem item)
+    {
+        Debug.Log(item.name);
+    }
+
     public void Show()
     {
         gameObject.SetActive(true);
