@@ -19,6 +19,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5a812241de5e88744bf34ebe941b57fd, type: 2}
   weaponCooldown: 0.2
   weaponDamage: 5
-  weaponRange: 12
+  weaponRange: 8
   chargeDuration: 1.2
   chargedDamageMultiplier: 1.5

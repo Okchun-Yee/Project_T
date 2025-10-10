@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 5019796880249711903}
   - component: {fileID: 876897273998244622}
   - component: {fileID: 3727368844708923466}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Enemy_Shooter01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -172,6 +172,8 @@ MonoBehaviour:
   attackRange: 5
   attackCooldown: 2
   stopMovingWhileAttacking: 1
+  trackingHysteresis: 0.5
+  stateChangeCooldown: 0.2
   enemyType: {fileID: 876897273998244622}
 --- !u!114 &5514901125581367987
 MonoBehaviour:
@@ -200,7 +202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 426a5d5ec7bbff84cb24bff728fbf326, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 0
+  moveSpeed: 1.2
 --- !u!114 &6039210322250237298
 MonoBehaviour:
   m_ObjectHideFlags: 0

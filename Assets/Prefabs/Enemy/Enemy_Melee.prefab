@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 8881612172762939992}
   - component: {fileID: 6410200745593520110}
   - component: {fileID: 8729688267481979012}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Enemy_Melee
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -170,6 +170,8 @@ MonoBehaviour:
   attackRange: 0
   attackCooldown: 2
   stopMovingWhileAttacking: 1
+  trackingHysteresis: 0.5
+  stateChangeCooldown: 0.2
   enemyType: {fileID: 0}
 --- !u!114 &6934632673470137704
 MonoBehaviour:
@@ -198,7 +200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 426a5d5ec7bbff84cb24bff728fbf326, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 0
+  moveSpeed: 2
 --- !u!114 &6410200745593520110
 MonoBehaviour:
   m_ObjectHideFlags: 0

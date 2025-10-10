@@ -22,7 +22,7 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private bool stopMovingWhileAttacking = false;     // 공격 시 이동 멈춤 여부
 
     [Header("State Tuning")]
-    [SerializeField] private float trackingHysteresis = 0.5f;           // 추적 히스테리시스(토글 완화)
+    [SerializeField] private float trackingHysteresis = 0.5f;           // 상태 변환 경계(변환 완화)
     [SerializeField] private float stateChangeCooldown = 0.15f;         // 상태 변경 디바운스(초)
 
     [Header("Enemy Type")]
