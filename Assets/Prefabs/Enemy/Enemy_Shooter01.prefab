@@ -168,8 +168,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roamChangeDirFloat: 2
-  trackingRange: 8
-  attackRange: 6
+  trackingRange: 6
+  attackRange: 5
   attackCooldown: 2
   stopMovingWhileAttacking: 1
   enemyType: {fileID: 876897273998244622}

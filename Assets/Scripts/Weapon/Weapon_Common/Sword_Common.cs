@@ -243,4 +243,43 @@ public class Sword_Common : BaseWeapon, ICharging
     {
         if (ActiveWeapon.Instance == null) return;
     }
+
+    #if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        // weaponCollider == NULL 인 경우는 아직 무기 장착이 이뤄지지 않은 상태이므로 pass
+        if(weaponColliders == null) { return; }
+        // 에디터 전용: weaponColliders 내부의 PolygonCollider2D를 따라 그립니다.
+        // 색상 = Red, 투명도 25%
+        Gizmos.color = new Color(1f, 0f, 0f, 0.25f);
+
+        PolygonCollider2D polys = null;
+        if (weaponColliders != null)
+        {
+            polys = weaponColliders.GetComponent<PolygonCollider2D>();
+        }
+        DrawPolygonCollider(polys); 
+    }
+    // PolyCollider의 Path를 따라 기즈모를 그리는 메서드
+    private void DrawPolygonCollider(PolygonCollider2D poly)
+    {
+        if (poly == null) return;
+        var t = poly.transform;
+        int pathCount = poly.pathCount;
+        for (int p = 0; p < pathCount; p++)
+        {
+            Vector2[] path = poly.GetPath(p);
+            if (path == null || path.Length < 2) continue;
+            Vector3 first = t.TransformPoint((Vector2)poly.offset + path[0]);
+            Vector3 prev = first;
+            for (int i = 1; i < path.Length; i++)
+            {
+                Vector3 cur = t.TransformPoint((Vector2)poly.offset + path[i]);
+                Gizmos.DrawLine(prev, cur);
+                prev = cur;
+            }
+            Gizmos.DrawLine(prev, first); // 닫기
+        }
+    }
+#endif
 }

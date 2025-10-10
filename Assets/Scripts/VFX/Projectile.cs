@@ -125,7 +125,7 @@ public class Projectile : BaseVFX
         DestroyProjectile();
     }
     // 투사체 충돌 시 파괴 VFX 생성 및 오브젝트 제거
-    private void DestroyProjectile()
+    public void DestroyProjectile()
     {
         if (particleOnHitPrefabVFX != null)
             Instantiate(particleOnHitPrefabVFX, transform.position, transform.rotation);

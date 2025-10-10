@@ -166,7 +166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roamChangeDirFloat: 2
-  trackingRange: 8
+  trackingRange: 4
   attackRange: 0
   attackCooldown: 2
   stopMovingWhileAttacking: 1
