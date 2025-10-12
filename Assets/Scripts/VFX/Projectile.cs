@@ -112,7 +112,7 @@ public class Projectile : BaseVFX
         }
         else
         {
-            damageSource.InstantDamage(1f, enemyHealth);    // DamageSource가 없으면 기본 데미지 1 적용
+            Debug.LogWarning($"Projectile [{gameObject.name}]: No DamageSource component found!");
         }
         OnEnemyHit?.Invoke(transform.position, enemyHealth);
         DestroyProjectile();
@@ -120,8 +120,8 @@ public class Projectile : BaseVFX
     // 투사체가 플레이어와 충돌 시 호출 (적 투사체일 때)
     private void PlayerHit(PlayerHealth player)
     {
-        // 적 투사체가 플레이어를 맞춤
-        player?.TakeDamage(1, transform);
+        int dmg = (int)GetAssignedDamage();        // BaseVFX에서 설정한 데미지 가져오기
+        damageSource?.InstantDamageToPlayer(dmg, player, transform);    // DamageSource가 있으면 해당 데미지 적용
         DestroyProjectile();
     }
     // 투사체 충돌 시 파괴 VFX 생성 및 오브젝트 제거

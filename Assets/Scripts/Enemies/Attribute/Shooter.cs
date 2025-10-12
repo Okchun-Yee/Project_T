@@ -8,6 +8,8 @@ public class Shooter : MonoBehaviour, IEnemy
     [SerializeField] private GameObject bulletPrefab;           // 투사체 프리펩
     [SerializeField] private float bulletMoveSpeed;             // 투사체 속도 
     [SerializeField] private int burstCount;                    // 투사체 연속 발사
+    [SerializeField] private float bulletRange;                 // 투사체 사거리
+    [SerializeField] private float bulletDamage;                // 투사체 데미지
     [SerializeField] private int projectilesPerBurst;           // 한번의 공격에서 동시에 발사되는 투사체 수
     [Header("Oscillate Shooter Setting")]
     [SerializeField][Range(0, 359)] private float angleSpread;  // 투사체가 퍼지는 각도 범위
@@ -77,7 +79,9 @@ public class Shooter : MonoBehaviour, IEnemy
 
                 if (newBullet.TryGetComponent(out Projectile projectile))
                 {
-                    projectile.UpdateMoveSpeed(bulletMoveSpeed);
+                    projectile.UpdateMoveSpeed(bulletMoveSpeed);        // 투사체 속도 설정
+                    projectile.UpdateProjectileRange(bulletRange);     // 투사체 사거리 설정
+                    projectile.Initialize(bulletDamage);               // 투사체 데미지 설정
                 }
 
                 currentAngle += angleStep;
