@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class InventoryController : MonoBehaviour
 {
-    public int inventorySize = 10;
+    public int inventorySize = 5;
     void Start()
     {
         inventoryUI.InitializeInventoryUI(inventorySize);

@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InventoryInformation : MonoBehaviour
+public class InventoryDescription : MonoBehaviour
 {
     [SerializeField] private Image itemImage;
     [SerializeField] private TMP_Text title;

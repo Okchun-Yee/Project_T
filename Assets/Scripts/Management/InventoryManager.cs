@@ -5,9 +5,22 @@ using UnityEngine;
 
 public class InventoryManager : MonoBehaviour
 {
-    [SerializeField]private InventoryItem itemPrefab;
+    [SerializeField] private InventoryItem itemPrefab;
     [SerializeField] private RectTransform contentPanel;
+    [SerializeField] private InventoryDescription itemDescription;
+
     List<InventoryItem> listOfItems = new List<InventoryItem>();
+
+    public Sprite image;
+    public int quantity;
+    public string title, description;
+
+
+    private void Awake()
+    {
+        Hide();
+        itemDescription.ResetDescription();
+    }
     public void InitializeInventoryUI(int inventorySize)
     {
         for (int i = 0; i < inventorySize; i++)
@@ -41,12 +54,16 @@ public class InventoryManager : MonoBehaviour
 
     private void HandleItemSelection(InventoryItem item)
     {
-        Debug.Log(item.name);
+        itemDescription.SetDescription(image, title, description);
+        listOfItems[0].Select();
     }
 
     public void Show()
     {
         gameObject.SetActive(true);
+        itemDescription.ResetDescription();
+
+        listOfItems[0].SetData(image, quantity);
     }
     public void Hide()
     {
