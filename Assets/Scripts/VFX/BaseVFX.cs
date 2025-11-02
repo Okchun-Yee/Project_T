@@ -27,7 +27,6 @@ public abstract class BaseVFX : MonoBehaviour
     }
     protected virtual void Start()
     {
-        // Initialize가 호출되지 않은 경우 기본값으로 초기화
         if (!isInitialized)
         {
             Initialize(1f); // 기본 데미지 1로 초기화
@@ -60,5 +59,9 @@ public abstract class BaseVFX : MonoBehaviour
         {
             gameObject.SetActive(false); // VFX 비활성화
         }
+    }
+    public float GetLifetime()
+    {
+        return lifetime;
     }
 }

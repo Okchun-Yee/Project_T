@@ -39,14 +39,26 @@ public class LandingAOE : BaseVFX
         base.Start();
         totalDuration = lifetime; // BaseVFX에서 설정한 수명으로 덮어쓰기
 
-        // 시각적 효과 시작
-        if (spriteFader != null)
-        {
-            StartCoroutine(spriteFader.SlowFadeRoutine());
-        }
+        // 초기 상태: 콜라이더는 필요 시 비활성화
         if(col != null && colLifeTime)
         {
             col.enabled = false;
+        }
+
+        // 시각적 효과: 페이드는 lifetime - fadeTime 시점에 시작하도록 스케줄
+        if (spriteFader != null)
+        {
+            float fadeDelay = totalDuration - spriteFader.FadeTime;
+            if (fadeDelay <= 0f)
+            {
+                // 즉시 시작
+                StartCoroutine(spriteFader.SlowFadeRoutine());
+            }
+            else
+            {
+                // lifetime - fadeTime 시점까지 대기 후 페이드 시작
+                StartCoroutine(DelayedFadeRoutine(fadeDelay));
+            }
         }
     }
 
@@ -83,6 +95,13 @@ public class LandingAOE : BaseVFX
         {
             col.enabled = false;
         }
+    }
+
+    private IEnumerator DelayedFadeRoutine(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (spriteFader != null)
+            StartCoroutine(spriteFader.SlowFadeRoutine());
     }
 
 #if UNITY_EDITOR
