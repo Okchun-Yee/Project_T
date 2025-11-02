@@ -9,8 +9,8 @@ public class ParabolaProjectile : BaseVFX
     [SerializeField] private AnimationCurve animCurve;              // 포물선 곡선을 정의하는 애니메이션 커브
     [SerializeField] private float heightY = 3f;                    // 포물선의 최고 높이
     [Header("VFX Settings")]
-    [SerializeField] private GameObject shadowPrefab;   // 투사체 그림자 프리팹
-    [SerializeField] private GameObject splatterPrefab;             // 투사체가 도착했을 때 생성되는 이펙트 프리팹
+    [SerializeField] private GameObject shadowPrefab;               // 투사체 그림자 프리팹
+    [SerializeField] private GameObject AOEPrefab;             // 투사체가 도착했을 때 생성되는 이펙트 프리팹
     protected override void Start()
     {
         base.Start();
@@ -37,13 +37,12 @@ public class ParabolaProjectile : BaseVFX
             float linearT = timePassed / duration;
             float heightT = animCurve.Evaluate(linearT);
             float height = Mathf.Lerp(0, heightY, heightT);
-
+            
             transform.position = Vector2.Lerp(startPos, endPos, linearT) + new Vector2(0, height);
             yield return null;
         }
 
-        Instantiate(splatterPrefab, transform.position, Quaternion.identity);   // 도착 지점에 이펙트 생성
-        splatterPrefab.GetComponent<DamageSource>().SetDamage(assignedDamage);  // 도착 시 데미지 설정
+        Instantiate(AOEPrefab, transform.position, Quaternion.identity);   // 도착 지점에 이펙트 생성
         Destroy(gameObject);    // 투사체 파괴
     }
     private IEnumerator MoveShadowRoutine(GameObject shadow, Vector3 startPos, Vector3 endPos)
