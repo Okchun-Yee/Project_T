@@ -48,7 +48,10 @@ public class EnemyHealth : MonoBehaviour
         if (currentHealth <= 0)
         {
             // 2) 사망 이펙트 인스턴스 생성
-            Instantiate(deathVFXPrefab, transform.position, Quaternion.identity);
+            if(deathVFXPrefab != null)
+            {
+                Instantiate(deathVFXPrefab, transform.position, Quaternion.identity);
+            }
 
             // 3) 아이템 드랍 및 사후 처리
 

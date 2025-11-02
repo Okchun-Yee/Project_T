@@ -10,7 +10,7 @@ using UnityEngine;
 public class Knockback : MonoBehaviour
 {
     [SerializeField] private float knockBackTime = .2f;
-    public bool GettingKnockback { get; private set; }
+    public bool isKnockback { get; private set; }
     private Rigidbody2D rb;
     private void Awake()
     {
@@ -18,9 +18,8 @@ public class Knockback : MonoBehaviour
     }
     public void GetKnockedBack(Transform damageSource, float knockBackThrust)
     {
-        GettingKnockback = true;
-        Vector2 difference =
-        (transform.position - damageSource.position).normalized * knockBackThrust * rb.mass;
+        isKnockback = true;
+        Vector2 difference = (transform.position - damageSource.position).normalized * knockBackThrust * rb.mass;
         rb.AddForce(difference, ForceMode2D.Impulse);
         StartCoroutine(KnockRoutine());
     }
@@ -29,6 +28,6 @@ public class Knockback : MonoBehaviour
     {
         yield return new WaitForSeconds(knockBackTime);
         rb.velocity = Vector2.zero;
-        GettingKnockback = false;
+        isKnockback = false;
     }
 }

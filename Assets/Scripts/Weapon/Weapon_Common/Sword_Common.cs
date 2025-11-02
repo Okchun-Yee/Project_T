@@ -62,7 +62,9 @@ public class Sword_Common : BaseWeapon, ICharging
             // Null 방어 코드
             Debug.LogWarning("[Sword_Common] 'Slash SpawnPoint' not found in scene. Slash VFX will not be spawned.");
         }
-        weaponColliders = GameObject.Find("Sword_Colliders")?.transform;
+        // Unity 2020.1+ : 모든 활성/비활성 GameObject 검색
+        GameObject[] all = FindObjectsOfType<GameObject>(true);
+        weaponColliders = Array.Find(all, g => g.name == "MeleeColliders")?.transform;
         if (weaponColliders == null)
         {
             // Null 방어 코드
@@ -104,8 +106,6 @@ public class Sword_Common : BaseWeapon, ICharging
     // 무기 공격 매서드
     protected override void OnAttack()
     {
-        Debug.Log($"[Sword]: OnAttack");
-
         // Advance combo on the Combo component if present; otherwise just trigger the attack animation
         if (comboController != null)
         {
@@ -220,7 +220,6 @@ public class Sword_Common : BaseWeapon, ICharging
     public void OnChargingCanceled(ChargingType type)
     {
         if (ActiveWeapon.Instance == null) return;
-        Debug.Log("Charging Canceled");
         // 기본 공격 & 스킬 구분
         if (type == ChargingType.Attack)
         {
@@ -232,16 +231,11 @@ public class Sword_Common : BaseWeapon, ICharging
     public void OnChargingCompleted(ChargingType type)
     {
         if (ActiveWeapon.Instance == null) return;
-        Debug.Log("Charging Completed");
         // 기본 공격 & 스킬 구분
         if (type == ChargingType.Attack)
         {
             StartCoroutine(flash.FlashRoutine()); // 피격시 깜빡임 효과
             _AttackCharged();
-        }
-        else if (type == ChargingType.Skill)
-        {
-            Debug.Log("Skill Charging Completed");
         }
     }
 
@@ -249,4 +243,43 @@ public class Sword_Common : BaseWeapon, ICharging
     {
         if (ActiveWeapon.Instance == null) return;
     }
+
+    #if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        // weaponCollider == NULL 인 경우는 아직 무기 장착이 이뤄지지 않은 상태이므로 pass
+        if(weaponColliders == null) { return; }
+        // 에디터 전용: weaponColliders 내부의 PolygonCollider2D를 따라 그립니다.
+        // 색상 = Red, 투명도 25%
+        Gizmos.color = new Color(1f, 0f, 0f, 0.25f);
+
+        PolygonCollider2D polys = null;
+        if (weaponColliders != null)
+        {
+            polys = weaponColliders.GetComponent<PolygonCollider2D>();
+        }
+        DrawPolygonCollider(polys); 
+    }
+    // PolyCollider의 Path를 따라 기즈모를 그리는 메서드
+    private void DrawPolygonCollider(PolygonCollider2D poly)
+    {
+        if (poly == null) return;
+        var t = poly.transform;
+        int pathCount = poly.pathCount;
+        for (int p = 0; p < pathCount; p++)
+        {
+            Vector2[] path = poly.GetPath(p);
+            if (path == null || path.Length < 2) continue;
+            Vector3 first = t.TransformPoint((Vector2)poly.offset + path[0]);
+            Vector3 prev = first;
+            for (int i = 1; i < path.Length; i++)
+            {
+                Vector3 cur = t.TransformPoint((Vector2)poly.offset + path[i]);
+                Gizmos.DrawLine(prev, cur);
+                prev = cur;
+            }
+            Gizmos.DrawLine(prev, first); // 닫기
+        }
+    }
+#endif
 }

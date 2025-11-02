@@ -10,7 +10,7 @@ using UnityEngine;
 public abstract class BaseVFX : MonoBehaviour
 {
     [Header("Base VFX Settings")]
-    [SerializeField] protected float lifetime = 2f;     // VFX 지속 시간
+    [SerializeField] protected float lifetime = 1f;     // VFX 지속 시간
     [SerializeField] protected bool autoDestroy = true; // VFX 종료 시 자동 파괴 여부
 
     protected DamageSource damageSource;                // VFX의 DamageSource 컴포넌트
@@ -19,20 +19,21 @@ public abstract class BaseVFX : MonoBehaviour
     public bool IsInitialized => isInitialized;         // 초기화 여부 검사
     public float GetAssignedDamage() => assignedDamage; // 현재 설정한 데미지 반환
 
+    [System.NonSerialized] private float scheduledDestroyAt = -1f;
+
     protected virtual void Awake()
     {
         damageSource = GetComponent<DamageSource>();    // VFX의 DamageSource 컴포넌트
     }
     protected virtual void Start()
     {
-        // Initialize가 호출되지 않은 경우 기본값으로 초기화
         if (!isInitialized)
         {
-            Debug.LogWarning($"BaseVFX [{gameObject.name}]: Not initialized! Using default damage 1.");
             Initialize(1f); // 기본 데미지 1로 초기화
         }
         if (autoDestroy && lifetime > 0f)
         {
+            scheduledDestroyAt = Time.time + lifetime;
             Destroy(gameObject, lifetime); // VFX가 자동으로 파괴되도록 설정
         }
     }
@@ -58,5 +59,9 @@ public abstract class BaseVFX : MonoBehaviour
         {
             gameObject.SetActive(false); // VFX 비활성화
         }
+    }
+    public float GetLifetime()
+    {
+        return lifetime;
     }
 }

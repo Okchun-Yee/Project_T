@@ -21,6 +21,7 @@ public class PlayerController : Singleton<PlayerController>
     private SpriteRenderer mySprite;
     private Dash dash;  // Dash 컴포넌트 참조 추가
     private Ghost ghostEffect; // Ghost 컴포넌트 참조 추가
+    private Knockback knockback; // Knockback 컴포넌트 참조 추가
     private float startingMoveSpeed;    // 기본 이동 속도 (증가 후 복귀 할 원본 이동 속도)
 
     // 플레이어 상태 변수 목록
@@ -30,7 +31,6 @@ public class PlayerController : Singleton<PlayerController>
     // 무기 애니메이션 방향 결정 프로터피
     public Vector2 CurrentMovement => movement;     // 현재 이동 방향 벡터
     public Vector2 LastMovement => lastMovement;    // 마지막 이동 방향 벡터
-
     protected override void Awake()
     {
         base.Awake();
@@ -38,8 +38,9 @@ public class PlayerController : Singleton<PlayerController>
         rb = GetComponent<Rigidbody2D>();
         myAnim = GetComponent<Animator>();
         mySprite = GetComponent<SpriteRenderer>();
-        dash = GetComponent<Dash>(); // Dash 컴포넌트 참조
-        ghostEffect = GetComponent<Ghost>(); // Ghost 컴포넌트 참조
+        dash = GetComponent<Dash>();                            // Dash 컴포넌트 참조
+        ghostEffect = GetComponent<Ghost>();                    // Ghost 컴포넌트 참조
+        knockback = GetComponent<Knockback>();                  // Knockback 컴포넌트 참조
     }
     private void Start()
     {
@@ -91,6 +92,13 @@ public class PlayerController : Singleton<PlayerController>
     }
     private void PlayerDirection()
     {
+        // (스킬 시전 중, 공격 중, 죽음 중) 방향 전환 불가 상태 관리
+        if (dash.IsDashing ||
+        knockback.isKnockback ||
+        PlayerHealth.Instance.isDead)
+        {
+            return;
+        }
         Vector3 mousePos = Input.mousePosition;
         Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(transform.position);
         if (mousePos.x < playerScreenPoint.x)
@@ -108,7 +116,13 @@ public class PlayerController : Singleton<PlayerController>
     }
     public void Dodge() // Input Manager 키보드 이벤트 구독용 메서드
     {
-        Debug.Log("Dodge called - Simple test");
+        // (스킬 시전 중, 공격 중, 죽음 중) 대시 불가 상태 관리
+        if (dash.IsDashing ||
+        knockback.isKnockback ||
+        PlayerHealth.Instance.isDead)
+        {
+            return;
+        }
 
         if (!dash.IsDashing)  // Dash 컴포넌트의 대시 상태 확인
         {
@@ -135,8 +149,13 @@ public class PlayerController : Singleton<PlayerController>
 
     private void PlayerMovement()
     {
-        if (dash.IsDashing)  // (스킬 시전 중, 공격 중, 죽음 중) 이동 불가
+        // (스킬 시전 중, 공격 중, 죽음 중) 이동 불가 상태 관리
+        if (dash.IsDashing ||
+        knockback.isKnockback ||
+        PlayerHealth.Instance.isDead)
+        {
             return;
+        }
         rb.MovePosition(rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
     }
 }

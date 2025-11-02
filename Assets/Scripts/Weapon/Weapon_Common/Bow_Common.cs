@@ -17,10 +17,12 @@ public class Bow_Common : BaseWeapon, ICharging
     private Animator anim;                                  // 애니메이터
     private Flash flash;                                    // 피격시 깜빡임 스크립트
     private static readonly int HASH_ATTACK = Animator.StringToHash("Attack");      // 기본 공격 트리거
+    private BaseVFX currentVFX;                               // 현재 재생 중인 VFX
     private void Awake()
     {
         anim = GetComponent<Animator>();
         flash = GetComponent<Flash>();
+        currentVFX = GetComponentInChildren<BaseVFX>();
     }
     private void OnEnable()
     {
@@ -95,5 +97,16 @@ public class Bow_Common : BaseWeapon, ICharging
 
         newArrow.GetComponent<Projectile>().UpdateProjectileRange(weaponInfo.weaponRange);
         newArrow.GetComponent<Projectile>().Initialize(weaponInfo.weaponDamage); // Initialize로 데미지 설정
+    }
+
+    private void OnDrawGizmos()
+    {
+        // weaponInfo == NULL인 경우 아직 무기 장착 이전이므로 PASS
+        if (weaponInfo == null) return;
+
+        Vector3 pos = transform.position;
+        // 공격 범위: 반투명 빨간
+        Gizmos.color = new Color(1f, 0f, 0f, 0.2f);
+        Gizmos.DrawWireSphere(pos, weaponInfo.weaponRange);
     }
 }
