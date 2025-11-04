@@ -1253,6 +1253,7 @@ MonoBehaviour:
   itemPrefab: {fileID: 5650726686205869535, guid: fd1005067a167ff49a60bd354c5e5872, type: 3}
   contentPanel: {fileID: 4981460523284708836}
   itemDescription: {fileID: 5009337094834461654}
+  mouseFollower: {fileID: 0}
 --- !u!1 &5753262299241743380
 GameObject:
   m_ObjectHideFlags: 0
@@ -1545,8 +1546,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6637401660508538666}
   m_HandleRect: {fileID: 531884587110547685}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 1
+  m_Value: 1
+  m_Size: 0
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

@@ -1,27 +1,105 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Inventory.Model;
+using Inventory.UI;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class InventoryController : MonoBehaviour
+namespace Inventory
 {
-    public int inventorySize = 5;
-    void Start()
+    public class InventoryController : MonoBehaviour
     {
-        inventoryUI.InitializeInventoryUI(inventorySize);
-    }
-    [SerializeField] private InventoryManager inventoryUI;
-    public void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Tab))
+        [SerializeField] private InventoryManager inventoryUI;
+        [SerializeField] private InventorySO inventoryData;
+        public List<InventoryItemObj> initialItems = new List<InventoryItemObj>();
+    
+        
+        void Start()
         {
-            if (inventoryUI.isActiveAndEnabled == false)
+            PrepareUI();
+            PrepareInventoryData();
+        }
+
+        private void PrepareInventoryData()
+        {
+            inventoryData.Initailize();
+            inventoryData.OnInventoryUpdated += UpdateInventoryUI;
+            foreach (InventoryItemObj item in initialItems)
             {
-                inventoryUI.Show();
+                if (item.isEmpty)
+                    continue;
+                inventoryData.AddItem(item);
             }
-            else
+        }
+
+        private void UpdateInventoryUI(Dictionary<int, InventoryItemObj> inventoryState)
+        {
+            inventoryUI.ResetAllItems();
+            foreach (var item in inventoryState)
             {
-                inventoryUI.Hide();
+                inventoryUI.UpdateData(item.Key, item.Value.item.Itemimage, item.Value.quantity);
+            }
+        }
+
+        private void PrepareUI()
+        {
+            inventoryUI.InitializeInventoryUI(inventoryData.Size);
+            this.inventoryUI.OnDescriptionRequested += HandleDescriptionRequest;
+            this.inventoryUI.OnSwapItem += HandleSwapItems;
+            this.inventoryUI.OnStartDragging += HandleDragging;
+            this.inventoryUI.OnItemActionRequested += HandleItemActionRequest;
+        }
+
+        private void HandleItemActionRequest(int itemIndex)
+        {
+            
+        }
+
+        private void HandleDragging(int itemIndex)
+        {
+            InventoryItemObj inventoryItem = inventoryData.GetItemAt(itemIndex);
+            if (inventoryItem.isEmpty)
+                return;
+            inventoryUI.CreateDraggedItem(inventoryItem.item.Itemimage, inventoryItem.quantity);
+        }
+
+        private void HandleSwapItems(int itemIndex_1, int itemIndex_2)
+        {
+            inventoryData.SwapItems(itemIndex_1, itemIndex_2);
+        }
+
+        private void HandleDescriptionRequest(int itemIndex)
+        {
+            InventoryItemObj inventoryItem = inventoryData.GetItemAt(itemIndex);
+            if (inventoryItem.isEmpty) // 빈 슬롯 선택시 선택 초기화
+            {
+                inventoryUI.ResetSelection();
+                return;
+            }
+            ItemSO item = inventoryItem.item;
+            inventoryUI.UpdateDecriptiron(itemIndex, item.Itemimage, item.Name, item.Description);
+        }
+
+        public void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                if (inventoryUI.isActiveAndEnabled == false)
+                {
+                    inventoryUI.Show();
+                    foreach (var item in inventoryData.GetCurrentInventoryState()) // 
+                    {
+                        inventoryUI.UpdateData(item.Key, item.Value.item.Itemimage, item.Value.quantity); // key는 인덱스
+                        
+                    }
+                }
+                else
+                {
+                    inventoryUI.Hide();
+                }
             }
         }
     }
+
 }

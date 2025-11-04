@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Inventory.UI;
 using UnityEngine;
 
 public class MouseFollower : MonoBehaviour
@@ -9,7 +10,7 @@ public class MouseFollower : MonoBehaviour
 
     public void Awake()
     {
-        canvas = transform.root.GetComponent<Canvas>();
+        canvas = GetComponentInParent<Canvas>();
         item = GetComponentInChildren<InventoryItem>();
     }
 
@@ -17,7 +18,7 @@ public class MouseFollower : MonoBehaviour
     {
         item.SetData(sprite, quantity);
     }
-    private void Update()
+    void Update()
     {
         Vector2 position;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
@@ -25,7 +26,7 @@ public class MouseFollower : MonoBehaviour
             Input.mousePosition,
             canvas.worldCamera,
             out position);
-        transform.position = canvas.transform.TransformDirection(position);
+        transform.position = canvas.transform.TransformPoint(position);
     }
     public void Toggle(bool val)
     {
