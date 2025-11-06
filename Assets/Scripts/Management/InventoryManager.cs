@@ -129,7 +129,7 @@ namespace Inventory.UI
             ResetDraggedItem();
         }
 
-        internal void UpdateDecriptiron(int itemIndex, Sprite itemimage, string name, string description)
+        internal void UpdateDecription(int itemIndex, Sprite itemimage, string name, string description)
         {
             itemDescription.SetDescription(itemimage, name, description);
             DeselectAllItems(); // 다른 것이 선택되어 있을 수 있으니 선택 취소

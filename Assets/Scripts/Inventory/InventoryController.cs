@@ -23,7 +23,7 @@ namespace Inventory
 
         private void PrepareInventoryData()
         {
-            inventoryData.Initailize();
+            inventoryData.Initialize();
             inventoryData.OnInventoryUpdated += UpdateInventoryUI;
             foreach (InventoryItemObj item in initialItems)
             {
@@ -78,7 +78,7 @@ namespace Inventory
                 return;
             }
             ItemSO item = inventoryItem.item;
-            inventoryUI.UpdateDecriptiron(itemIndex, item.Itemimage, item.Name, item.Description);
+            inventoryUI.UpdateDecription(itemIndex, item.Itemimage, item.Name, item.Description);
         }
 
         public void Update()

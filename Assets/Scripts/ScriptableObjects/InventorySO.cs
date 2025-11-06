@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace Inventory.Model
 {
-    [CreateAssetMenu]
+    [CreateAssetMenu] 
     public class InventorySO : ScriptableObject
     {
         [SerializeField] private List<InventoryItemObj> inventoryItems; // 인벤토리 컨트롤러가 이 리스트를 액세스하여 새 값을 수정할 수 있음
         [field: SerializeField] public int Size { get; private set; } = 10; // 인벤토리  사이즈
         public event Action<Dictionary<int, InventoryItemObj>> OnInventoryUpdated;
          
-        public void Initailize()
+        public void Initialize()
         {
             inventoryItems = new List<InventoryItemObj>();
             for (int i = 0; i < Size; i++) // 인벤토리 사이즈만큼 빈 항목 생성
@@ -49,7 +49,7 @@ namespace Inventory.Model
             {
                 for (int i = 0; i < inventoryItems.Count; i++)
                 {
-                    while (quantity > 0 && IsInventoryFull() == false)
+                    while (quantity > 0 && !IsInventoryFull())
                     {
                         quantity -= AddItemToFirstFreeSlot(item, 1);
                     }
@@ -60,8 +60,6 @@ namespace Inventory.Model
             quantity = AddStackableItem(item, quantity);
             InformAboutChange();
             return quantity;
-
-            
         }
 
         private int AddItemToFirstFreeSlot(ItemSO item, int quantity)
@@ -112,7 +110,7 @@ namespace Inventory.Model
                     }
                 }
             }
-            while (quantity > 0 && IsInventoryFull() == false)
+            while (quantity > 0 && !IsInventoryFull())
             {
                 int newQuantity = Mathf.Clamp(quantity, 0, item.MaxStackSize);
                 quantity -= newQuantity;

@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIManger : Singleton<UIManger>
+public class UIManager : Singleton<UIManager>
 {
     private Slider healthSlider;
     private int currentHealth;
