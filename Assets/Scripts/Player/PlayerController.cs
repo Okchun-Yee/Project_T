@@ -6,6 +6,7 @@ using System;
 public class PlayerController : Singleton<PlayerController>
 {
     public bool FacingLeft { get { return facingLeft; } }
+    public bool FacingBack {get { return facingBack; }}
     [Header("Player Settings")]
     [SerializeField] private float moveSpeed = 4f;  // 플레이어 이동 속도
 
@@ -20,11 +21,16 @@ public class PlayerController : Singleton<PlayerController>
     private SpriteRenderer mySprite;
     private Dash dash;  // Dash 컴포넌트 참조 추가
     private Ghost ghostEffect; // Ghost 컴포넌트 참조 추가
+    private Knockback knockback; // Knockback 컴포넌트 참조 추가
     private float startingMoveSpeed;    // 기본 이동 속도 (증가 후 복귀 할 원본 이동 속도)
 
     // 플레이어 상태 변수 목록
     private bool facingLeft = false;    // 플레이어 왼쪽 / 오른쪽 판별
+    private bool facingBack = false;    // 플레이어 앞 / 뒤 판별
 
+    // 무기 애니메이션 방향 결정 프로터피
+    public Vector2 CurrentMovement => movement;     // 현재 이동 방향 벡터
+    public Vector2 LastMovement => lastMovement;    // 마지막 이동 방향 벡터
     protected override void Awake()
     {
         base.Awake();
@@ -32,8 +38,9 @@ public class PlayerController : Singleton<PlayerController>
         rb = GetComponent<Rigidbody2D>();
         myAnim = GetComponent<Animator>();
         mySprite = GetComponent<SpriteRenderer>();
-        dash = GetComponent<Dash>(); // Dash 컴포넌트 참조
-        ghostEffect = GetComponent<Ghost>(); // Ghost 컴포넌트 참조
+        dash = GetComponent<Dash>();                            // Dash 컴포넌트 참조
+        ghostEffect = GetComponent<Ghost>();                    // Ghost 컴포넌트 참조
+        knockback = GetComponent<Knockback>();                  // Knockback 컴포넌트 참조
     }
     private void Start()
     {
@@ -63,6 +70,7 @@ public class PlayerController : Singleton<PlayerController>
     private void FixedUpdate()
     {
         PlayerMovement();           // 물리 프레임 당 플레이어 이동 계산
+        PlayerDirection();          // 플레이어 방향 계산
     }
 
     public void Move(Vector2 moveInput) // Input Manager 키보드 이벤트 구독용 메서드
@@ -77,29 +85,55 @@ public class PlayerController : Singleton<PlayerController>
         }
         else
         {
-            // 키를 뗄 때 정규화된 마지막 입력 값을 전달
-            myAnim.SetFloat("LastmoveX", lastMovement.x);
-            myAnim.SetFloat("LastmoveY", lastMovement.y);
-
             // 이동 입력이 없을 때는 0으로 설정
             myAnim.SetFloat("moveX", 0f);
             myAnim.SetFloat("moveY", 0f);
         }
     }
+    private void PlayerDirection()
+    {
+        // (스킬 시전 중, 공격 중, 죽음 중) 방향 전환 불가 상태 관리
+        if (dash.IsDashing ||
+        knockback.isKnockback ||
+        PlayerHealth.Instance.isDead)
+        {
+            return;
+        }
+        Vector3 mousePos = Input.mousePosition;
+        Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(transform.position);
+        if (mousePos.x < playerScreenPoint.x)
+        {
+            mySprite.flipX = true;
+            facingLeft = true;
+        }
+        else
+        {
+            mySprite.flipX = false;
+            facingLeft = false;
+        }
+        facingBack = mousePos.y > playerScreenPoint.y;
+        myAnim?.SetBool("isBack", facingBack);
+    }
     public void Dodge() // Input Manager 키보드 이벤트 구독용 메서드
     {
-        Debug.Log("Dodge called - Simple test");
+        // (스킬 시전 중, 공격 중, 죽음 중) 대시 불가 상태 관리
+        if (dash.IsDashing ||
+        knockback.isKnockback ||
+        PlayerHealth.Instance.isDead)
+        {
+            return;
+        }
 
         if (!dash.IsDashing)  // Dash 컴포넌트의 대시 상태 확인
         {
             Vector2 dashDirection = GetDashDirection();
-            
+
             // 잔상 효과 시작 (대시 지속시간 동안)
             if (ghostEffect != null)
             {
                 ghostEffect.StartGhostEffect(dashDuration);
             }
-            
+
             dash.Dash_(dashDirection, dashForce, dashDuration);
         }
     }
@@ -115,8 +149,13 @@ public class PlayerController : Singleton<PlayerController>
 
     private void PlayerMovement()
     {
-        if (dash.IsDashing)  // (스킬 시전 중, 공격 중, 죽음 중) 이동 불가
+        // (스킬 시전 중, 공격 중, 죽음 중) 이동 불가 상태 관리
+        if (dash.IsDashing ||
+        knockback.isKnockback ||
+        PlayerHealth.Instance.isDead)
+        {
             return;
+        }
         rb.MovePosition(rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
     }
 }

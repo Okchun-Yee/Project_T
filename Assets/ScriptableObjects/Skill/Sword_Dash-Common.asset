@@ -9,12 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b7972dce8fab8244a971d129aa35db6d, type: 3}
-  m_Name: Sword_Common
+  m_Script: {fileID: 11500000, guid: 3da6ef9e1deff9341bf56fe6127092bb, type: 3}
+  m_Name: Sword_Dash-Common
   m_EditorClassIdentifier: 
-  weaponPrefab: {fileID: 4528167299006447994, guid: 72fa1ff43415646428fb94c206bc30c7, type: 3}
-  weaponCategory: 0
-  skillInfos: []
-  weaponCooldown: 0.25
-  weaponDamage: 10
-  weaponRange: 0
+  icon: {fileID: 21300000, guid: c0cbc89dbcdeac5418f46823e6663cf9, type: 3}
+  skillCategory: 1
+  skillCooldown: 2
+  chargingTime: 0
+  skillDamage: 120

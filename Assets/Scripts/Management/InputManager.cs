@@ -32,7 +32,7 @@ public class InputManager : Singleton<InputManager>
         // 플레이어 회피 이벤트 구독
         playerControls.Movement.Dodge.performed += HandleDodge;                     // 플레이어 회피 입력 감지
         // 플레이어 기본 공격 이벤트 구독
-        playerControls.Combat.Attack.performed += HandleAttack_Started;             // 기본 공격 입력 감지
+        playerControls.Combat.Attack.started += HandleAttack_Started;             // 기본 공격 입력 감지
         playerControls.Combat.Attack.canceled += HandleAttack_Canceled;
         // 플레이어 스킬 이벤트 구독
         playerControls.Combat.Skill_01.performed += ctx => HandleSkill_Started(0);  // 스킬 1 입력 감지
@@ -61,7 +61,7 @@ public class InputManager : Singleton<InputManager>
             // 플레이어 회피 이벤트 구독 해제
             playerControls.Movement.Dodge.performed -= HandleDodge;
             // 플레이어 기본 공격 이벤트 구독 해제
-            playerControls.Combat.Attack.performed -= HandleAttack_Started;
+            playerControls.Combat.Attack.started -= HandleAttack_Started;
             playerControls.Combat.Attack.canceled -= HandleAttack_Canceled;
             // 플레이어 스킬 이벤트 구독 해제
             playerControls.Combat.Skill_01.performed -= ctx => HandleSkill_Started(0);
@@ -95,7 +95,6 @@ public class InputManager : Singleton<InputManager>
     // 플레이어 회피 이벤트 매서드
     private void HandleDodge(InputAction.CallbackContext context)
     {
-        Debug.Log("HandleDodge called!"); // 입력 확인
         OnDodgeInput?.Invoke();
     }
     // 플레이어 공격 이벤트 매서드

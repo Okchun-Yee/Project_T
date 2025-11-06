@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 
 public class Dash : MonoBehaviour
@@ -15,8 +16,6 @@ public class Dash : MonoBehaviour
     public void Dash_(Vector2 direction, float force, float duration)
     {
         if (isDashing) return; // 중복 대시 방지
-
-        Debug.Log($"Starting dash: Direction={direction.normalized}, Force={force}, Duration={duration}");
         StartCoroutine(DashRoutine(direction, force, duration));
     }
 

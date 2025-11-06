@@ -33,23 +33,6 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
         // 1) 무기 정보 주입
         weaponInfo = info;
         weaponCooldown = info.weaponCooldown;
-
-        // 2) 모든 DamageSource 컴포넌트 찾아서 초기화
-        DamageSource[] allDamageSources = GetComponentsInChildren<DamageSource>();
-        if (allDamageSources.Length == 0)
-        {
-            Debug.LogError($"[BaseWeapon] No DamageSource components found in children of {name}");
-        }
-        else
-        {            
-            // 모든 DamageSource에 데미지 설정
-            foreach (DamageSource damageSource in allDamageSources)
-            {
-                damageSource.DamageAmount = info.weaponDamage;
-            }
-        }
-        // 첫 번째 DamageSource를 대표로 저장 (기존 호환성을 위해)
-        ds = allDamageSources.Length > 0 ? allDamageSources[0] : null;
     }
     // 스킬 초기화 매서드
     private void SkillInitialization(WeaponSO info)
@@ -64,8 +47,8 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
         // 2) 각 스킬에 정보 주입 및 시전 시간 저장
         for (int i = 0; i < skills.Length; i++)
         {
-            skills[i].Skill_Initialize(info.skillInfos[i]);               // 스킬 초기화
-            skillCastingTime[i] = info.skillInfos[i].chargingTime;  // 캐스팅 시간 설정
+            skills[i].Skill_Initialize(info.skillInfos[i]);             // 스킬 초기화
+            skillCastingTime[i] = info.skillInfos[i].chargingTime;      // 캐스팅 시간 설정
 
             // 스킬 인덱스 자동 설정
             if (skills[i] is BaseSkill baseSkill)
@@ -81,7 +64,31 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     public void Attack()
     {
         if (isCooldown) { return; }
+        if (weaponInfo != null && weaponInfo.chargeDuration > 0f)
+        {
+            // 기본적으로 차징 시작
+            ChargingManager.Instance?.StartCharging(ChargingType.Attack, weaponInfo.chargeDuration);
+            return;
+        }
+        else
+        {
+            // 차징이 필요 없는 무기의 경우 즉시 공격 시전
+            OnAttack();
+            CooldownCoroutine = StartCoroutine(CooldownRoutine());
+        }
+    }
+    // 새 헬퍼: 무기가 (차징 취소 시) 직접 즉시 공격을 트리거할 때 사용.
+    // ForceAttack은 공격 쿨다운 검사를 포함하고 CooldownRoutine을 시작합니다.
+    protected void _Attack()
+    {
+        if (isCooldown) { return; }
         OnAttack();
+        CooldownCoroutine = StartCoroutine(CooldownRoutine());
+    }
+    protected void _AttackCharged()
+    {
+        if (isCooldown) { return; }
+        OnAttack_Charged();
         CooldownCoroutine = StartCoroutine(CooldownRoutine());
     }
 
@@ -121,5 +128,6 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     // 추상 매서드
     // 파생 무기 클래스에서 구현할 공격 매서드
     protected abstract void OnAttack();
-
+    // 추상 매서드 (차징 공격용)
+    protected abstract void OnAttack_Charged();
 }
