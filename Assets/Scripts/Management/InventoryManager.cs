@@ -85,7 +85,7 @@ namespace Inventory.UI
             currentlyDraggedItemIndex = index;
             HandleItemSelection(inventoryItemUI); // 동일한 아이템이 존재할 경우 혼돈을 방지하기 위함
             OnStartDragging?.Invoke(index); // 인벤토리 자체가 아닌 드래그한 아이템을 생성할지 결정
-
+           
         }
         
         public void CreateDraggedItem(Sprite sprite, int quantity)
@@ -100,6 +100,7 @@ namespace Inventory.UI
             if (index == -1) // 빈 슬롯 클릭시 동작하지 않음
                 return;
             OnDescriptionRequested?.Invoke(index);
+            
         }
 
         public void Show()

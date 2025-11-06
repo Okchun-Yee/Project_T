@@ -61,7 +61,7 @@ namespace Inventory
             InventoryItemObj inventoryItem = inventoryData.GetItemAt(itemIndex);
             if (inventoryItem.isEmpty)
                 return;
-            inventoryUI.CreateDraggedItem(inventoryItem.item.Itemimage, inventoryItem.quantity);
+            inventoryUI.CreateDraggedItem(inventoryItem.item.Itemimage , inventoryItem.quantity);
         }
 
         private void HandleSwapItems(int itemIndex_1, int itemIndex_2)
