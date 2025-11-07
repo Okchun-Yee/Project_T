@@ -2,7 +2,7 @@
 name: PR Template
 about: PR 탬플릿 작성
 title: "[PR]"
-labels: ''
+labels: enhancement
 assignees: Okchun-Yee
 
 ---
