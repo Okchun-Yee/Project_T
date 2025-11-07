@@ -1,5 +1,5 @@
 ---
-name: Feature Request
+name: 기능 개발 요청 (Feature Request)
 about: 새로운 기능이나 시스템 개발을 제안할 때 사용합니다.
 title: "[Feature] 기능명 요약"
 labels: feature

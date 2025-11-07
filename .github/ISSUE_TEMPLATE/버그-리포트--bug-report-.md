@@ -1,5 +1,5 @@
 ---
-name: Bug Report
+name: 버그 리포트 (Bug Report)
 about: 동작하지 않거나 예상과 다른 버그를 보고할 때 사용하세요.
 title: "[Bug] 버그 요약"
 labels: bug
