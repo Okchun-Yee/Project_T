@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2739958482673637408}
   - component: {fileID: 3665337992527428249}
   - component: {fileID: 1587783763597901714}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: MeleeColliders
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -119,7 +119,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4509739319565634421}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Slash SpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -158,7 +158,9 @@ GameObject:
   - component: {fileID: 8997236477992658678}
   - component: {fileID: 6607252703563164941}
   - component: {fileID: 6452783177651912205}
-  m_Layer: 0
+  - component: {fileID: 4851540924471138649}
+  - component: {fileID: 551655167739136020}
+  m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -346,6 +348,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf97926f04dd86745bc6a6af294f2ab0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 100
+  knockBackThrustAmount: 4
+  damageRecoveryTime: 1.2
 --- !u!114 &6607252703563164941
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -374,6 +379,33 @@ MonoBehaviour:
   ghostDelay: 0.05
   ghostLifetime: 0.5
   ghostAlpha: 0.3
+--- !u!114 &4851540924471138649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3969855821128286577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46085622b88b7ba4eb5766112a8951ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  whiteFlashMat: {fileID: 2100000, guid: 978b214c36181d54a8ba568bea9fd507, type: 2}
+  restoreDefaultMatTime: 0.2
+--- !u!114 &551655167739136020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3969855821128286577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2637af95ee0e65c40aaac87d6a7eb413, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  knockBackTime: 0.5
 --- !u!1 &5369139554958457058
 GameObject:
   m_ObjectHideFlags: 0
@@ -384,7 +416,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5503010220425314227}
   - component: {fileID: 8432185888802150665}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Ghost
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -469,7 +501,7 @@ GameObject:
   - component: {fileID: 9096985913030178786}
   - component: {fileID: 6882450491504140009}
   - component: {fileID: 5982412848121576239}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: ActiveWeapon
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
