@@ -20,10 +20,6 @@ namespace Inventory
             base.Awake();
         }
 
-        private void Start()
-        {
-            
-        }
 
         private void OnEnable()
         {
