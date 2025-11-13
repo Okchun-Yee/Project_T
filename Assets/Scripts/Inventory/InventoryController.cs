@@ -44,7 +44,7 @@ namespace Inventory
         }
         private void InventoryInput()
         {
-            if (inventoryUI.isActiveAndEnabled == false)
+            if (!inventoryUI.isActiveAndEnabled)
             {
                 inventoryUI.Show();
                 foreach (var item in inventoryData.GetCurrentInventoryState()) // 
