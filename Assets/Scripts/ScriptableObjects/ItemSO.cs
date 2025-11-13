@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Inventory.Model
 {
-    [CreateAssetMenu]
+    [CreateAssetMenu(menuName = "New Item")]
     public class ItemSO : ScriptableObject
     {
         [field: SerializeField] public bool IsStackable { get; set; } // 아이템 개수 스택

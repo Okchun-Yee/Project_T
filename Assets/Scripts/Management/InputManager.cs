@@ -102,15 +102,20 @@ public class InputManager : Singleton<InputManager>
     // 플레이어 공격 이벤트 매서드
     private void HandleAttack_Started(InputAction.CallbackContext context)
     {
+        // UI 위에서 공격 입력 차단
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
         {
-            Debug.Log("[InputManager] UI 위에서 공격 입력 무시");
             return;
         }
         OnAttackInput?.Invoke();
     }
     private void HandleAttack_Canceled(InputAction.CallbackContext context)
     {
+        // UI 위에서 공격 입력 차단
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
         OnAttackCanceled?.Invoke();
     }
     // 플레이어 스킬 이벤트 매서드

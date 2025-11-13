@@ -8,19 +8,57 @@ using UnityEngine.AI;
 
 namespace Inventory
 {
-    public class InventoryController : MonoBehaviour
+    public class InventoryController : Singleton<InventoryController>
     {
         [SerializeField] private InventoryManager inventoryUI;
         [SerializeField] private InventorySO inventoryData;
         public List<InventoryItemObj> initialItems = new List<InventoryItemObj>();
-    
-        
-        void Start()
+
+
+        protected override void Awake()
         {
+            base.Awake();
+        }
+
+        private void Start()
+        {
+            
+        }
+
+        private void OnEnable()
+        {
+            InputManager.Instance.OnInventoryInput += InventoryInput;
             PrepareUI();
             PrepareInventoryData();
         }
 
+        private void OnDisable()
+        {
+            if (inventoryData != null)
+            {
+                inventoryData.OnInventoryUpdated -= UpdateInventoryUI;
+            }
+            if (InputManager.Instance != null)
+            {
+                InputManager.Instance.OnInventoryInput -= InventoryInput;
+            }
+        }
+        private void InventoryInput()
+        {
+            if (inventoryUI.isActiveAndEnabled == false)
+            {
+                inventoryUI.Show();
+                foreach (var item in inventoryData.GetCurrentInventoryState()) // 
+                {
+                    inventoryUI.UpdateData(item.Key, item.Value.item.Itemimage, item.Value.quantity); // key는 인덱스
+
+                }
+            }
+            else
+            {
+                inventoryUI.Hide();
+            }
+        }
         private void PrepareInventoryData()
         {
             inventoryData.Initialize();
@@ -53,7 +91,7 @@ namespace Inventory
 
         private void HandleItemActionRequest(int itemIndex)
         {
-            
+
         }
 
         private void HandleDragging(int itemIndex)
@@ -61,7 +99,7 @@ namespace Inventory
             InventoryItemObj inventoryItem = inventoryData.GetItemAt(itemIndex);
             if (inventoryItem.isEmpty)
                 return;
-            inventoryUI.CreateDraggedItem(inventoryItem.item.Itemimage , inventoryItem.quantity);
+            inventoryUI.CreateDraggedItem(inventoryItem.item.Itemimage, inventoryItem.quantity);
         }
 
         private void HandleSwapItems(int itemIndex_1, int itemIndex_2)
@@ -79,26 +117,6 @@ namespace Inventory
             }
             ItemSO item = inventoryItem.item;
             inventoryUI.UpdateDecription(itemIndex, item.Itemimage, item.Name, item.Description);
-        }
-
-        public void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Tab))
-            {
-                if (inventoryUI.isActiveAndEnabled == false)
-                {
-                    inventoryUI.Show();
-                    foreach (var item in inventoryData.GetCurrentInventoryState()) // 
-                    {
-                        inventoryUI.UpdateData(item.Key, item.Value.item.Itemimage, item.Value.quantity); // key는 인덱스
-                        
-                    }
-                }
-                else
-                {
-                    inventoryUI.Hide();
-                }
-            }
         }
     }
 
