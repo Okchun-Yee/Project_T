@@ -23,7 +23,10 @@ namespace Inventory
 
         private void OnEnable()
         {
-            InputManager.Instance.OnInventoryInput += InventoryInput;
+            if (InputManager.Instance != null)
+            {
+                InputManager.Instance.OnInventoryInput += InventoryInput;
+            }
             PrepareUI();
             PrepareInventoryData();
         }
