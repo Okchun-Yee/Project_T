@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 
 public class InputManager : Singleton<InputManager>
 {
@@ -78,7 +80,7 @@ public class InputManager : Singleton<InputManager>
             playerControls.Disable();
         }
     }
-    
+
     private void OnDestroy()
     {
         if (playerControls != null)
@@ -100,6 +102,11 @@ public class InputManager : Singleton<InputManager>
     // 플레이어 공격 이벤트 매서드
     private void HandleAttack_Started(InputAction.CallbackContext context)
     {
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        {
+            Debug.Log("[InputManager] UI 위에서 공격 입력 무시");
+            return;
+        }
         OnAttackInput?.Invoke();
     }
     private void HandleAttack_Canceled(InputAction.CallbackContext context)
