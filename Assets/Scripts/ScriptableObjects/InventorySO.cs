@@ -6,13 +6,13 @@ using UnityEngine;
 
 namespace Inventory.Model
 {
-    [CreateAssetMenu] 
+    [CreateAssetMenu(menuName = "New Inventory")]
     public class InventorySO : ScriptableObject
     {
         [SerializeField] private List<InventoryItemObj> inventoryItems; // 인벤토리 컨트롤러가 이 리스트를 액세스하여 새 값을 수정할 수 있음
         [field: SerializeField] public int Size { get; private set; } = 10; // 인벤토리  사이즈
         public event Action<Dictionary<int, InventoryItemObj>> OnInventoryUpdated;
-         
+
         public void Initialize()
         {
             inventoryItems = new List<InventoryItemObj>();
@@ -21,7 +21,7 @@ namespace Inventory.Model
                 inventoryItems.Add(InventoryItemObj.GetEmptyItem());
             }
         }
-        
+
         public Dictionary<int, InventoryItemObj> GetCurrentInventoryState()
         {
             Dictionary<int, InventoryItemObj> returnValue = new Dictionary<int, InventoryItemObj>();
@@ -39,7 +39,7 @@ namespace Inventory.Model
             return inventoryItems[itemIndex];
         }
 
-        public void  AddItem(InventoryItemObj item)
+        public void AddItem(InventoryItemObj item)
         {
             AddItem(item.item, item.quantity);
         }
@@ -47,15 +47,12 @@ namespace Inventory.Model
         {
             if (item.IsStackable == false)
             {
-                for (int i = 0; i < inventoryItems.Count; i++)
+                while (quantity > 0 && !IsInventoryFull())
                 {
-                    while (quantity > 0 && !IsInventoryFull())
-                    {
-                        quantity -= AddItemToFirstFreeSlot(item, 1);
-                    }
-                    InformAboutChange();
-                    return quantity;
+                    quantity -= AddItemToFirstFreeSlot(item, 1);
                 }
+                InformAboutChange();
+                return quantity;
             }
             quantity = AddStackableItem(item, quantity);
             InformAboutChange();
@@ -144,7 +141,7 @@ namespace Inventory.Model
         public ItemSO item;
         public bool isEmpty => item == null;
 
-        public InventoryItemObj  ChangeQuantity(int newQuantity) // 값을 변경하기 위한 또 하나의 구조체
+        public InventoryItemObj ChangeQuantity(int newQuantity) // 값을 변경하기 위한 또 하나의 구조체
         {
             return new InventoryItemObj
             {

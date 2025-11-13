@@ -48,6 +48,7 @@ GameObject:
   - component: {fileID: 2594379691367871548}
   - component: {fileID: 6345816566964928929}
   - component: {fileID: 7467764219116966625}
+  - component: {fileID: 1438839435982861054}
   m_Layer: 5
   m_Name: InGameMenu
   m_TagString: Untagged
@@ -139,6 +140,27 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &1438839435982861054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395164002409838510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e41904a4104a2dc4c86bbdef65831873, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventoryUI: {fileID: 4038809706745579275}
+  inventoryData: {fileID: 11400000, guid: 599806ef280ef5e49a3ab8741677cf1a, type: 2}
+  initialItems:
+  - quantity: 20
+    item: {fileID: 11400000, guid: 65bb27f725c1c1f45811dd93e28f5260, type: 2}
+  - quantity: 1
+    item: {fileID: 11400000, guid: d035d47774cd30c4b9d00d21a04393ee, type: 2}
+  - quantity: 1
+    item: {fileID: 11400000, guid: f2aed07dfa8e9e148aa0a77679922d57, type: 2}
 --- !u!1 &1507766574433424451
 GameObject:
   m_ObjectHideFlags: 0
@@ -2776,3 +2798,14 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3499155842714787724, guid: 98f72c2cc5d37eb4aa0517de9bf02ed0, type: 3}
   m_PrefabInstance: {fileID: 298392174825109618}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4038809706745579275 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4334897288012676985, guid: 98f72c2cc5d37eb4aa0517de9bf02ed0, type: 3}
+  m_PrefabInstance: {fileID: 298392174825109618}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 784f6f673d0729a4b9d9158f260ee943, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
