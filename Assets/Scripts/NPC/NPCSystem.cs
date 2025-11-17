@@ -1,9 +1,7 @@
-using System;
 using System.Collections;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine;
-using Unity.VisualScripting;
 
 public class NPCSystem : MonoBehaviour, IInteractable
 {
