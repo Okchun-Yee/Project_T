@@ -80,7 +80,7 @@ public class NPCSystem : MonoBehaviour, IInteractable
             yield return new WaitForSeconds(npcInfo.typingSpeed);
         }
         isTyping = false;
-        if(npcInfo.autoProgressLines.Count > dialogueIndex && npcInfo.autoProgressLines[dialogueIndex])
+        if(dialogueIndex < npcInfo.autoProgressLines.Count && npcInfo.autoProgressLines[dialogueIndex])
         {
             yield return new WaitForSeconds(npcInfo.autoProgressDelay);
             NextDialogue();
