@@ -271,7 +271,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""TempUI1"",
+                    ""name"": ""Interact"",
                     ""type"": ""Button"",
                     ""id"": ""68a78f15-0dcc-4da1-9f76-d812c635c137"",
                     ""expectedControlType"": """",
@@ -315,11 +315,11 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""d260961a-b52d-4297-bff4-c1c63c9acefe"",
-                    ""path"": ""<Keyboard>/c"",
+                    ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""TempUI1"",
+                    ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -369,7 +369,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_System = asset.FindActionMap("System", throwIfNotFound: true);
         m_System_Pickup = m_System.FindAction("Pickup", throwIfNotFound: true);
         m_System_InventoryUI = m_System.FindAction("InventoryUI", throwIfNotFound: true);
-        m_System_TempUI1 = m_System.FindAction("TempUI1", throwIfNotFound: true);
+        m_System_Interact = m_System.FindAction("Interact", throwIfNotFound: true);
         m_System_TempUI2 = m_System.FindAction("TempUI2", throwIfNotFound: true);
     }
 
@@ -680,7 +680,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private List<ISystemActions> m_SystemActionsCallbackInterfaces = new List<ISystemActions>();
     private readonly InputAction m_System_Pickup;
     private readonly InputAction m_System_InventoryUI;
-    private readonly InputAction m_System_TempUI1;
+    private readonly InputAction m_System_Interact;
     private readonly InputAction m_System_TempUI2;
     /// <summary>
     /// Provides access to input actions defined in input action map "System".
@@ -702,9 +702,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @InventoryUI => m_Wrapper.m_System_InventoryUI;
         /// <summary>
-        /// Provides access to the underlying input action "System/TempUI1".
+        /// Provides access to the underlying input action "System/Interact".
         /// </summary>
-        public InputAction @TempUI1 => m_Wrapper.m_System_TempUI1;
+        public InputAction @Interact => m_Wrapper.m_System_Interact;
         /// <summary>
         /// Provides access to the underlying input action "System/TempUI2".
         /// </summary>
@@ -741,9 +741,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @InventoryUI.started += instance.OnInventoryUI;
             @InventoryUI.performed += instance.OnInventoryUI;
             @InventoryUI.canceled += instance.OnInventoryUI;
-            @TempUI1.started += instance.OnTempUI1;
-            @TempUI1.performed += instance.OnTempUI1;
-            @TempUI1.canceled += instance.OnTempUI1;
+            @Interact.started += instance.OnInteract;
+            @Interact.performed += instance.OnInteract;
+            @Interact.canceled += instance.OnInteract;
             @TempUI2.started += instance.OnTempUI2;
             @TempUI2.performed += instance.OnTempUI2;
             @TempUI2.canceled += instance.OnTempUI2;
@@ -764,9 +764,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @InventoryUI.started -= instance.OnInventoryUI;
             @InventoryUI.performed -= instance.OnInventoryUI;
             @InventoryUI.canceled -= instance.OnInventoryUI;
-            @TempUI1.started -= instance.OnTempUI1;
-            @TempUI1.performed -= instance.OnTempUI1;
-            @TempUI1.canceled -= instance.OnTempUI1;
+            @Interact.started -= instance.OnInteract;
+            @Interact.performed -= instance.OnInteract;
+            @Interact.canceled -= instance.OnInteract;
             @TempUI2.started -= instance.OnTempUI2;
             @TempUI2.performed -= instance.OnTempUI2;
             @TempUI2.canceled -= instance.OnTempUI2;
@@ -889,12 +889,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnInventoryUI(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "TempUI1" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Interact" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnTempUI1(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "TempUI2" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

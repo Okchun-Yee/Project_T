@@ -16,6 +16,7 @@ public class InputManager : Singleton<InputManager>
     public event Action<int> OnSkillCanceled;           // 스킬 취소 이벤트 (int Index : 스킬 번호)
     public event Action OnPickupInput;                  // 아이템 획득 입력 이벤트
     public event Action OnInventoryInput;               // 인벤토리 UI 입력 이벤트
+    public event Action OnInteractInput;                // 상호작용 입력 이벤트
     private PlayerControls playerControls;
 
     protected override void Awake()
@@ -44,8 +45,8 @@ public class InputManager : Singleton<InputManager>
         playerControls.System.Pickup.performed += HandlePickup;                     // 아이템 획득 입력 감지
         // 플레이어 인벤토리 이벤트 구독
         playerControls.System.InventoryUI.performed += HandleInventoryUI;           // 인벤토리 UI 입력 감지
-        // 플레이어 임시 UI 1 이벤트 구독
-        playerControls.System.TempUI1.performed += HandleTempUI1;                   // 임시 UI 1 입력 감지
+        // 플레이어 상호작용 이벤트 구독
+        playerControls.System.Interact.performed += HandleInteract;                   // 상호작용 입력 감지
         // 플레이어 임시 UI 2 이벤트 구독
         playerControls.System.TempUI2.performed += HandleTempUI2;                   // 임시 UI 2 입력 감지
     }
@@ -73,7 +74,8 @@ public class InputManager : Singleton<InputManager>
             playerControls.System.Pickup.performed -= HandlePickup;
             // 플레이어 인벤토리 이벤트 구독 해제
             playerControls.System.InventoryUI.performed -= HandleInventoryUI;
-            playerControls.System.TempUI1.performed -= HandleTempUI1;
+            // 플레이어 상호작용 이벤트 구독 해제
+            playerControls.System.Interact.performed -= HandleInteract;
             playerControls.System.TempUI2.performed -= HandleTempUI2;
 
             playerControls.Disable();
@@ -136,10 +138,10 @@ public class InputManager : Singleton<InputManager>
     {
         OnInventoryInput?.Invoke();
     }
-    // 플레이어 임시 UI 1 이벤트 매서드
-    private void HandleTempUI1(InputAction.CallbackContext context)
+    // 플레이어 상호작용 이벤트 매서드
+    private void HandleInteract(InputAction.CallbackContext context)
     {
-        // 임시 UI 1 토글 시 필요한 로직 추가
+        OnInteractInput?.Invoke();
     }
     // 플레이어 임시 UI 2 이벤트 매서드
     private void HandleTempUI2(InputAction.CallbackContext context)

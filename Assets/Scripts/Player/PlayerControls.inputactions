@@ -185,7 +185,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "TempUI1",
+                    "name": "Interact",
                     "type": "Button",
                     "id": "68a78f15-0dcc-4da1-9f76-d812c635c137",
                     "expectedControlType": "",
@@ -229,11 +229,11 @@
                 {
                     "name": "",
                     "id": "d260961a-b52d-4297-bff4-c1c63c9acefe",
-                    "path": "<Keyboard>/c",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "TempUI1",
+                    "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
