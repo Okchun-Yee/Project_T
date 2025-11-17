@@ -71,9 +71,11 @@ public class NPCSystem : MonoBehaviour, IInteractable
     {
         isTyping = true;
         dialogueText.SetText("");
+        string currentText = "";
         foreach (char letter in npcInfo.dialogueLines[dialogueIndex].ToCharArray())
         {
-            dialogueText.text += letter;
+            currentText += letter;
+            dialogueText.SetText(currentText);
             // 타이핑 속도 조절
             yield return new WaitForSeconds(npcInfo.typingSpeed);
         }
