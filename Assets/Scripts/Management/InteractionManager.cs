@@ -47,11 +47,8 @@ public class InteractionManager : Singleton<InteractionManager>
     {
         if (collision.TryGetComponent(out IInteractable interactable) && interactable == interactableInRange)
         {
-            if(interactableInRange == interactable)
-            {
-                interactableInRange = null;
-                interactionIcon.SetActive(false);
-            }
+            interactableInRange = null;
+            interactionIcon.SetActive(false);
         }
     }
 }
