@@ -27,7 +27,7 @@ public class NPCSystem : MonoBehaviour, IInteractable
         }
         if(isDialogueActive)
         {
-            NextDialogue();
+            NextDialogue();  
         }
         else 
         {

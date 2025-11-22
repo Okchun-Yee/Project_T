@@ -14,7 +14,7 @@ public class InputManager : Singleton<InputManager>
     public event Action OnAttackCanceled;               // 공격 취소 이벤트
     public event Action<int> OnSkillInput;              // 스킬 입력 이벤트 (int Index : 스킬 번호)
     public event Action<int> OnSkillCanceled;           // 스킬 취소 이벤트 (int Index : 스킬 번호)
-    public event Action OnPickupInput;                  // 아이템 획득 입력 이벤트
+    public event Action OnLootingInput;                  // 아이템 획득 입력 이벤트
     public event Action OnInventoryInput;               // 인벤토리 UI 입력 이벤트
     public event Action OnInteractInput;                // 상호작용 입력 이벤트
     private PlayerControls playerControls;
@@ -131,7 +131,7 @@ public class InputManager : Singleton<InputManager>
     // 플레이어 아이템 획득 이벤트 매서드
     private void HandlePickup(InputAction.CallbackContext context)
     {
-        OnPickupInput?.Invoke();
+        OnLootingInput?.Invoke();
     }
     // 플레이어 인벤토리 UI 이벤트 매서드
     private void HandleInventoryUI(InputAction.CallbackContext context)

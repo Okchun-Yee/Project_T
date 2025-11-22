@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponPickup : MonoBehaviour, IPickupable
+public class WeaponLoot : MonoBehaviour, ILooting
 {
     [Header("Weapon Data")]
     [SerializeField] private WeaponSO weaponData;
@@ -12,18 +12,18 @@ public class WeaponPickup : MonoBehaviour, IPickupable
     private void OnEnable()
     {
         // PickupManager의 무기 픽업 이벤트 구독
-        if (PickupManager.Instance != null)
+        if (LootingManager.Instance != null)
         {
-            PickupManager.Instance.OnWeaponPickedUp += Pickup;
+            LootingManager.Instance.OnWeaponLoot += Pickup;
         }
     }
     
     private void OnDisable()
     {
         // 이벤트 구독 해제
-        if (PickupManager.Instance != null)
+        if (LootingManager.Instance != null)
         {
-            PickupManager.Instance.OnWeaponPickedUp -= Pickup;
+            LootingManager.Instance.OnWeaponLoot -= Pickup;
         }
     }
     
@@ -36,11 +36,11 @@ public class WeaponPickup : MonoBehaviour, IPickupable
         }
     }
     
-    // 이벤트 구독 핸들러 - 이 WeaponPickup이 픽업되었을 때 호출
+    // 이벤트 구독 핸들러 - 이 WeaponLoot이 픽업되었을 때 호출
     public void Pickup()
     {
         // 현재 가장 가까운 픽업이 자신인지 확인
-        if (ReferenceEquals(PickupManager.Instance.GetClosestPickup(), this))
+        if (ReferenceEquals(LootingManager.Instance.GetClosestLoot(), this))
         {
             // WeaponManager에 무기 장착 요청
             if (WeaponManager.Instance != null && weaponData != null)
@@ -66,9 +66,9 @@ public class WeaponPickup : MonoBehaviour, IPickupable
         return weaponData != null ? weaponData.name : "Unknown Weapon";
     }
 
-    public PickupType GetPickupType()
+    public LootType GetLootingType()
     {
-        return PickupType.Weapon;
+        return LootType.Weapon;
     }
 
     public Transform GetTransform()
