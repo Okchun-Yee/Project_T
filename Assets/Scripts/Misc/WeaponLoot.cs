@@ -2,78 +2,41 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponLoot : MonoBehaviour, ILooting
+public class WeaponLoot : BaseLoot
 {
-    [Header("Weapon Data")]
-    [SerializeField] private WeaponSO weaponData;
-    private string displayName;
-    private bool canPickup = true;
-    
-    private void OnEnable()
+    [SerializeField] private WeaponSO weaponData; // 무기 데이터
+    protected override void Awake()
     {
-        // PickupManager의 무기 픽업 이벤트 구독
-        if (LootingManager.Instance != null)
-        {
-            LootingManager.Instance.OnWeaponLoot += Pickup;
-        }
+        base.Awake();
+        lootingType = LootType.Weapon;
     }
-    
-    private void OnDisable()
+    public override bool CanPickup()
     {
-        // 이벤트 구독 해제
-        if (LootingManager.Instance != null)
-        {
-            LootingManager.Instance.OnWeaponLoot -= Pickup;
-        }
+        return canLoot && weaponData != null;
     }
-    
-    private void Start()
+    public override void Looting()
     {
-        // WeaponSO에서 displayName 설정
-        if (weaponData != null && string.IsNullOrEmpty(displayName))
+        // 무기 획득 로직 구현
+        if(WeaponManager.Instance != null)
         {
-            displayName = weaponData.name;
+            WeaponManager.Instance.EquipWeapon(weaponData);
+            Debug.Log($"Weapon looted: {weaponData.name}");
         }
+        else
+        {
+            Debug.LogWarning($"[WeaponLoot] WeaponManager missing when picking up {weaponData.name}");
+        }
+        canLoot = false; // 픽업 불가로 설정
+        DestroyItem();  // 아이템 제거 애니메이션 및 오브젝트 제거
     }
-    
-    // 이벤트 구독 핸들러 - 이 WeaponLoot이 픽업되었을 때 호출
-    public void Pickup()
+    public override string GetItemType()
     {
-        // 현재 가장 가까운 픽업이 자신인지 확인
-        if (ReferenceEquals(LootingManager.Instance.GetClosestLoot(), this))
-        {
-            // WeaponManager에 무기 장착 요청
-            if (WeaponManager.Instance != null && weaponData != null)
-            {
-                WeaponManager.Instance.EquipWeapon(weaponData);
-                Debug.Log($"Weapon picked up: {weaponData.name}");
-            }
-            
-            // 픽업 완료 후 오브젝트 제거
-            Destroy(gameObject);
-        }
+        if(weaponData != null) return weaponData.name;
+        else return base.GetItemType();
     }
 
-    #region IPickupable Implementation
-    
-    public bool CanPickup()
-    {
-        return canPickup && weaponData != null;
-    }
-
-    public string GetItemType()
-    {
-        return weaponData != null ? weaponData.name : "Unknown Weapon";
-    }
-
-    public LootType GetLootingType()
+    public override LootType GetLootingType()
     {
         return LootType.Weapon;
     }
-
-    public Transform GetTransform()
-    {
-        return transform;
-    }
-    #endregion
 }

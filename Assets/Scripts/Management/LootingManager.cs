@@ -10,20 +10,26 @@ using System;
 public class LootingManager : Singleton<LootingManager>
 {
     [Header("Looting Settings")]
-    [SerializeField] private float LootingRange = 2f;
-    [SerializeField] private LayerMask lootingLayer = -1;
-
+    [SerializeField] private float LootingRange = 2.0f;     // 픽업 범위
+    [SerializeField] private Transform playerTransform;     // 플레이어 트랜스폼
+    [SerializeField] private LayerMask lootingLayer = -1;   // 픽업 가능 레이어
     // 픽업 이벤트
     public event Action OnWeaponLoot;       // WeaponData 호출 이벤트 
     public event Action OnItemLoot;         // ItemData 호출 이벤트
+    public event Action<ILooting> OnLoot;             // 공통 호출 이벤트
 
     // 현재 범위 내 픽업 가능한 아이템들
-    private List<ILooting> nearbyLoots = new List<ILooting>();
+    private List<ILooting> nearItem = new List<ILooting>();
     private ILooting closestLoot;
 
     protected override void Awake()
     {
         base.Awake();
+        // 플레이어 트랜스폼이 할당되지 않은 경우 자동으로 할당 (fallback)
+        if(playerTransform == null && PlayerController.Instance != null)
+        {
+            playerTransform = PlayerController.Instance.transform;
+        }
     }
 
     private void OnEnable()
@@ -63,28 +69,28 @@ public class LootingManager : Singleton<LootingManager>
     // 아이템 픽업 실행
     private void LootItem(ILooting item)
     {
-        // 타입별 처리
-        if (item is WeaponLoot weaponPickup)
-        {
-            OnWeaponLoot?.Invoke();
-        }
-        else if (item is AutoLoot itemPickup)
-        {
-            // 향후 인벤토리 시스템 연동
-            OnItemLoot?.Invoke(); // 임시
-        }
+        if (item == null) return;
 
-        // 픽업 실행
-        item.Pickup();
-
-        // 리스트에서 제거
-        nearbyLoots.Remove(item);
+        switch(item.GetLootingType())
+        {
+            case LootType.Weapon:
+                OnWeaponLoot?.Invoke();
+                break;
+            case LootType.Item:
+            case LootType.Consumable:
+                OnItemLoot?.Invoke();
+                break;
+        }
+        OnLoot?.Invoke(item);   // 공통 이벤트 호출
+        item.Looting();         // 파생 클래스의 Looting 매서드 호출
+        nearItem.Remove(item);  // 픽업된 아이템을 근처 아이템 리스트에서 제거
+        closestLoot = null;     // 가장 가까운 아이템 초기화
     }
 
     // 플레이어 주변 픽업 아이템 스캔
     private void UpdateNearbyLoots()
     {
-        nearbyLoots.Clear();
+        nearItem.Clear();
 
         Vector3 playerPos = PlayerController.Instance.transform.position;
         Collider2D[] lootingColliders = Physics2D.OverlapCircleAll(playerPos, LootingRange, lootingLayer);
@@ -94,7 +100,7 @@ public class LootingManager : Singleton<LootingManager>
             ILooting pickupable = collider.GetComponent<ILooting>();
             if (pickupable != null && pickupable.CanPickup())
             {
-                nearbyLoots.Add(pickupable);
+                nearItem.Add(pickupable);
             }
         }
     }
@@ -102,7 +108,7 @@ public class LootingManager : Singleton<LootingManager>
     // 가장 가까운 픽업 아이템 선택
     private void UpdateClosestLoot()
     {
-        if (nearbyLoots.Count == 0)
+        if (nearItem.Count == 0)
         {
             closestLoot = null;
             return;
@@ -112,7 +118,7 @@ public class LootingManager : Singleton<LootingManager>
         float closestDistance = float.MaxValue;
         ILooting closest = null;
 
-        foreach (ILooting loot in nearbyLoots)
+        foreach (ILooting loot in nearItem)
         {
             float distance = Vector3.Distance(playerPos, loot.GetTransform().position);
             if (distance < closestDistance)
@@ -127,8 +133,8 @@ public class LootingManager : Singleton<LootingManager>
 
     // UI용 정보 제공
     public ILooting GetClosestLoot() => closestLoot;
-    public bool HasNearbyLoots() => nearbyLoots.Count > 0;
-    public int GetNearbyLootCount() => nearbyLoots.Count;
+    public bool HasNearbyLoots() => nearItem.Count > 0;
+    public int GetNearbyLootCount() => nearItem.Count;
 
     // 디버그용 시각화
     private void OnDrawGizmosSelected()
