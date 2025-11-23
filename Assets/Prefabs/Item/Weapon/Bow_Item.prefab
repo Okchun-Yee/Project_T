@@ -133,4 +133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1aa10353106a9bd40989a14f6d2c7497, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lootingType: 0
+  canLoot: 1
+  lootAnimDuration: 0.3
   weaponData: {fileID: 11400000, guid: aa2918ee87746fa48ab54329cbb86acc, type: 2}

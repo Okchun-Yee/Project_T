@@ -10,7 +10,7 @@ using System;
 public class LootingManager : Singleton<LootingManager>
 {
     [Header("Looting Settings")]
-    [SerializeField] private float LootingRange = 2.0f;     // 픽업 범위
+    [SerializeField] private float lootingRange = 2.0f;     // 픽업 범위
     [SerializeField] private Transform playerTransform;     // 플레이어 트랜스폼
     [SerializeField] private LayerMask lootingLayer = -1;   // 픽업 가능 레이어
     // 픽업 이벤트
@@ -93,7 +93,7 @@ public class LootingManager : Singleton<LootingManager>
         nearItem.Clear();
 
         Vector3 playerPos = PlayerController.Instance.transform.position;
-        Collider2D[] lootingColliders = Physics2D.OverlapCircleAll(playerPos, LootingRange, lootingLayer);
+        Collider2D[] lootingColliders = Physics2D.OverlapCircleAll(playerPos, lootingRange, lootingLayer);
 
         foreach (Collider2D collider in lootingColliders)
         {
@@ -135,6 +135,7 @@ public class LootingManager : Singleton<LootingManager>
     public ILooting GetClosestLoot() => closestLoot;
     public bool HasNearbyLoots() => nearItem.Count > 0;
     public int GetNearbyLootCount() => nearItem.Count;
+    public float GetLootingRange() => lootingRange;
 
     // 디버그용 시각화
     private void OnDrawGizmosSelected()
@@ -142,7 +143,7 @@ public class LootingManager : Singleton<LootingManager>
         if (PlayerController.Instance != null)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(PlayerController.Instance.transform.position, LootingRange);
+            Gizmos.DrawWireSphere(PlayerController.Instance.transform.position, lootingRange);
         }
     }
 }
