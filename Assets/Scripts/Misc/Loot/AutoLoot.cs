@@ -48,7 +48,7 @@ public class AutoLoot : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        rb.velocity = moveDir * moveSpeed * Time.deltaTime;
+        rb.velocity = moveDir * moveSpeed;
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
@@ -70,11 +70,11 @@ public class AutoLoot : MonoBehaviour
         while (timePassed < popDuration)
         {
             timePassed += Time.deltaTime;
-            float linerT = timePassed / popDuration;
-            float heightT = animCurve.Evaluate(linerT);
+            float linearT = timePassed / popDuration;
+            float heightT = animCurve.Evaluate(linearT);
             float height = Mathf.Lerp(0f, heightY, heightT);
 
-            transform.position = Vector2.Lerp(startPos, endPoint, linerT) + new Vector2(0f, height);
+            transform.position = Vector2.Lerp(startPos, endPoint, linearT) + new Vector2(0f, height);
             yield return null;
         }
     }
