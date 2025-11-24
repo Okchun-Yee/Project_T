@@ -34,9 +34,4 @@ public class WeaponLoot : BaseLoot
         if(weaponData != null) return weaponData.name;
         else return base.GetItemType();
     }
-
-    public override LootType GetLootingType()
-    {
-        return LootType.Weapon;
-    }
 }

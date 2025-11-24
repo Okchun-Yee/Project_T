@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Inventory.Model;
-using System.Data;
 
 public class PassivityLoot : BaseLoot
 {
@@ -62,10 +61,6 @@ public class PassivityLoot : BaseLoot
     public override string GetItemType()
     {
         return inventoryData != null ? inventoryData.name : base.GetItemType();
-    }
-    public override LootType GetLootingType()
-    {
-        return LootType.Item;
     }
     private void OnDrawGizmos()
     {
