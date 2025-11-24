@@ -82,7 +82,7 @@ public class LootingManager : Singleton<LootingManager>
                 break;
         }
         OnLoot?.Invoke(item);   // 공통 이벤트 호출
-        item.Looting();         // 파생 클래스의 Looting 매서드 호출
+        item.Looting();         // 파생 클래스의 Looting 메서드 호출
         nearItem.Remove(item);  // 픽업된 아이템을 근처 아이템 리스트에서 제거
         closestLoot = null;     // 가장 가까운 아이템 초기화
     }
