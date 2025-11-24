@@ -15,6 +15,7 @@ public class AutoLoot : MonoBehaviour
     [SerializeField] private float lootDistance = 5f;       // 플레이어가 아이템을 감지하는 거리
     [SerializeField] private float accelerationRate = .2f;  // 플레이어에게 다가갈 때 가속도
     [SerializeField] private float moveSpeed = 3f;          // 아이템 이동 속도
+    [SerializeField] private float maxMoveSpeed = 30f;      // 아이템 최대 이동 속도
     [SerializeField] private AnimationCurve animCurve;      // 아이템이 튀어오르는 애니메이션 커브
     [SerializeField] private float heightY = 1.5f;          // 아이템이 튀어오르는 높이
     [SerializeField] private float popDuration = 1f;        // 아이템이 튀어오르는 애니메이션 지속 시간 
@@ -37,7 +38,7 @@ public class AutoLoot : MonoBehaviour
         if (Vector3.Distance(transform.position, playerPos) < lootDistance)
         {
             moveDir = (playerPos - transform.position).normalized;
-            moveSpeed += accelerationRate;
+            moveSpeed = Mathf.Min(moveSpeed + accelerationRate * Time.deltaTime, maxMoveSpeed);
         }
         else
         {
@@ -86,7 +87,7 @@ public class AutoLoot : MonoBehaviour
                 Debug.Log("coin picked up");
                 break;
             case AutoLootType.HealthGlobe:
-            PlayerHealth.Instance.HealPlayer();
+                PlayerHealth.Instance.HealPlayer();
                 Debug.Log("health picked up");
                 break;
             case AutoLootType.StaminaGlobe:
