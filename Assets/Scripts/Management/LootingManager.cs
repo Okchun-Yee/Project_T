@@ -19,7 +19,7 @@ public class LootingManager : Singleton<LootingManager>
     public event Action<ILooting> OnLoot;             // 공통 호출 이벤트
 
     // 현재 범위 내 픽업 가능한 아이템들
-    private List<ILooting> nearItem = new List<ILooting>();
+    private readonly List<ILooting> nearItem = new List<ILooting>();
     private ILooting closestLoot;
 
     protected override void Awake()
