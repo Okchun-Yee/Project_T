@@ -17,6 +17,7 @@ public class InputManager : Singleton<InputManager>
     public event Action OnPickupInput;                  // 아이템 획득 입력 이벤트
     public event Action OnInventoryInput;               // 인벤토리 UI 입력 이벤트
     public event Action OnInteractInput;                // 상호작용 입력 이벤트
+    public event Action OnRuneInventoryInput;           // 룬 인벤토리 UI 입력 이벤트
     private PlayerControls playerControls;
 
     protected override void Awake()
@@ -45,11 +46,14 @@ public class InputManager : Singleton<InputManager>
         playerControls.System.Pickup.performed += HandlePickup;                     // 아이템 획득 입력 감지
         // 플레이어 인벤토리 이벤트 구독
         playerControls.System.InventoryUI.performed += HandleInventoryUI;           // 인벤토리 UI 입력 감지
+        playerControls.System.RuneInventoryUI.performed += HandleRuneInventoryUI;   // 룬 인벤토리 UI 입력 감지
         // 플레이어 상호작용 이벤트 구독
         playerControls.System.Interact.performed += HandleInteract;                   // 상호작용 입력 감지
         // 플레이어 임시 UI 2 이벤트 구독
         playerControls.System.TempUI2.performed += HandleTempUI2;                   // 임시 UI 2 입력 감지
     }
+
+   
 
     // 이벤트 구독 해제
     private void OnDisable()
@@ -74,6 +78,7 @@ public class InputManager : Singleton<InputManager>
             playerControls.System.Pickup.performed -= HandlePickup;
             // 플레이어 인벤토리 이벤트 구독 해제
             playerControls.System.InventoryUI.performed -= HandleInventoryUI;
+            playerControls.System.RuneInventoryUI.performed -= HandleRuneInventoryUI;
             // 플레이어 상호작용 이벤트 구독 해제
             playerControls.System.Interact.performed -= HandleInteract;
             playerControls.System.TempUI2.performed -= HandleTempUI2;
@@ -137,6 +142,11 @@ public class InputManager : Singleton<InputManager>
     private void HandleInventoryUI(InputAction.CallbackContext context)
     {
         OnInventoryInput?.Invoke();
+    }
+    // 플레이어 룬 인벤토리 UI 이벤트 메서드
+     private void HandleRuneInventoryUI(InputAction.CallbackContext context)
+    {
+        OnRuneInventoryInput?.Invoke();
     }
     // 플레이어 상호작용 이벤트 매서드
     private void HandleInteract(InputAction.CallbackContext context)

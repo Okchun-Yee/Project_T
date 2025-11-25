@@ -12,6 +12,8 @@ namespace Inventory
     {
         [SerializeField] private InventoryManager inventoryUI;
         [SerializeField] private InventorySO inventoryData;
+        [SerializeField] private InventoryManager runeInventoryUI;
+        [SerializeField] private InventorySO runeInventoryData;
         public List<InventoryItemObj> initialItems = new List<InventoryItemObj>();
 
 
@@ -31,7 +33,7 @@ namespace Inventory
             PrepareInventoryData();
         }
 
-        private void OnDisable()
+        private void OnDisable() 
         {
             if (inventoryData != null)
             {
@@ -42,12 +44,12 @@ namespace Inventory
                 InputManager.Instance.OnInventoryInput -= InventoryInput;
             }
         }
-        private void InventoryInput()
+        private void InventoryInput() // 인벤토리 인풋
         {
             if (!inventoryUI.isActiveAndEnabled)
             {
                 inventoryUI.Show();
-                foreach (var item in inventoryData.GetCurrentInventoryState()) // 
+                foreach (var item in inventoryData.GetCurrentInventoryState()) // 모든 아이템 탐색
                 {
                     inventoryUI.UpdateData(item.Key, item.Value.item.Itemimage, item.Value.quantity); // key는 인덱스
 
@@ -58,7 +60,16 @@ namespace Inventory
                 inventoryUI.Hide();
             }
         }
-        private void PrepareInventoryData()
+        
+        private void UpdateRuneInventoryUI(Dictionary<int, InventoryItemObj> inventoryState) // 아이템의 위치(인덱스), 퀀티티 등 세부 정보 업데이트
+        {
+            runeInventoryUI.ResetAllItems();
+            foreach (var item in inventoryState)
+            {
+                runeInventoryUI.UpdateData(item.Key, item.Value.item.Itemimage, item.Value.quantity);
+            }
+        }
+        private void PrepareInventoryData() // 아이템 초기화
         {
             inventoryData.Initialize();
             inventoryData.OnInventoryUpdated += UpdateInventoryUI;
@@ -70,7 +81,7 @@ namespace Inventory
             }
         }
 
-        private void UpdateInventoryUI(Dictionary<int, InventoryItemObj> inventoryState)
+        private void UpdateInventoryUI(Dictionary<int, InventoryItemObj> inventoryState) // 아이템의 위치(인덱스), 퀀티티 등 세부 정보 업데이트
         {
             inventoryUI.ResetAllItems();
             foreach (var item in inventoryState)
@@ -79,7 +90,8 @@ namespace Inventory
             }
         }
 
-        private void PrepareUI()
+        // UI 초기화. 각 핸들러 및 이벤트 초기화
+        private void PrepareUI() 
         {
             inventoryUI.InitializeInventoryUI(inventoryData.Size);
             this.inventoryUI.OnDescriptionRequested += HandleDescriptionRequest;
@@ -93,7 +105,7 @@ namespace Inventory
 
         }
 
-        private void HandleDragging(int itemIndex)
+        private void HandleDragging(int itemIndex) // 아이템 드래그 확인
         {
             InventoryItemObj inventoryItem = inventoryData.GetItemAt(itemIndex);
             if (inventoryItem.isEmpty)
@@ -101,12 +113,12 @@ namespace Inventory
             inventoryUI.CreateDraggedItem(inventoryItem.item.Itemimage, inventoryItem.quantity);
         }
 
-        private void HandleSwapItems(int itemIndex_1, int itemIndex_2)
+        private void HandleSwapItems(int itemIndex_1, int itemIndex_2) // 아이템 위치 스왑
         {
             inventoryData.SwapItems(itemIndex_1, itemIndex_2);
         }
 
-        private void HandleDescriptionRequest(int itemIndex)
+        private void HandleDescriptionRequest(int itemIndex) // 아이템 선택이 바뀌었을 때 아이템 설명 업데이트
         {
             InventoryItemObj inventoryItem = inventoryData.GetItemAt(itemIndex);
             if (inventoryItem.isEmpty) // 빈 슬롯 선택시 선택 초기화

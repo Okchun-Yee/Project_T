@@ -287,6 +287,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RuneInventoryUI"",
+                    ""type"": ""Button"",
+                    ""id"": ""7a81cf81-e4f6-4aff-a8e9-2166c5af0d9c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -333,6 +342,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""TempUI2"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""56eb97c7-31e0-4c25-af06-0f30329ca32c"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RuneInventoryUI"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -371,6 +391,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_System_InventoryUI = m_System.FindAction("InventoryUI", throwIfNotFound: true);
         m_System_Interact = m_System.FindAction("Interact", throwIfNotFound: true);
         m_System_TempUI2 = m_System.FindAction("TempUI2", throwIfNotFound: true);
+        m_System_RuneInventoryUI = m_System.FindAction("RuneInventoryUI", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -682,6 +703,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_System_InventoryUI;
     private readonly InputAction m_System_Interact;
     private readonly InputAction m_System_TempUI2;
+    private readonly InputAction m_System_RuneInventoryUI;
     /// <summary>
     /// Provides access to input actions defined in input action map "System".
     /// </summary>
@@ -709,6 +731,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "System/TempUI2".
         /// </summary>
         public InputAction @TempUI2 => m_Wrapper.m_System_TempUI2;
+        /// <summary>
+        /// Provides access to the underlying input action "System/RuneInventoryUI".
+        /// </summary>
+        public InputAction @RuneInventoryUI => m_Wrapper.m_System_RuneInventoryUI;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -747,6 +773,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @TempUI2.started += instance.OnTempUI2;
             @TempUI2.performed += instance.OnTempUI2;
             @TempUI2.canceled += instance.OnTempUI2;
+            @RuneInventoryUI.started += instance.OnRuneInventoryUI;
+            @RuneInventoryUI.performed += instance.OnRuneInventoryUI;
+            @RuneInventoryUI.canceled += instance.OnRuneInventoryUI;
         }
 
         /// <summary>
@@ -770,6 +799,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @TempUI2.started -= instance.OnTempUI2;
             @TempUI2.performed -= instance.OnTempUI2;
             @TempUI2.canceled -= instance.OnTempUI2;
+            @RuneInventoryUI.started -= instance.OnRuneInventoryUI;
+            @RuneInventoryUI.performed -= instance.OnRuneInventoryUI;
+            @RuneInventoryUI.canceled -= instance.OnRuneInventoryUI;
         }
 
         /// <summary>
@@ -902,5 +934,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnTempUI2(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "RuneInventoryUI" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRuneInventoryUI(InputAction.CallbackContext context);
     }
 }

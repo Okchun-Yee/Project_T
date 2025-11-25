@@ -201,6 +201,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "RuneInventoryUI",
+                    "type": "Button",
+                    "id": "7a81cf81-e4f6-4aff-a8e9-2166c5af0d9c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -245,6 +254,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "TempUI2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "56eb97c7-31e0-4c25-af06-0f30329ca32c",
+                    "path": "<Keyboard>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RuneInventoryUI",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
