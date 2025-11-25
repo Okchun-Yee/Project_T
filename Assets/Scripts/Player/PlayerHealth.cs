@@ -40,11 +40,18 @@ public class PlayerHealth : Singleton<PlayerHealth>
         }
     }
 
-    public void HealPlayer()
+    public void HealPlayer(int healAmount=0)
     {
-        if (currentHealth < maxHealth)
+        if (healAmount <= 0)
         {
-            currentHealth++;
+            if (currentHealth < maxHealth)
+            {
+                currentHealth++;
+            }
+        }
+        else
+        {
+            currentHealth = Mathf.Min(currentHealth + healAmount, maxHealth);
         }
     }
     public void TakeDamage(int damageAmount, Transform hitTransform)

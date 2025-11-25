@@ -4,8 +4,11 @@ using UnityEngine;
 
 namespace Inventory.Model
 {
-    [CreateAssetMenu(menuName = "New Item")]
-    public class ItemSO : ScriptableObject
+    /// <summary>
+    /// 아이템의 기본 속성들을 정의하는 추상 클래스
+    /// 사용 아이템, 장착 아이템 유형의 기반
+    /// </summary>
+    public abstract class ItemSO : ScriptableObject
     {
         [field: SerializeField] public bool IsStackable { get; set; } // 아이템 개수 스택
         public int ID => GetInstanceID();
