@@ -83,14 +83,13 @@ public class LootingManager : Singleton<LootingManager>
         }
         OnLoot?.Invoke(item);   // 공통 이벤트 호출
         item.Looting();         // 파생 클래스의 Looting 메서드 호출
-        nearItem.Remove(item);  // 픽업된 아이템을 근처 아이템 리스트에서 제거
         closestLoot = null;     // 가장 가까운 아이템 초기화
     }
 
     // 플레이어 주변 픽업 아이템 스캔
     private void UpdateNearbyLoots()
     {
-        nearItem.Clear();
+        nearItem.Clear();   // 이전 근처 아이템 리스트 초기화
 
         Vector3 playerPos = PlayerController.Instance.transform.position;
         Collider2D[] lootingColliders = Physics2D.OverlapCircleAll(playerPos, lootingRange, lootingLayer);
