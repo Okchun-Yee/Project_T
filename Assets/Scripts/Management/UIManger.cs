@@ -6,42 +6,30 @@ using UnityEngine.UI;
 
 public class UIManager : Singleton<UIManager>
 {
-    private Slider healthSlider;
-    private int currentHealth;
-    [SerializeField] private int maxHealth = 100;
+    [SerializeField] private Slider healthSlider;
     public TextMeshProUGUI hpText; //hp 표시 텍스트
+    private int maxHealth;
+    const string HEALTH_SLIDER_TEXT = "Health Bar";
 
     protected override void Awake()
     {
         base.Awake();
-        currentHealth = maxHealth;
-    }
-
-     private void Start()
-    {   
-        Debug.Log("테스트 시작");
-        currentHealth = maxHealth;
-        UpdateHealthSlider();
-        
-        // 2초마다 TakeDamage() 실행
-        InvokeRepeating("TakeDamage", 2, 2);
-    }
-
-    private void TakeDamage()
-    {
-        currentHealth -= 10;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth); // 0 이하로는 안 떨어지게
-        UpdateHealthSlider();
-    }
-    private void UpdateHealthSlider()
-    {
-        const string HEALTH_SLIDER_TEXT = "Health Bar";
         if (healthSlider == null)
         {
             healthSlider = GameObject.Find(HEALTH_SLIDER_TEXT).GetComponent<Slider>();
         }
+    }
+
+     private void Start()
+    {   
+        maxHealth = PlayerHealth.Instance.maxHealthGetter();
         healthSlider.maxValue = maxHealth;
-        healthSlider.value = currentHealth;
-        hpText.text = currentHealth + "/" + maxHealth;
+
+        UpdateHealthSlider();
+    }
+    public void UpdateHealthSlider()
+    {
+        healthSlider.value = PlayerHealth.Instance.currentHealthGetter();
+        hpText.text = PlayerHealth.Instance.currentHealthGetter() + "/" + maxHealth;
     }
 }
