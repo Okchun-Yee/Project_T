@@ -24,7 +24,7 @@ namespace Inventory.Model
     }
     public interface IDestroyableItem
     {
-
+        
     }
     public interface IItemAction
     {

@@ -64,7 +64,7 @@ namespace Inventory
             inventoryData.OnInventoryUpdated += UpdateInventoryUI;
             foreach (InventoryItemObj item in initialItems)
             {
-                if (item.isEmpty)
+                if (item.IsEmpty)
                     continue;
                 inventoryData.AddItem(item);
             }
@@ -90,13 +90,26 @@ namespace Inventory
 
         private void HandleItemActionRequest(int itemIndex)
         {
+            InventoryItemObj inventoryItem = inventoryData.GetItemAt(itemIndex);
+            if (inventoryItem.IsEmpty)
+                return;
 
+            IItemAction itemAction = inventoryItem.item as IItemAction;
+            if (itemAction != null)
+            {
+                itemAction.PerformAction(gameObject);
+            }
+            IDestroyableItem destroyableItem = inventoryItem.item as IDestroyableItem;
+            if( destroyableItem != null)
+            {
+                inventoryData.RemoveItem(itemIndex, 1);
+            }
         }
 
         private void HandleDragging(int itemIndex)
         {
             InventoryItemObj inventoryItem = inventoryData.GetItemAt(itemIndex);
-            if (inventoryItem.isEmpty)
+            if (inventoryItem.IsEmpty)
                 return;
             inventoryUI.CreateDraggedItem(inventoryItem.item.Itemimage, inventoryItem.quantity);
         }
@@ -109,7 +122,7 @@ namespace Inventory
         private void HandleDescriptionRequest(int itemIndex)
         {
             InventoryItemObj inventoryItem = inventoryData.GetItemAt(itemIndex);
-            if (inventoryItem.isEmpty) // 빈 슬롯 선택시 선택 초기화
+            if (inventoryItem.IsEmpty) // 빈 슬롯 선택시 선택 초기화
             {
                 inventoryUI.ResetSelection();
                 return;

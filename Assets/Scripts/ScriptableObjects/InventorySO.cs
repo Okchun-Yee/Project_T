@@ -27,7 +27,7 @@ namespace Inventory.Model
             Dictionary<int, InventoryItemObj> returnValue = new Dictionary<int, InventoryItemObj>();
             for (int i = 0; i < inventoryItems.Count; i++)
             {
-                if (inventoryItems[i].isEmpty)
+                if (inventoryItems[i].IsEmpty)
                     continue;
                 returnValue[i] = inventoryItems[i];
             }
@@ -38,7 +38,28 @@ namespace Inventory.Model
         {
             return inventoryItems[itemIndex];
         }
-
+        public void RemoveItem(int itemIndex, int amount)
+        {
+            if(inventoryItems.Count > itemIndex)
+            {
+                if(inventoryItems[itemIndex].IsEmpty)
+                {
+                    Debug.LogWarning($"[InventorySO] Attempting to remove item at index {itemIndex}, but it's already empty.");
+                    return;
+                }
+                int reminder = inventoryItems[itemIndex].quantity - amount;
+                
+                if(reminder <= 0)
+                {
+                    inventoryItems[itemIndex] = InventoryItemObj.GetEmptyItem();
+                }
+                else
+                {
+                    inventoryItems[itemIndex] = inventoryItems[itemIndex].ChangeQuantity(reminder);
+                }
+                InformAboutChange();
+            }
+        }
         public void AddItem(InventoryItemObj item)
         {
             AddItem(item.item, item.quantity);
@@ -69,7 +90,7 @@ namespace Inventory.Model
 
             for (int i = 0; i < inventoryItems.Count; i++)
             {
-                if (inventoryItems[i].isEmpty)
+                if (inventoryItems[i].IsEmpty)
                 {
                     inventoryItems[i] = newItem;
                     return quantity;
@@ -79,13 +100,13 @@ namespace Inventory.Model
         }
 
         private bool IsInventoryFull()
-        => inventoryItems.Where(item => item.isEmpty).Any() == false; // 인벤토리가 가득 찼는지 확인
+        => inventoryItems.Where(item => item.IsEmpty).Any() == false; // 인벤토리가 가득 찼는지 확인
 
         private int AddStackableItem(ItemSO item, int quantity)
         {
             for (int i = 0; i < inventoryItems.Count; i++)
             {
-                if (inventoryItems[i].isEmpty)
+                if (inventoryItems[i].IsEmpty)
                     continue;
                 if (inventoryItems[i].item.ID == item.ID)
                 {
@@ -139,7 +160,7 @@ namespace Inventory.Model
     {
         public int quantity;
         public ItemSO item;
-        public bool isEmpty => item == null;
+        public bool IsEmpty => item == null;
 
         public InventoryItemObj ChangeQuantity(int newQuantity) // 값을 변경하기 위한 또 하나의 구조체
         {

@@ -53,6 +53,7 @@ public class PlayerHealth : Singleton<PlayerHealth>
         {
             currentHealth = Mathf.Min(currentHealth + healAmount, maxHealth);
         }
+        UIManager.Instance.UpdateHealthSlider();
     }
     public void TakeDamage(int damageAmount, Transform hitTransform)
     {
