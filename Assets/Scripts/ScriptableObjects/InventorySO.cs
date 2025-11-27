@@ -64,13 +64,13 @@ namespace Inventory.Model
         {
             AddItem(item.item, item.quantity);
         }
-        public int AddItem(ItemSO item, int quantity)
-        {
+        public int AddItem(ItemSO item, int quantity, List<ItemParameter> itemState = null)
+        { 
             if (item.IsStackable == false)
             {
                 while (quantity > 0 && !IsInventoryFull())
                 {
-                    quantity -= AddItemToFirstFreeSlot(item, 1);
+                    quantity -= AddItemToFirstFreeSlot(item, 1, itemState);
                 }
                 InformAboutChange();
                 return quantity;
@@ -80,12 +80,13 @@ namespace Inventory.Model
             return quantity;
         }
 
-        private int AddItemToFirstFreeSlot(ItemSO item, int quantity)
+        private int AddItemToFirstFreeSlot(ItemSO item, int quantity, List<ItemParameter> itemState = null)
         {
             InventoryItemObj newItem = new InventoryItemObj
             {
                 item = item,
-                quantity = quantity
+                quantity = quantity,
+                itemState = new List<ItemParameter>(itemState == null ? item.DefaultParametersList : itemState)
             };
 
             for (int i = 0; i < inventoryItems.Count; i++)
@@ -160,6 +161,7 @@ namespace Inventory.Model
     {
         public int quantity;
         public ItemSO item;
+        public List<ItemParameter> itemState;
         public bool IsEmpty => item == null;
 
         public InventoryItemObj ChangeQuantity(int newQuantity) // 값을 변경하기 위한 또 하나의 구조체
@@ -168,12 +170,14 @@ namespace Inventory.Model
             {
                 item = this.item,
                 quantity = newQuantity,
+                itemState = new List<ItemParameter>(this.itemState)
             };
         }
         public static InventoryItemObj GetEmptyItem() => new InventoryItemObj
         {
             item = null,
             quantity = 0,
+            itemState = new List<ItemParameter>()
         };
     }
 }

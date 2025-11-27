@@ -5,7 +5,7 @@ using System;
 
 namespace Inventory.Model
 {
-    [CreateAssetMenu(menuName = "New Edible-Item")]
+    [CreateAssetMenu(menuName = "New EdibleItem")]
     public class EdibleItemSO : ItemSO, IDestroyableItem, IItemAction
     {
         [SerializeField] private List<ModifierData> modifiersData = new List<ModifierData>();
@@ -13,7 +13,7 @@ namespace Inventory.Model
 
         public AudioClip actionSFX { get; private set; }
 
-        public bool PerformAction(GameObject character)
+        public bool PerformAction(GameObject character, List<ItemParameter> itemState = null)
         {
             foreach (ModifierData data in modifiersData)
             {
@@ -30,7 +30,7 @@ namespace Inventory.Model
     {
         public string ActionName { get; }
         public AudioClip actionSFX { get; }
-        public bool PerformAction(GameObject character);
+        public bool PerformAction(GameObject character, List<ItemParameter> itemState);
     }
     [Serializable] 
     public class ModifierData
