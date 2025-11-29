@@ -16,7 +16,8 @@ MonoBehaviour:
   <MaxStackSize>k__BackingField: 99
   <Name>k__BackingField: Item-01
   <Description>k__BackingField: "1a2w3e4r\uAC00\uB098\uB2E4\uB77C"
-  <Itemimage>k__BackingField: {fileID: 21300000, guid: a89e085ab5cc2894297545888f42e8a1, type: 3}
+  <ItemImage>k__BackingField: {fileID: 21300000, guid: a89e085ab5cc2894297545888f42e8a1, type: 3}
+  <DefaultParametersList>k__BackingField: []
   modifiersData:
   - statModifier: {fileID: 11400000, guid: ad82ff2b8914ea742924fe225fb8edae, type: 2}
     value: 1

@@ -8,12 +8,18 @@ namespace Inventory.Model
     public class EquippableItemSO : ItemSO, IDestroyableItem, IItemAction
     {
         public string ActionName => "Equip";
-
-        public AudioClip actionSFX {get; private set;}
+        [field: SerializeField] public AudioClip actionSFX {get; private set;}
 
         public bool PerformAction(GameObject character, List<ItemParameter> itemState = null)
         {
-            throw new System.NotImplementedException();
+            AgentWeapon agentWeapon = character.GetComponent<AgentWeapon>();
+            if (agentWeapon != null)
+            {
+                agentWeapon.SetWeapon(this, itemState == null ? 
+                    DefaultParametersList : itemState);
+                return true;
+            }
+            return false;
         }
     }
 }

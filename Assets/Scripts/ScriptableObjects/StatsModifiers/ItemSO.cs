@@ -16,11 +16,10 @@ namespace Inventory.Model
         [field: SerializeField] public int MaxStackSize { get; set; } = 1; // 최대 개수
         [field: SerializeField] public string Name { get; set; } // 이름
         [field: SerializeField] [field : TextArea] public string Description { get; set; } // 설명
-        [field: SerializeField] public Sprite Itemimage { get; set; } //이미지
-
+        [field: SerializeField] public Sprite ItemImage { get; set; } //이미지
         [field: SerializeField] public List<ItemParameter> DefaultParametersList { get; set; } // 아이템 파라미터
     }
-    [SerializeField]
+    [Serializable] 
     public struct ItemParameter : IEquatable<ItemParameter>
     {
         public ItemParameterSO itemParameter;

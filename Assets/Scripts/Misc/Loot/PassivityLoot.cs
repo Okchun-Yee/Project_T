@@ -23,9 +23,9 @@ public class PassivityLoot : BaseLoot
     private void Start()
     {
         // 아이템 스프라이트 설정
-        if (inventoryData != null && spriteRenderer != null && inventoryData.Itemimage != null)
+        if (inventoryData != null && spriteRenderer != null && inventoryData.ItemImage != null)
         {
-            spriteRenderer.sprite = inventoryData.Itemimage;
+            spriteRenderer.sprite = inventoryData.ItemImage;
         }
     }
     public override bool CanPickup()

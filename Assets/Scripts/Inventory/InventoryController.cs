@@ -20,8 +20,6 @@ namespace Inventory
         {
             base.Awake();
         }
-
-
         private void OnEnable()
         {
             if (InputManager.Instance != null)
@@ -50,7 +48,7 @@ namespace Inventory
                 inventoryUI.Show();
                 foreach (var item in inventoryData.GetCurrentInventoryState()) // 
                 {
-                    inventoryUI.UpdateData(item.Key, item.Value.item.Itemimage, item.Value.quantity); // key는 인덱스
+                    inventoryUI.UpdateData(item.Key, item.Value.item.ItemImage, item.Value.quantity); // key는 인덱스
 
                 }
             }
@@ -76,7 +74,7 @@ namespace Inventory
             inventoryUI.ResetAllItems();
             foreach (var item in inventoryState)
             {
-                inventoryUI.UpdateData(item.Key, item.Value.item.Itemimage, item.Value.quantity);
+                inventoryUI.UpdateData(item.Key, item.Value.item.ItemImage, item.Value.quantity);
             }
         }
 
@@ -94,16 +92,17 @@ namespace Inventory
             InventoryItemObj inventoryItem = inventoryData.GetItemAt(itemIndex);
             if (inventoryItem.IsEmpty)
                 return;
-
-            IItemAction itemAction = inventoryItem.item as IItemAction;
-            if (itemAction != null)
-            {
-                itemAction.PerformAction(gameObject, null);
-            }
+                
             IDestroyableItem destroyableItem = inventoryItem.item as IDestroyableItem;
             if (destroyableItem != null)
             {
                 inventoryData.RemoveItem(itemIndex, 1);
+            }
+
+            IItemAction itemAction = inventoryItem.item as IItemAction;
+            if (itemAction != null)
+            {
+                itemAction.PerformAction(gameObject, inventoryItem.itemState);
             }
         }
 
@@ -112,7 +111,7 @@ namespace Inventory
             InventoryItemObj inventoryItem = inventoryData.GetItemAt(itemIndex);
             if (inventoryItem.IsEmpty)
                 return;
-            inventoryUI.CreateDraggedItem(inventoryItem.item.Itemimage, inventoryItem.quantity);
+            inventoryUI.CreateDraggedItem(inventoryItem.item.ItemImage, inventoryItem.quantity);
         }
 
         private void HandleSwapItems(int itemIndex_1, int itemIndex_2)
@@ -130,7 +129,7 @@ namespace Inventory
             }
             ItemSO item = inventoryItem.item;
             string description = PrepareDescription(inventoryItem);
-            inventoryUI.UpdateDecription(itemIndex, item.Itemimage, item.Name, description);
+            inventoryUI.UpdateDecription(itemIndex, item.ItemImage, item.Name, description);
         }
         private string PrepareDescription(InventoryItemObj inventoryItem)
         {
