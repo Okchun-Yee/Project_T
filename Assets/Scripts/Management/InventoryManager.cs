@@ -20,6 +20,7 @@ namespace Inventory.UI
 
         public event Action<int> OnDescriptionRequested, OnItemActionRequested, OnStartDragging; // 인덱스를 가져와 적용
         public event Action<int, int> OnSwapItem; // 스왑할 두 개의 아이템 인덱스를 가져와 적용
+        [SerializeField] private ItemActionPanel actionPanel;
 
         private void Awake()
         {
@@ -121,6 +122,15 @@ namespace Inventory.UI
             itemDescription.ResetDescription();
             DeselectAllItems(); // 테두리 초기화
         }
+        public void AddAction(string actionName, Action performAction)
+        {
+            actionPanel.AddButon(actionName, performAction);
+        }
+        public void ShowItemAction(int itemIndex)
+        {
+            actionPanel.Toggle(true);
+            actionPanel.transform.position = listOfItems[itemIndex].transform.position;
+        }
 
         private void DeselectAllItems() 
         {
@@ -128,10 +138,12 @@ namespace Inventory.UI
             {
                 item.Deselect(); // 선택 취소
             }
+            actionPanel.Toggle(false);
         }
 
         public void Hide()
         {
+            actionPanel.Toggle(false);
             gameObject.SetActive(false);
             ResetDraggedItem();
         }
