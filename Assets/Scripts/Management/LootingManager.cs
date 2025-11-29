@@ -12,7 +12,7 @@ public class LootingManager : Singleton<LootingManager>
     [Header("Looting Settings")]
     [SerializeField] private float lootingRange = 2.0f;     // 픽업 범위
     [SerializeField] private Transform playerTransform;     // 플레이어 트랜스폼
-    [SerializeField] private readonly LayerMask lootingLayer = -1;   // 픽업 가능 레이어
+    [SerializeField] private LayerMask lootingLayer = -1;   // 픽업 가능 레이어
     // 픽업 이벤트
     public event Action OnWeaponLoot;       // WeaponData 호출 이벤트 
     public event Action OnItemLoot;         // ItemData 호출 이벤트

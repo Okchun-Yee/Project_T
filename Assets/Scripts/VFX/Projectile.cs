@@ -57,7 +57,7 @@ public class Projectile : BaseVFX
     protected override void OnVFXInitialized()
     {
         // 투사체의 초기화 로직 구현
-        Debug.Log($"Projectile [{gameObject.name}]: Initialized with damage {assignedDamage}");
+        // Debug.Log($"Projectile [{gameObject.name}]: Initialized with damage {assignedDamage}");
     }
 
     // 투사체 충돌 처리 매서드

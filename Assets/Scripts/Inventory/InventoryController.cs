@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using Inventory.Model;
 using Inventory.UI;
 using UnityEngine;
@@ -13,14 +14,14 @@ namespace Inventory
         [SerializeField] private InventoryManager inventoryUI;
         [SerializeField] private InventorySO inventoryData;
         public List<InventoryItemObj> initialItems = new List<InventoryItemObj>();
+        [SerializeField] private AudioClip dropSound;
+        [SerializeField] private AudioSource audioSource;
 
 
         protected override void Awake()
         {
             base.Awake();
         }
-
-
         private void OnEnable()
         {
             if (InputManager.Instance != null)
@@ -49,7 +50,7 @@ namespace Inventory
                 inventoryUI.Show();
                 foreach (var item in inventoryData.GetCurrentInventoryState()) // 
                 {
-                    inventoryUI.UpdateData(item.Key, item.Value.item.Itemimage, item.Value.quantity); // key는 인덱스
+                    inventoryUI.UpdateData(item.Key, item.Value.item.ItemImage, item.Value.quantity); // key는 인덱스
 
                 }
             }
@@ -64,7 +65,7 @@ namespace Inventory
             inventoryData.OnInventoryUpdated += UpdateInventoryUI;
             foreach (InventoryItemObj item in initialItems)
             {
-                if (item.isEmpty)
+                if (item.IsEmpty)
                     continue;
                 inventoryData.AddItem(item);
             }
@@ -75,7 +76,7 @@ namespace Inventory
             inventoryUI.ResetAllItems();
             foreach (var item in inventoryState)
             {
-                inventoryUI.UpdateData(item.Key, item.Value.item.Itemimage, item.Value.quantity);
+                inventoryUI.UpdateData(item.Key, item.Value.item.ItemImage, item.Value.quantity);
             }
         }
 
@@ -90,15 +91,60 @@ namespace Inventory
 
         private void HandleItemActionRequest(int itemIndex)
         {
+            InventoryItemObj inventoryItem = inventoryData.GetItemAt(itemIndex);
+            if (inventoryItem.IsEmpty)
+                return;
 
+            IItemAction itemAction = inventoryItem.item as IItemAction;
+            if (itemAction != null)
+            {
+                inventoryUI.ShowItemAction(itemIndex);
+                inventoryUI.AddAction(itemAction.ActionName, () => PerformAction(itemIndex));
+            }
+            IDestroyableItem destroyableItem = inventoryItem.item as IDestroyableItem;
+            if (destroyableItem != null)
+            {
+                inventoryUI.AddAction("Drop", () => DropItem(itemIndex, inventoryItem.quantity));
+            }
+        }
+
+        private void DropItem(int itemIndex, int quantity)
+        {
+            inventoryData.RemoveItem(itemIndex, quantity);
+            inventoryUI.ResetSelection();
+            audioSource.PlayOneShot(dropSound);
+        }
+
+        public void PerformAction(int itemIndex)
+        {
+            InventoryItemObj inventoryItem = inventoryData.GetItemAt(itemIndex);
+            if (inventoryItem.IsEmpty)
+                return;
+                
+            IDestroyableItem destroyableItem = inventoryItem.item as IDestroyableItem;
+            if (destroyableItem != null)
+            {
+                inventoryData.RemoveItem(itemIndex, 1);
+            }
+
+            IItemAction itemAction = inventoryItem.item as IItemAction;
+            if (itemAction != null)
+            {
+                itemAction.PerformAction(gameObject, inventoryItem.itemState);
+                audioSource.PlayOneShot(itemAction.actionSFX);
+                if(inventoryData.GetItemAt(itemIndex).IsEmpty)
+                {
+                    inventoryUI.ResetSelection();
+                }
+            }
         }
 
         private void HandleDragging(int itemIndex)
         {
             InventoryItemObj inventoryItem = inventoryData.GetItemAt(itemIndex);
-            if (inventoryItem.isEmpty)
+            if (inventoryItem.IsEmpty)
                 return;
-            inventoryUI.CreateDraggedItem(inventoryItem.item.Itemimage, inventoryItem.quantity);
+            inventoryUI.CreateDraggedItem(inventoryItem.item.ItemImage, inventoryItem.quantity);
         }
 
         private void HandleSwapItems(int itemIndex_1, int itemIndex_2)
@@ -109,13 +155,27 @@ namespace Inventory
         private void HandleDescriptionRequest(int itemIndex)
         {
             InventoryItemObj inventoryItem = inventoryData.GetItemAt(itemIndex);
-            if (inventoryItem.isEmpty) // 빈 슬롯 선택시 선택 초기화
+            if (inventoryItem.IsEmpty) // 빈 슬롯 선택시 선택 초기화
             {
                 inventoryUI.ResetSelection();
                 return;
             }
             ItemSO item = inventoryItem.item;
-            inventoryUI.UpdateDecription(itemIndex, item.Itemimage, item.Name, item.Description);
+            string description = PrepareDescription(inventoryItem);
+            inventoryUI.UpdateDecription(itemIndex, item.ItemImage, item.Name, description);
+        }
+        private string PrepareDescription(InventoryItemObj inventoryItem)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(inventoryItem.item.Description);
+            sb.AppendLine();
+            for(int i = 0; i < inventoryItem.itemState.Count; ++i){
+                sb.AppendLine($"{inventoryItem.itemState[i].itemParameter.parameterName} "
+                + $": {inventoryItem.itemState[i].value} / "
+                + $"{inventoryItem.item.DefaultParametersList[i].value}");
+                sb.AppendLine();
+            }
+            return sb.ToString();
         }
     }
 

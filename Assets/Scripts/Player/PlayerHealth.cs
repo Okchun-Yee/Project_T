@@ -8,7 +8,7 @@ public class PlayerHealth : Singleton<PlayerHealth>
     public bool isDead { get; private set; }
 
     [Header("Health Settings")]
-    [SerializeField] private int maxHealth = 3;
+    [SerializeField] private int maxHealth = 10;
     [Header("Hit Settings")]
     [SerializeField] private float knockBackThrustAmount = 1f;
     [SerializeField] private float damageRecoveryTime = 1f;
@@ -25,11 +25,11 @@ public class PlayerHealth : Singleton<PlayerHealth>
         base.Awake();
         knockback = GetComponent<Knockback>();
         flash = GetComponent<Flash>();
+        currentHealth = maxHealth;
     }
     private void Start()
     {
         isDead = false;
-        currentHealth = maxHealth;
     }
     private void OnCollisionStay2D(Collision2D collision)
     {
@@ -40,12 +40,20 @@ public class PlayerHealth : Singleton<PlayerHealth>
         }
     }
 
-    public void HealPlayer()
+    public void HealPlayer(int healAmount=0)
     {
-        if (currentHealth < maxHealth)
+        if (healAmount <= 0)
         {
-            currentHealth++;
+            if (currentHealth < maxHealth)
+            {
+                currentHealth++;
+            }
         }
+        else
+        {
+            currentHealth = Mathf.Min(currentHealth + healAmount, maxHealth);
+        }
+        UIManager.Instance.UpdateHealthSlider();
     }
     public void TakeDamage(int damageAmount, Transform hitTransform)
     {
@@ -55,7 +63,9 @@ public class PlayerHealth : Singleton<PlayerHealth>
         knockback.GetKnockedBack(hitTransform, knockBackThrustAmount);
         StartCoroutine(flash.FlashRoutine());
 
+        Debug.Log("[PlayerHealth] Player took damage: " + damageAmount);
         currentHealth -= damageAmount;
+        UIManager.Instance.UpdateHealthSlider();
         DamageRecoveryTime();
 
         CheckIfPlayerDeath();
@@ -90,4 +100,6 @@ public class PlayerHealth : Singleton<PlayerHealth>
         yield return new WaitForSeconds(damageRecoveryTime);
         canTakeDamage = true;
     }
+    public int maxHealthGetter() => maxHealth;
+    public int currentHealthGetter() => currentHealth;
 }

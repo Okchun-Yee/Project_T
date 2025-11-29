@@ -244,6 +244,7 @@ GameObject:
   - component: {fileID: 6452783177651912205}
   - component: {fileID: 4851540924471138649}
   - component: {fileID: 551655167739136020}
+  - component: {fileID: 2544210104233898081}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -432,7 +433,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf97926f04dd86745bc6a6af294f2ab0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 10
   knockBackThrustAmount: 4
   damageRecoveryTime: 1.2
 --- !u!114 &6607252703563164941
@@ -490,6 +491,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   knockBackTime: 0.5
+--- !u!114 &2544210104233898081
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3969855821128286577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e41904a4104a2dc4c86bbdef65831873, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventoryUI: {fileID: 0}
+  inventoryData: {fileID: 11400000, guid: 599806ef280ef5e49a3ab8741677cf1a, type: 2}
+  initialItems: []
 --- !u!1 &5082727570490180707
 GameObject:
   m_ObjectHideFlags: 0
