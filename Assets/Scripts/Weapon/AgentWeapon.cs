@@ -7,23 +7,24 @@ using UnityEngine;
 public class AgentWeapon : MonoBehaviour
 {
     [Header("Equipped Weapon State")]
-    [SerializeField] private Inventory.Model.EquippableItemSO weaponData;               // 현재 장착 중인 무기 데이터
+    [SerializeField] private EquippableItemSO weaponData;               // 현재 장착 중인 무기 데이터
     [SerializeField] private InventorySO inventoryData;                 // 플레이어 인벤토리 데이터 : 무기 반환용
     [SerializeField] private List<ItemParameter> parametersToModify;    // 무기 장착 시 수정할 파라미터 리스트
     [SerializeField] private List<ItemParameter> itemCurrentState;      // 현재 무기 상태 (강화 수치 등)
 
-    public event Action<Inventory.Model.EquippableItemSO, List<ItemParameter>> OnWeaponChanged; // 장착된 무기가 변경되었을 때 발생하는 이벤트 (weaponSO, itemState)
+    public event Action<EquippableItemSO, List<ItemParameter>> OnWeaponChanged; // 장착된 무기가 변경되었을 때 발생하는 이벤트 (weaponSO, itemState)
 
     // ---------- 외부 접근용 프로퍼티 ----------
-    public Inventory.Model.EquippableItemSO CurrentWeapon => weaponData;
+    public EquippableItemSO CurrentWeapon => weaponData;
     public IReadOnlyList<ItemParameter> CurrentParameters => itemCurrentState;
+    public InventorySO InventoryData => inventoryData;  // 인벤토리 데이터 접근용
     // -----------------------------------------
     
     /// <summary>
     /// * 무기를 장착/교체 시 진입점
     /// EquippableItemSO.PerformAction()에서 호출됨.
     /// </summary>
-    public void SetWeapon(Inventory.Model.EquippableItemSO weaponSO, List<ItemParameter> itemState)
+    public void SetWeapon(EquippableItemSO weaponSO, List<ItemParameter> itemState)
     {
         // 0) 방어 코드: 인벤토리/입력 상태 null 방지
         if (itemCurrentState == null)

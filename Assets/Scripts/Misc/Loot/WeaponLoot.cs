@@ -40,20 +40,37 @@ public class WeaponLoot : BaseLoot
             Debug.LogWarning($"[WeaponLoot] PlayerTransform not found when picking up {weaponData.name}");
             return;
         }
-        
-        // 2) performAction 호출하여 무기 장착 시도
-        GameObject player = playerTf.gameObject;
-        bool equipped = weaponData.PerformAction(player);
-        if (equipped)
+
+        // 2) 플레이어의 AgentWeapon에서 InventorySO 꺼내기
+        AgentWeapon agentWeapon = playerTf.GetComponent<AgentWeapon>();
+        // 방어 코드 
+        if (agentWeapon == null || agentWeapon.InventoryData == null)
         {
-            Debug.Log($"[WeaponLoot] Weapon looted & equipped via PerformAction: {weaponData.name}");
-            // 획득 후 아이템 제거
+            Debug.LogWarning($"[WeaponLoot] AgentWeapon or InventoryData missing on player when picking up {weaponData.name}");
+            return;
+        }
+        InventorySO inventory = agentWeapon.InventoryData;
+
+        // 3) 인벤토리에 무기 추가
+        int quantityToAdd = 1;
+        // itemState가 필요하면 여기서 준비해서 넘기면 됨 (예: 기본 파라미터 복사)
+        // List<ItemParameter> state = new List<ItemParameter>(weaponData.DefaultParametersList);
+        List<ItemParameter> state = null;
+        int remaining = inventory.AddItem(weaponData, quantityToAdd, state);
+        if (remaining == 0)
+        {
+            // 전부 성공적으로 들어감
+            Debug.Log($"[WeaponLoot] Weapon added to inventory: {weaponData.name}");
+            // 4) 획득 후 처리
             canLoot = false;
             DestroyItem();
         }
         else
         {
-            Debug.LogWarning($"[WeaponLoot] PerformAction failed for {weaponData.name}");
+            // 인벤토리 가득 차서 못 넣음 (또는 일부만 넣었는데 우리는 1개 기준이라 = 1이면 전부 못 넣은 것)
+            Debug.LogWarning($"[WeaponLoot] Failed to add weapon to inventory (maybe full): {weaponData.name}");
+            
+            // 획득 실패 (인벤토리 Full 피드백 추가)
         }
 
     }
