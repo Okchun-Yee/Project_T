@@ -26,6 +26,12 @@ public class AgentWeapon : MonoBehaviour
     /// </summary>
     public void SetWeapon(EquippableItemSO weaponSO, List<ItemParameter> itemState)
     {
+        // 방어 코드: null 무기 장착 시도 방지
+        if (weaponSO == null)
+        {
+            Debug.LogWarning("[AgentWeapon] Attempted to set null weapon. Use UnequipWeapon instead.");
+            return;
+        }
         // 0) 방어 코드: 인벤토리/입력 상태 null 방지
         if (itemCurrentState == null)
         {
