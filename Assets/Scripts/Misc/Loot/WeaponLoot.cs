@@ -54,8 +54,7 @@ public class WeaponLoot : BaseLoot
         // 3) 인벤토리에 무기 추가
         int quantityToAdd = 1;
         // itemState가 필요하면 여기서 준비해서 넘기면 됨 (예: 기본 파라미터 복사)
-        // List<ItemParameter> state = new List<ItemParameter>(weaponData.DefaultParametersList);
-        List<ItemParameter> state = null;
+        List<ItemParameter> state = new List<ItemParameter>(weaponData.DefaultParametersList);
         int remaining = inventory.AddItem(weaponData, quantityToAdd, state);
         if (remaining == 0)
         {

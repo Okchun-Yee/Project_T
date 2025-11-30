@@ -104,7 +104,11 @@ public class WeaponManager : Singleton<WeaponManager>
     public void HandleAgentWeaponChanged(EquippableItemSO info, List<ItemParameter> state)
     {
         // 일단은 state는 사용하지 않고, 무기 데이터 기준으로만 장착
-        // (추후 state를 반영해서 강화/옵션을 Weapon에 반영하는 단계로 확장 가능)
+        // TODO: (추후 state를 반영해서 강화/옵션을 Weapon에 반영하는 단계로 확장 가능)
+        if (state != null && state.Count > 0)
+        {
+            Debug.Log($"[WeaponManager] HandleAgentWeaponChanged called with state: {string.Join(", ", state)}");
+        }
         EquipWeapon(info);
     }
 }
