@@ -34,7 +34,7 @@ namespace Inventory.Model
             return returnValue;
         }
 
-        public InventoryItemObj GetItemAt(int itemIndex)
+        public InventoryItemObj GetItemAt(int itemIndex) 
         {
             return inventoryItems[itemIndex];
         }

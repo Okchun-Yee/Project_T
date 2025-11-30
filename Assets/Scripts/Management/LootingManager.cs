@@ -22,6 +22,9 @@ public class LootingManager : Singleton<LootingManager>
     private readonly List<ILooting> nearItem = new List<ILooting>();
     private ILooting closestLoot;
 
+    // 외부 접근용 프로퍼티
+    public Transform PlayerTransform => playerTransform;
+    public float LootingRange => lootingRange;
     protected override void Awake()
     {
         base.Awake();
