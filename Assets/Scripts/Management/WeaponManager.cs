@@ -36,19 +36,20 @@ public class WeaponManager : Singleton<WeaponManager>
     }
     /// <summary>
     /// * 무기 장착 매서드
+    /// info는 null이 아니어야 하며, 무기 해제는 UnequipWeapon() 또는 AgentWeapon.SetWeapon(null)로 처리해야 합니다.
     /// </summary>
     public void EquipWeapon(EquippableItemSO info)
     {
         if (info == null)
         {
             Debug.LogError("[WeaponManager] WeaponInfo is null");
-            UnequipWeapon();     // null이 들어오면 해제
+            UnequipWeapon();     // null이 들어오면 해제, 편의용 숏컷
             return;
         }
         // 1) 기존 장착 무기 제거
         if (currentWeapon != null)
         {
-           UnequipWeapon();
+           UnequipWeapon();     // 편의용 숏컷 SSOT 구조상 무기 장착/해제는 AgentWeapon가 담당하지만, 여기서도 안전하게 처리
         }
 
         // 2) 새 무기 인스턴스화 및 마운트
