@@ -18,8 +18,8 @@ public class AgentWeapon : MonoBehaviour
     public EquippableItemSO CurrentWeapon => weaponData;
     public IReadOnlyList<ItemParameter> CurrentParameters => itemCurrentState;
     public InventorySO InventoryData => inventoryData;  // 인벤토리 데이터 접근용
-    // -----------------------------------------
-    
+                                                        // -----------------------------------------
+
     /// <summary>
     /// * 무기를 장착/교체 시 진입점
     /// EquippableItemSO.PerformAction()에서 호출됨.
@@ -33,15 +33,25 @@ public class AgentWeapon : MonoBehaviour
             itemCurrentState = new List<ItemParameter>();
         }
         // 1) 무기 장착/교체 : 기존 장착 무기가 있다면 인벤토리로 반환
-        if(weaponData != null)
+        if (weaponData != null)
         {
             // 기존 장착된 무기가 있으면 인벤토리에 반환
-            inventoryData.AddItem(weaponData, 1, itemCurrentState);
+            int remaining = inventoryData.AddItem(weaponData, 1, itemCurrentState);
+
+            // fail silently 발생 위험: 인벤토리가 꽉 찼을 경우
+            if (remaining > 0)
+            {
+                Debug.LogWarning("[AgentWeapon] Inventory full, could not return existing weapon upon equipping new one.");
+                // 인벤토리가 꽉 참
+                // 무기를 다시 떨어뜨리거나
+                // UI 알림을 띄우거나
+                // 플레이어 발밑에 떨어뜨리거나
+            }
         }
         // 2) 무기 장착/교체 : 새로운 무기 장착
         this.weaponData = weaponSO;
         // 인자 상태를 그대로 참조하지 않고 복사해서 내부 상태로 유지, null 방지
-        this.itemCurrentState = itemState != null? new List<ItemParameter>(itemState) : new List<ItemParameter>();
+        this.itemCurrentState = itemState != null ? new List<ItemParameter>(itemState) : new List<ItemParameter>();
         ModifyParameters();
         // 3) 장착 상태 변경 이벤트 발행 -> WeaponManager 구독
         OnWeaponChanged?.Invoke(weaponData, itemCurrentState);
@@ -70,7 +80,7 @@ public class AgentWeapon : MonoBehaviour
             // 같은 타입의 parameter 값 찾기
             // 기존 객체 비교 -> Parameter 타입 비교
             int index = itemCurrentState.FindIndex(p => p.itemParameter == parameter.itemParameter);
-            if(index >= 0)
+            if (index >= 0)
             {
                 float newValue = itemCurrentState[index].value + parameter.value;
                 itemCurrentState[index] = new ItemParameter
