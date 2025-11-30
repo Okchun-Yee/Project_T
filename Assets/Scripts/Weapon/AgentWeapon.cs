@@ -70,12 +70,7 @@ public class AgentWeapon : MonoBehaviour
     /// </summary>
     private void ModifyParameters()
     {
-        // 0) 방어 코드 : itemCurrentState null 방지
-        if (itemCurrentState == null)
-        {
-            Debug.LogWarning("[AgentWeapon] itemCurrentState was null in ModifyParameters. Initializing empty list to avoid null reference.");
-            itemCurrentState = new List<ItemParameter>();
-        }
+        // 0) itemCurrentState는 SetWeapon에서 이미 null 체크 및 초기화됨
         if (parametersToModify == null || parametersToModify.Count == 0)
         {
             Debug.LogWarning("[AgentWeapon] parametersToModify is null or empty in ModifyParameters. No parameters to apply.");
