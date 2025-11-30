@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Inventory.Model;
 
 public abstract class BaseWeapon : MonoBehaviour, IWeapon
 {
-    public bool isAttacking { get; private set; } = false;  // 공격 상태
-    public WeaponSO weaponInfo { get; private set; }        // 무기 정보
+    public bool isAttacking { get; private set; } = false;      // 공격 상태
+    public EquippableItemSO weaponInfo { get; private set; }    // 무기 정보
 
     private Coroutine CooldownCoroutine;                    //무기 공격 쿨다운 코루틴
     protected ISkill[] skills;                              // 무기에 적용된 스킬들
@@ -16,8 +17,11 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     private float[] skillCastingTime;                       // 스킬 시전 시간
     private DamageSource ds;                                // 데미지 소스 컴포넌트
 
-    // 초기화 매서드 (weaponSO & skillSO 주입)
-    public virtual void Weapon_Initialize(WeaponSO info)
+    /// <summary>
+    /// 초기화 진입점 매서드 (weaponSO & skillSO 주입)
+    /// 파생 클래스의 무기 SO, 스킬 SO 초기화 매서드 호출
+    /// </summary>
+    public virtual void Weapon_Initialize(EquippableItemSO info)
     {
         if (info == null)
         {
@@ -28,14 +32,14 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
         SkillInitialization(info);  // 스킬 초기화
     }
     // 무기 초기화 매서드
-    private void WeaponInitialization(WeaponSO info)
+    private void WeaponInitialization(EquippableItemSO info)
     {
         // 1) 무기 정보 주입
         weaponInfo = info;
         weaponCooldown = info.weaponCooldown;
     }
     // 스킬 초기화 매서드
-    private void SkillInitialization(WeaponSO info)
+    private void SkillInitialization(EquippableItemSO info)
     {
         // 1) 스킬 배열 초기화
         skills = GetComponents<ISkill>();               // ISkill 인터페이스를 구현한 모든 컴포넌트 가져오기
@@ -123,7 +127,7 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     }
     // 무기의 스킬 정보 반환 매서드
     public ISkill[] GetSkills() => skills;
-    public WeaponSO GetWeaponInfo() => weaponInfo;    // 무기 정보 반환 메서드
+    public EquippableItemSO GetWeaponInfo() => weaponInfo;    // 무기 정보 반환 메서드
 
     // 추상 매서드
     // 파생 무기 클래스에서 구현할 공격 매서드

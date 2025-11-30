@@ -6,35 +6,86 @@ using UnityEngine;
 
 public class AgentWeapon : MonoBehaviour
 {
-    [SerializeField] private EquippableItemSO weaponData;
-    [SerializeField] private InventorySO inventoryData;
-    [SerializeField] private List<ItemParameter> parametersToModify, itemCurrentState;
+    [Header("Equipped Weapon State")]
+    [SerializeField] private Inventory.Model.EquippableItemSO weaponData;               // 현재 장착 중인 무기 데이터
+    [SerializeField] private InventorySO inventoryData;                 // 플레이어 인벤토리 데이터 : 무기 반환용
+    [SerializeField] private List<ItemParameter> parametersToModify;    // 무기 장착 시 수정할 파라미터 리스트
+    [SerializeField] private List<ItemParameter> itemCurrentState;      // 현재 무기 상태 (강화 수치 등)
+
+    public event Action<Inventory.Model.EquippableItemSO, List<ItemParameter>> OnWeaponChanged; // 장착된 무기가 변경되었을 때 발생하는 이벤트 (weaponSO, itemState)
+
+    // ---------- 외부 접근용 프로퍼티 ----------
+    public Inventory.Model.EquippableItemSO CurrentWeapon => weaponData;
+    public IReadOnlyList<ItemParameter> CurrentParameters => itemCurrentState;
+    // -----------------------------------------
     
-    public void SetWeapon(EquippableItemSO weaponSO, List<ItemParameter> itemState)
+    /// <summary>
+    /// * 무기를 장착/교체 시 진입점
+    /// EquippableItemSO.PerformAction()에서 호출됨.
+    /// </summary>
+    public void SetWeapon(Inventory.Model.EquippableItemSO weaponSO, List<ItemParameter> itemState)
     {
+        // 0) 방어 코드: 인벤토리/입력 상태 null 방지
+        if (itemCurrentState == null)
+        {
+            Debug.LogWarning("[AgentWeapon] itemCurrentState was null. Initializing new list to avoid null reference.");
+            itemCurrentState = new List<ItemParameter>();
+        }
+        // 1) 무기 장착/교체 : 기존 장착 무기가 있다면 인벤토리로 반환
         if(weaponData != null)
         {
             // 기존 장착된 무기가 있으면 인벤토리에 반환
             inventoryData.AddItem(weaponData, 1, itemCurrentState);
         }
+        // 2) 무기 장착/교체 : 새로운 무기 장착
         this.weaponData = weaponSO;
-        this.itemCurrentState = new List<ItemParameter>(itemState);
+        // 인자 상태를 그대로 참조하지 않고 복사해서 내부 상태로 유지, null 방지
+        this.itemCurrentState = itemState != null? new List<ItemParameter>(itemState) : new List<ItemParameter>();
         ModifyParameters();
+        // 3) 장착 상태 변경 이벤트 발행 -> WeaponManager 구독
+        OnWeaponChanged?.Invoke(weaponData, itemCurrentState);
     }
-
+    /// <summary>
+    /// * 무기 장착 시 파라미터 수정
+    /// ParametersToModify에 정의된 파라미터들을 itemCurrentState에 반영
+    /// EX) 공격력 +10, 사거리 +5 등..
+    /// </summary>
     private void ModifyParameters()
     {
+        // 0) 방어 코드 : itemCurrentState null 방지
+        if (itemCurrentState == null)
+        {
+            Debug.LogError("[AgentWeapon] itemCurrentState was null in ModifyParameters. Initializing empty list to avoid null reference.");
+            itemCurrentState = new List<ItemParameter>();
+        }
+        if (parametersToModify == null || parametersToModify.Count == 0)
+        {
+            Debug.LogError("[AgentWeapon] parametersToModify is null or empty in ModifyParameters. No parameters to apply.");
+            return;
+        }
+        // 1) 파라미터 수정 로직
         foreach (var parameter in parametersToModify)
         {
-            if(itemCurrentState.Contains(parameter))
+            // 같은 타입의 parameter 값 찾기
+            // 기존 객체 비교 -> Parameter 타입 비교
+            int index = itemCurrentState.FindIndex(p => p.itemParameter == parameter.itemParameter);
+            if(index >= 0)
             {
-                int index = itemCurrentState.IndexOf(parameter);
                 float newValue = itemCurrentState[index].value + parameter.value;
                 itemCurrentState[index] = new ItemParameter
                 {
                     itemParameter = parameter.itemParameter,
                     value = newValue
                 };
+            }
+            else
+            {
+                // 파라미터 없을 시 새로 추가
+                itemCurrentState.Add(new ItemParameter
+                {
+                    itemParameter = parameter.itemParameter,
+                    value = parameter.value
+                });
             }
         }
     }
