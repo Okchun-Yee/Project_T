@@ -78,6 +78,11 @@ public class AgentWeapon : MonoBehaviour
         // 1) 파라미터 수정 로직
         foreach (var parameter in parametersToModify)
         {
+            if (parameter.itemParameter == null)
+            {
+                Debug.LogWarning("[AgentWeapon] Null itemParameter found in parametersToModify. Skipping.");
+                continue;
+            }
             // 같은 타입의 parameter 값 찾기
             // 기존 객체 비교 -> Parameter 타입 비교
             int index = itemCurrentState.FindIndex(p => p.itemParameter == parameter.itemParameter);
