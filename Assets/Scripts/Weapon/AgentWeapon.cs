@@ -42,6 +42,7 @@ public class AgentWeapon : MonoBehaviour
             if (remaining > 0)
             {
                 Debug.LogWarning("[AgentWeapon] Inventory full, could not return existing weapon upon equipping new one.");
+                // TODO: fail silently 예외 처리 로직
                 // 인벤토리가 꽉 참
                 // 무기를 다시 떨어뜨리거나
                 // UI 알림을 띄우거나
@@ -66,12 +67,12 @@ public class AgentWeapon : MonoBehaviour
         // 0) 방어 코드 : itemCurrentState null 방지
         if (itemCurrentState == null)
         {
-            Debug.LogError("[AgentWeapon] itemCurrentState was null in ModifyParameters. Initializing empty list to avoid null reference.");
+            Debug.LogWarning("[AgentWeapon] itemCurrentState was null in ModifyParameters. Initializing empty list to avoid null reference.");
             itemCurrentState = new List<ItemParameter>();
         }
         if (parametersToModify == null || parametersToModify.Count == 0)
         {
-            Debug.LogError("[AgentWeapon] parametersToModify is null or empty in ModifyParameters. No parameters to apply.");
+            Debug.LogWarning("[AgentWeapon] parametersToModify is null or empty in ModifyParameters. No parameters to apply.");
             return;
         }
         // 1) 파라미터 수정 로직

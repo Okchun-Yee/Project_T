@@ -69,8 +69,8 @@ public class WeaponLoot : BaseLoot
         {
             // 인벤토리 가득 차서 못 넣음 (또는 일부만 넣었는데 우리는 1개 기준이라 = 1이면 전부 못 넣은 것)
             Debug.LogWarning($"[WeaponLoot] Failed to add weapon to inventory (maybe full): {weaponData.name}");
-            
-            // 획득 실패 (인벤토리 Full 피드백 추가)
+
+            // TODO: 획득 실패 (인벤토리 Full 피드백 추가)
         }
 
     }
