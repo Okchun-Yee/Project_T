@@ -3,7 +3,7 @@ name: 코드 리팩토링 요청 (Refactor Request)
 about: 기존 코드를 개선하거나 구조를 재정리할 때 사용합니다.
 title: "[Refactor] 대상 클래스/기능 요약"
 labels: refactor
-assignees: Okchun-Yee, Copilot
+assignees: Okchun-Yee
 
 ---
 
