@@ -1,18 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using ProjectT.Core.FSM;
+using ProjectT.Game.Player.FSM.Combat.States;
 
-public class PlayerCombatFsmComposer : MonoBehaviour
+namespace ProjectT.Game.Player.FSM.Combat
 {
-    // Start is called before the first frame update
-    void Start()
+    /// <summary>
+    /// Composer for player combat FSM.
+    /// 플레이어 전투 FSM 등록 담당 클래스.
+    /// </summary>
+    public static class PlayerCombatFsmComposer
     {
-        
-    }
+        public static StateMachine<PlayerCombatStateId, PlayerFsmContext> Create()
+        {
+            var fsm = new StateMachine<PlayerCombatStateId, PlayerFsmContext>();
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+            fsm.RegisterState(PlayerCombatStateId.None,     new CombatNoneState());
+            fsm.RegisterState(PlayerCombatStateId.Attack,   new CombatAttackState());
+            fsm.RegisterState(PlayerCombatStateId.Charging, new CombatChargingState());
+            fsm.RegisterState(PlayerCombatStateId.Holding,  new CombatHoldingState());
+
+            return fsm;
+        }
     }
 }
