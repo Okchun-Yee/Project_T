@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace ProjectT.Game.Player.FSM.Locomotion.States
 {
     /// <summary>
@@ -6,8 +8,23 @@ namespace ProjectT.Game.Player.FSM.Locomotion.States
     /// </summary>
     public sealed class LocomotionHitState : PlayerLocomotionStateBase
     {
-        public override void Enter(PlayerFsmContext ctx) { }
-        public override void Tick(PlayerFsmContext ctx) { }
+        private float _timeLeft;
+        public override void Enter(PlayerFsmContext ctx)
+        {
+            _timeLeft = ctx.Controller.HitStunDuration;
+            if(ctx.rb != null) ctx.rb.velocity = Vector2.zero;
+        }
+        public override void Tick(PlayerFsmContext ctx)
+        {
+            _timeLeft -= Time.deltaTime;
+
+            if(_timeLeft > 0f) return;
+
+            PlayerController pc = ctx.Controller;
+            pc.SetLocomotion(pc.MoveInput != Vector2.zero 
+                ? PlayerLocomotionStateId.Move 
+                : PlayerLocomotionStateId.Idle);
+        }
         public override void Exit(PlayerFsmContext ctx) { }
     }
 }

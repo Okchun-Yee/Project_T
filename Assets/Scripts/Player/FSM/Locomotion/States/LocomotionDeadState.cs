@@ -6,7 +6,10 @@ namespace ProjectT.Game.Player.FSM.Locomotion.States
     /// </summary>
     public sealed class LocomotionDeadState : PlayerLocomotionStateBase
     {
-        public override void Enter(PlayerFsmContext ctx) { }
+        public override void Enter(PlayerFsmContext ctx)
+        {
+            if(ctx.rb != null) ctx.rb.velocity = UnityEngine.Vector2.zero;
+        }
         public override void Tick(PlayerFsmContext ctx) { }
         public override void Exit(PlayerFsmContext ctx) { }
     }

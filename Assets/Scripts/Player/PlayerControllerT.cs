@@ -32,6 +32,17 @@ namespace ProjectT.Game.Player
         public bool AttackPressed { get; private set; }
         public bool AttackHeld { get; private set; }
         public bool DodgePressed { get; private set; }
+
+        // 상태 전이 + 행동 입력
+        [SerializeField] private float _moveSpeed = 5f;
+        [SerializeField] private float _dodgeSpeed = 10f;
+        [SerializeField] private float _dodgeDuration = 0.15f;
+        [SerializeField] private float _hitStunDuration = 0.2f;
+        // 외부 접근용 프로퍼티
+        public float MoveSpeed => _moveSpeed;
+        public float DodgeSpeed => _dodgeSpeed;
+        public float DodgeDuration => _dodgeDuration;
+        public float HitStunDuration => _hitStunDuration;
     #endregion
 
         public PlayerLocomotionStateId LocomotionState => _locomotionFsm.CurrentStateId;    // 현재 Locomotion 상태
@@ -155,6 +166,13 @@ namespace ProjectT.Game.Player
 
             if (isDodging && _combatFsm.CurrentStateId != PlayerCombatStateId.None)
                 _combatFsm.ChangeState(PlayerCombatStateId.None);
+        }
+        /// <summary>
+        /// Locomotion FSM 상태 전환 헬퍼
+        /// </summary>
+        public void SetLocomotion(PlayerLocomotionStateId id)
+        {
+            _locomotionFsm.ChangeState(id);
         }
     #endregion
 
