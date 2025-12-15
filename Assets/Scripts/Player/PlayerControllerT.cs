@@ -18,15 +18,15 @@ namespace ProjectT.Game.Player
     public sealed class PlayerController : MonoBehaviour
     {
         [Header("Gate")]
-    #region PAUSE 상위 게이트
+        #region PAUSE 상위 게이트
         [SerializeField] private bool _isPaused;    // 일시정지 상태
         public bool IsPaused => _isPaused;          // 일시정지 상태 프로퍼티   
-    #endregion
+        #endregion
 
         public bool IsDead { get; private set; }    // 사망 상태
-        // public bool IsHit { get; private set; }     // 피격 상태 (추후 사용 예정)
+                                                    // public bool IsHit { get; private set; }     // 피격 상태 (추후 사용 예정)
 
-    #region Input (임시)
+        #region Input (임시)
         // [TODO] InputManager 시스템으로 교체 예정
         public Vector2 MoveInput { get; private set; }
         public bool AttackPressed { get; private set; }
@@ -38,12 +38,21 @@ namespace ProjectT.Game.Player
         [SerializeField] private float _dodgeSpeed = 10f;
         [SerializeField] private float _dodgeDuration = 0.15f;
         [SerializeField] private float _hitStunDuration = 0.2f;
+
+        // Combat
+        [SerializeField] private float _attackDuration = 0.1f;
+        [SerializeField] private float _maxChargeTime = 0.6f;
+
         // 외부 접근용 프로퍼티
         public float MoveSpeed => _moveSpeed;
         public float DodgeSpeed => _dodgeSpeed;
         public float DodgeDuration => _dodgeDuration;
         public float HitStunDuration => _hitStunDuration;
-    #endregion
+
+        public float AttackDuration => _attackDuration;
+        public float MaxChargeTime => _maxChargeTime;
+        public float ChargeTime { get; set; }
+        #endregion
 
         public PlayerLocomotionStateId LocomotionState => _locomotionFsm.CurrentStateId;    // 현재 Locomotion 상태
         public PlayerCombatStateId CombatState => _combatFsm.CurrentStateId;                // 현재 Combat 상태
@@ -81,7 +90,7 @@ namespace ProjectT.Game.Player
             ClearOneFrameInput();           // 1프레임 입력 초기화
         }
 
-    #region Bridge/Gate Policies
+        #region Bridge/Gate Policies
         /// <summary>
         /// Pause 상위 게이트
         /// Pause면 FSM Tick을 수행하지 않는다.
@@ -119,9 +128,9 @@ namespace ProjectT.Game.Player
             _locomotionFsm.Deactivate();
             _combatFsm.Deactivate();
         }
-    #endregion
+        #endregion
 
-    #region 내부 구성/구동
+        #region 내부 구성/구동
         /// <summary>
         /// FSM 빌드 (컨텍스트 + FSM 생성/등록)
         /// </summary>
@@ -174,9 +183,17 @@ namespace ProjectT.Game.Player
         {
             _locomotionFsm.ChangeState(id);
         }
-    #endregion
 
-    #region Input (임시)
+        /// <summary>
+        /// Combat FSM 상태 전환 헬퍼
+        /// </summary>
+        public void SetCombat(PlayerCombatStateId id)
+        {
+            _combatFsm.ChangeState(id);
+        }
+        #endregion
+
+        #region Input (임시)
         // [TODO] InputManager 시스템으로 교체 예정
         private void PollDummyInput()
         {
@@ -204,6 +221,6 @@ namespace ProjectT.Game.Player
             AttackPressed = false;
             DodgePressed = false;
         }
-    #endregion
+        #endregion
     }
 }
