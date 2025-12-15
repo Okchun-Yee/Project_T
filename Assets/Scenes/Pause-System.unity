@@ -187,6 +187,8 @@ MonoBehaviour:
   _hitStunDuration: 0.2
   _attackDuration: 0.1
   _maxChargeTime: 0.6
+  _useDummyInput: 1
+  _logStateChanges: 1
 --- !u!212 &792384042
 SpriteRenderer:
   m_ObjectHideFlags: 0

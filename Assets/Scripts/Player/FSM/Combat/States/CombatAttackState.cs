@@ -13,6 +13,7 @@ namespace ProjectT.Game.Player.FSM.Combat.States
         {
             _timeLeft = Math.Max(0f, ctx.Controller.AttackDuration);
             ctx.Controller.ChargeTime = 0f;
+            ctx.Controller.NotifyAttackStarted();
         }
         public override void Tick(PlayerFsmContext ctx)
         {
@@ -22,6 +23,9 @@ namespace ProjectT.Game.Player.FSM.Combat.States
 
             ctx.Controller.SetCombat(PlayerCombatStateId.None);
         }
-        public override void Exit(PlayerFsmContext ctx) { }
+        public override void Exit(PlayerFsmContext ctx)
+        {
+            ctx.Controller.NotifyAttackEnded();
+        }
     }
 } 

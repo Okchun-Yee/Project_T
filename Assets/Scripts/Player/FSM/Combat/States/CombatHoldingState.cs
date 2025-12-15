@@ -5,7 +5,10 @@ namespace ProjectT.Game.Player.FSM.Combat.States
     /// </summary>
     public sealed class CombatHoldingState : PlayerCombatStateBase
     {
-        public override void Enter(PlayerFsmContext ctx) { }
+        public override void Enter(PlayerFsmContext ctx)
+        {
+            ctx.Controller.NotifyHoldStarted();
+        }
         public override void Tick(PlayerFsmContext ctx)
         {
             PlayerController pc = ctx.Controller;

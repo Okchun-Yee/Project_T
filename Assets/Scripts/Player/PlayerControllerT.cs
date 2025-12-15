@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using ProjectT.Core.FSM;
 using ProjectT.Game.Player.FSM;
@@ -17,31 +18,32 @@ namespace ProjectT.Game.Player
     /// </summary>
     public sealed class PlayerController : MonoBehaviour
     {
-        [Header("Gate")]
         #region PAUSE 상위 게이트
+        [Header("Gate")]
         [SerializeField] private bool _isPaused;    // 일시정지 상태
         public bool IsPaused => _isPaused;          // 일시정지 상태 프로퍼티   
         #endregion
 
         public bool IsDead { get; private set; }    // 사망 상태
-                                                    // public bool IsHit { get; private set; }     // 피격 상태 (추후 사용 예정)
+        // public bool IsHit { get; private set; }     // 피격 상태 (추후 사용 예정)
 
-        #region Input (임시)
         // [TODO] InputManager 시스템으로 교체 예정
-        public Vector2 MoveInput { get; private set; }
-        public bool AttackPressed { get; private set; }
-        public bool AttackHeld { get; private set; }
-        public bool DodgePressed { get; private set; }
-
+        #region Input (임시)
         // 상태 전이 + 행동 입력
+        [Header("Locomotion")]
         [SerializeField] private float _moveSpeed = 5f;
         [SerializeField] private float _dodgeSpeed = 10f;
         [SerializeField] private float _dodgeDuration = 0.15f;
         [SerializeField] private float _hitStunDuration = 0.2f;
 
         // Combat
+        [Header("Combat")]
         [SerializeField] private float _attackDuration = 0.1f;
         [SerializeField] private float _maxChargeTime = 0.6f;
+
+        [Header("Debug")]
+        [SerializeField] private bool _useDummyInput = true;
+        [SerializeField] private bool _logStateChanges = false;
 
         // 외부 접근용 프로퍼티
         public float MoveSpeed => _moveSpeed;
@@ -52,6 +54,10 @@ namespace ProjectT.Game.Player
         public float AttackDuration => _attackDuration;
         public float MaxChargeTime => _maxChargeTime;
         public float ChargeTime { get; set; }
+        public Vector2 MoveInput { get; private set; }
+        public bool AttackPressed { get; private set; }
+        public bool AttackHeld { get; private set; }
+        public bool DodgePressed { get; private set; }
         #endregion
 
         public PlayerLocomotionStateId LocomotionState => _locomotionFsm.CurrentStateId;    // 현재 Locomotion 상태
@@ -59,6 +65,19 @@ namespace ProjectT.Game.Player
         private PlayerFsmContext _ctx;  // FSM 공유 컨텍스트
         private StateMachine<PlayerLocomotionStateId, PlayerFsmContext> _locomotionFsm;
         private StateMachine<PlayerCombatStateId, PlayerFsmContext> _combatFsm;
+
+        // Combat FSM 확장 포인트 이벤트
+        public event Action AttackStarted;
+        public event Action AttackEnded;
+        public event Action ChargeStarted;
+        public event Action ChargeReachedMax;
+        public event Action ChargeCanceled;
+        public event Action HoldStarted;
+
+        // 이전 상태 로깅용
+        private PlayerLocomotionStateId _prevL;
+        private PlayerCombatStateId _prevC;
+
 
         private void Awake()
         {
@@ -68,6 +87,7 @@ namespace ProjectT.Game.Player
         private void Start()
         {
             InitializeFsm();
+            CachePrevStates();
         }
 
         /// <summary>
@@ -76,18 +96,26 @@ namespace ProjectT.Game.Player
         private void Update()
         {
             // [TODO] InputManager 시스템으로 교체 예정
-            PollDummyInput();               // 입력 수집 (임시)
+            if(_useDummyInput) 
+            {
+                PollDummyInput();
+            }
             // 게이트 검사
-            if (!ShouldTickFsm())
+            if (!CanTickFsmThisFrame())
             {
                 ClearOneFrameInput();
                 return;
             }
-            ApplyBridgePoliciesPreTick();   // 정책 적용
+            ApplyCrossFsmPoliciesPreTick();   // 정책 적용
             _locomotionFsm.Tick();          // 병렬 Tick
             _combatFsm.Tick();
 
             ClearOneFrameInput();           // 1프레임 입력 초기화
+        }
+        private void LateUpdate()
+        {
+            if(!_logStateChanges) return;
+            LogStateIfChanged();
         }
 
         #region Bridge/Gate Policies
@@ -99,6 +127,23 @@ namespace ProjectT.Game.Player
         {
             _isPaused = paused;
         }
+
+        /// <summary>
+        /// Locomotion FSM 상태 전환 헬퍼
+        /// </summary>
+        public void SetLocomotion(PlayerLocomotionStateId id)
+        {
+            _locomotionFsm.ChangeState(id);
+        }
+
+        /// <summary>
+        /// Combat FSM 상태 전환 헬퍼
+        /// </summary>
+        public void SetCombat(PlayerCombatStateId id)
+        {
+            _combatFsm.ChangeState(id);
+        }
+
         /// <summary>
         /// 강제 이벤트 브릿지
         /// Locomotion->Hit 전환, Combat->None 전환
@@ -110,6 +155,7 @@ namespace ProjectT.Game.Player
             _locomotionFsm.ChangeState(PlayerLocomotionStateId.Hit);
             _combatFsm.ChangeState(PlayerCombatStateId.None);
         }
+
         /// <summary>
         /// 강제 이벤트 브릿지
         /// Locomotion->Dead 전환, Combat->None 전환
@@ -130,6 +176,15 @@ namespace ProjectT.Game.Player
         }
         #endregion
 
+        // Combat FSM 확장 포인트 알림 메서드
+        public void NotifyAttackStarted() => AttackStarted?.Invoke();
+        public void NotifyAttackEnded() => AttackEnded?.Invoke();
+        public void NotifyChargeStarted() => ChargeStarted?.Invoke();
+        public void NotifyChargeReachedMax() => ChargeReachedMax?.Invoke();
+        public void NotifyChargeCanceled() => ChargeCanceled?.Invoke();
+        public void NotifyHoldStarted() => HoldStarted?.Invoke();
+
+
         #region 내부 구성/구동
         /// <summary>
         /// FSM 빌드 (컨텍스트 + FSM 생성/등록)
@@ -143,6 +198,7 @@ namespace ProjectT.Game.Player
             _locomotionFsm = PlayerLocomotionFsmComposer.Create();
             _combatFsm = PlayerCombatFsmComposer.Create();
         }
+
         /// <summary>
         /// FSM 초기화 (초기 상태 설정)
         /// </summary>
@@ -153,43 +209,49 @@ namespace ProjectT.Game.Player
             // 초기 Combat: None
             _combatFsm.Initialize(_ctx, PlayerCombatStateId.None);
         }
+
         /// <summary>
         /// FSM Tick 가능 여부 검사
         /// Pause, Dead 게이트 검사
         /// </summary>
-        private bool ShouldTickFsm()
+        private bool CanTickFsmThisFrame()
         {
             if (_isPaused) return false;
             if (IsDead) return false;
             return true;
         }
+
         /// <summary>
         /// FSM 간 브릿지 정책 적용
         /// - 두 FSM 간 입력/상태 충돌 방지
         /// - 강제 취소/차단 같은 상위 정책 반영
         /// </summary>
-        private void ApplyBridgePoliciesPreTick()
+        private void ApplyCrossFsmPoliciesPreTick()
         {
             // 1. 정책 1: Dodge 중에는 Combat FSM이 None 상태여야 함
-            bool isDodging = (_locomotionFsm.CurrentStateId == PlayerLocomotionStateId.Dodge);
+            if(IsCombatBlockedByLocomotion())
+            {
+                CancelCombat();
+            }
+        }
+        #endregion
 
-            if (isDodging && _combatFsm.CurrentStateId != PlayerCombatStateId.None)
+        #region Cross-FSM Policies
+        /// <summary>
+        /// 정책 1 검사: Locomotion FSM이 Dodge 상태인지
+        /// </summary>
+        private bool IsCombatBlockedByLocomotion()
+        {
+            return _locomotionFsm.CurrentStateId == PlayerLocomotionStateId.Dodge;
+        }
+
+        /// <summary>
+        /// Combat FSM 강제 취소: None 상태로 전환
+        /// </summary>
+        private void CancelCombat()
+        {
+            if (_combatFsm.CurrentStateId != PlayerCombatStateId.None)
                 _combatFsm.ChangeState(PlayerCombatStateId.None);
-        }
-        /// <summary>
-        /// Locomotion FSM 상태 전환 헬퍼
-        /// </summary>
-        public void SetLocomotion(PlayerLocomotionStateId id)
-        {
-            _locomotionFsm.ChangeState(id);
-        }
-
-        /// <summary>
-        /// Combat FSM 상태 전환 헬퍼
-        /// </summary>
-        public void SetCombat(PlayerCombatStateId id)
-        {
-            _combatFsm.ChangeState(id);
         }
         #endregion
 
@@ -222,5 +284,16 @@ namespace ProjectT.Game.Player
             DodgePressed = false;
         }
         #endregion
+        private void CachePrevStates()
+        {
+            _prevL = LocomotionState;
+            _prevC = CombatState;
+        }
+        private void LogStateIfChanged()
+        {
+            if(_prevL==LocomotionState && _prevC==CombatState) return;
+            Debug.Log($"[FSM] L:{LocomotionState} C:{CombatState}");
+            CachePrevStates();
+        }
     }
 }
