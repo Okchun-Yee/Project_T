@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using UnityEngine;
 
 namespace ProjectT.Game.Player.FSM.Locomotion.States
