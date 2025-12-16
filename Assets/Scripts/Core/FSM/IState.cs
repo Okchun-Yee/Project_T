@@ -1,4 +1,4 @@
-namespace ProjectT.core.FSM
+namespace ProjectT.Core.FSM
 {
     public interface IState
     {

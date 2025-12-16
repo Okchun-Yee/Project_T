@@ -37,16 +37,16 @@ namespace ProjectT.Game.Player.FSM.Locomotion.States
         // [TODO] 기존 이동 로직 점검 후 통합
         private static void Move(PlayerFsmContext ctx, Vector2 dir, float speed)
         {
-            if(ctx.rb!=null)
+            if(ctx.Rigid!=null)
             {
-                ctx.rb.velocity = dir.normalized * speed;
+                ctx.Rigid.velocity = dir.normalized * speed;
                 return;
             }
              ctx.Transform.Translate(dir * speed * Time.deltaTime);
         }
         private static void Stop(PlayerFsmContext ctx)
         {
-            if(ctx.rb!=null) ctx.rb.velocity = Vector2.zero;
+            if(ctx.Rigid!=null) ctx.Rigid.velocity = Vector2.zero;
         }
     #endregion
     }

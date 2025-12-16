@@ -35,14 +35,14 @@ namespace ProjectT.Game.Player.FSM.Locomotion.States
 
         public override void Exit(PlayerFsmContext ctx)
         {
-            if(ctx.rb!=null) ctx.rb.velocity = Vector2.zero;
+            if(ctx.Rigid!=null) ctx.Rigid.velocity = Vector2.zero;
         }
         // [TODO] 기존 Dodge 로직 점검 후 통합
         private static void ApplyDodgeVelocity(PlayerFsmContext ctx, Vector2 dir, float speed)
         {
-            if(ctx.rb!=null)
+            if(ctx.Rigid!=null)
             {
-                ctx.rb.velocity = dir.normalized * speed;
+                ctx.Rigid.velocity = dir.normalized * speed;
                 return;
             }
             ctx.Transform.Translate(dir * speed * Time.deltaTime);

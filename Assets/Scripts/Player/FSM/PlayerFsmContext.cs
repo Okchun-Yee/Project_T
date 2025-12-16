@@ -13,7 +13,7 @@ namespace ProjectT.Game.Player.FSM
     {
         public PlayerController Controller { get; }
         public Transform Transform { get; }
-        public Rigidbody2D rb { get; }
+        public Rigidbody2D Rigid { get; }
         public Animator Animator { get; }
 
         public PlayerFsmContext(PlayerController controller)
@@ -25,7 +25,7 @@ namespace ProjectT.Game.Player.FSM
             controller.TryGetComponent(out Rigidbody2D rb);
             controller.TryGetComponent(out Animator animator);
 
-            this.rb = rb;
+            this.Rigid = rb;
             Animator = animator;
         }
     }

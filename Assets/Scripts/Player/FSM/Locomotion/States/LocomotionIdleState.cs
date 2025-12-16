@@ -32,7 +32,7 @@ namespace ProjectT.Game.Player.FSM.Locomotion.States
         public override void Exit(PlayerFsmContext ctx) { }
         private static void Stop(PlayerFsmContext ctx)
         {
-            if(ctx.rb!=null) ctx.rb.velocity = Vector2.zero;
+            if(ctx.Rigid!=null) ctx.Rigid.velocity = Vector2.zero;
         }
     }
 }

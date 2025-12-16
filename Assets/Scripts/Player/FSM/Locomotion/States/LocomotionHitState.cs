@@ -12,7 +12,7 @@ namespace ProjectT.Game.Player.FSM.Locomotion.States
         public override void Enter(PlayerFsmContext ctx)
         {
             _timeLeft = ctx.Controller.HitStunDuration;
-            if(ctx.rb != null) ctx.rb.velocity = Vector2.zero;
+            if(ctx.Rigid != null) ctx.Rigid.velocity = Vector2.zero;
         }
         public override void Tick(PlayerFsmContext ctx)
         {

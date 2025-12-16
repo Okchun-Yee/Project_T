@@ -8,7 +8,7 @@ namespace ProjectT.Game.Player.FSM.Locomotion.States
     {
         public override void Enter(PlayerFsmContext ctx)
         {
-            if(ctx.rb != null) ctx.rb.velocity = UnityEngine.Vector2.zero;
+            if(ctx.Rigid != null) ctx.Rigid.velocity = UnityEngine.Vector2.zero;
         }
         public override void Tick(PlayerFsmContext ctx) { }
         public override void Exit(PlayerFsmContext ctx) { }

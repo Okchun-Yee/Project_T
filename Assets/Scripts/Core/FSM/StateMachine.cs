@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ProjectT.core.FSM
+namespace ProjectT.Core.FSM
 {
     public class StateMachine<TStateId>
     {
