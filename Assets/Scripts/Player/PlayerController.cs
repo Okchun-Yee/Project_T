@@ -27,38 +27,16 @@ namespace ProjectT.Game.Player
         public bool IsDead { get; private set; }    // 사망 상태
         // public bool IsHit { get; private set; }     // 피격 상태 (추후 사용 예정)
 
-        // [TODO] InputManager 시스템으로 교체 예정
-        #region Input (임시)
-        // 상태 전이 + 행동 입력
-        [Header("Locomotion")]
-        [SerializeField] private float _moveSpeed = 5f;
-        [SerializeField] private float _dodgeSpeed = 10f;
-        [SerializeField] private float _dodgeDuration = 0.15f;
-        [SerializeField] private float _hitStunDuration = 0.2f;
-
-        // Combat
-        [Header("Combat")]
-        [SerializeField] private float _attackDuration = 0.1f;
-        [SerializeField] private float _maxChargeTime = 0.6f;
-
         [Header("Debug")]
         [SerializeField] private bool _useDummyInput = true;
         [SerializeField] private bool _logStateChanges = false;
 
         // 외부 접근용 프로퍼티
-        public float MoveSpeed => _moveSpeed;
-        public float DodgeSpeed => _dodgeSpeed;
-        public float DodgeDuration => _dodgeDuration;
-        public float HitStunDuration => _hitStunDuration;
-
-        public float AttackDuration => _attackDuration;
-        public float MaxChargeTime => _maxChargeTime;
         public float ChargeTime { get; set; }
         public Vector2 MoveInput { get; private set; }
         public bool AttackPressed { get; private set; }
         public bool AttackHeld { get; private set; }
         public bool DodgePressed { get; private set; }
-        #endregion
 
         public PlayerLocomotionStateId LocomotionState => _locomotionFsm.CurrentStateId;    // 현재 Locomotion 상태
         public PlayerCombatStateId CombatState => _combatFsm.CurrentStateId;                // 현재 Combat 상태
