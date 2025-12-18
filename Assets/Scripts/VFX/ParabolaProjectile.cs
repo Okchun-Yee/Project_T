@@ -17,7 +17,7 @@ public class ParabolaProjectile : BaseVFX
         GameObject projectileShadow =
         Instantiate(shadowPrefab, transform.position + new Vector3(0, -0.3f, 0), Quaternion.identity);
 
-        Vector3 playerPos = PlayerController.Instance.transform.position;
+        Vector3 playerPos = PlayerLegacyController.Instance.transform.position;
         Vector3 shadowStartPos = projectileShadow.transform.position;
 
         StartCoroutine(ProjectileCurveRoutine(transform.position, playerPos));

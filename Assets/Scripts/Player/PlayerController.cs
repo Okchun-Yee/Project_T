@@ -1,161 +1,299 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using System;
+using UnityEngine;
+using ProjectT.Core.FSM;
+using ProjectT.Game.Player.FSM;
+using ProjectT.Game.Player.FSM.Locomotion;
+using ProjectT.Game.Player.FSM.Combat;
 
-public class PlayerController : Singleton<PlayerController>
+namespace ProjectT.Game.Player
 {
-    public bool FacingLeft { get { return facingLeft; } }
-    public bool FacingBack {get { return facingBack; }}
-    [Header("Player Settings")]
-    [SerializeField] private float moveSpeed = 4f;  // 플레이어 이동 속도
+    /// <summary>
+    /// Player Controller
+    /// 두 개의 독립적인 FSM(이동, 전투)를 병렬 관리
+    /// 입력 처리 <-> 상태 간 상호작용 조율
+    /// [Architecture]
+    /// * Locomotion FSM: 이동, 회피, 피격, 사망 상태 관리
+    /// * Combat FSM: 공격, 차징, 홀딩 상태 관리
+    /// - 두 FSM는 병렬 동작 => 특정 조건에서 서로 영향을 줌
+    /// </summary>
+    public sealed class PlayerController : MonoBehaviour
+    {
+        #region PAUSE 상위 게이트
+        [Header("Gate")]
+        [SerializeField] private bool _isPaused;    // 일시정지 상태
+        public bool IsPaused => _isPaused;          // 일시정지 상태 프로퍼티   
+        #endregion
 
-    [Header("Dash Settings")]
-    [SerializeField] private float dashForce = 15f;    // 대시 힘
-    [SerializeField] private float dashDuration = 0.2f; // 대시 지속시간
+        public bool IsDead { get; private set; }    // 사망 상태
+        // public bool IsHit { get; private set; }     // 피격 상태 (추후 사용 예정)
 
-    private Vector2 movement;
-    private Vector2 lastMovement;
-    private Rigidbody2D rb;
-    private Animator myAnim;
-    private SpriteRenderer mySprite;
-    private Dash dash;  // Dash 컴포넌트 참조 추가
-    private Ghost ghostEffect; // Ghost 컴포넌트 참조 추가
-    private Knockback knockback; // Knockback 컴포넌트 참조 추가
-    private float startingMoveSpeed;    // 기본 이동 속도 (증가 후 복귀 할 원본 이동 속도)
+        // [TODO] InputManager 시스템으로 교체 예정
+        #region Input (임시)
+        // 상태 전이 + 행동 입력
+        [Header("Locomotion")]
+        [SerializeField] private float _moveSpeed = 5f;
+        [SerializeField] private float _dodgeSpeed = 10f;
+        [SerializeField] private float _dodgeDuration = 0.15f;
+        [SerializeField] private float _hitStunDuration = 0.2f;
 
-    // 플레이어 상태 변수 목록
-    private bool facingLeft = false;    // 플레이어 왼쪽 / 오른쪽 판별
-    private bool facingBack = false;    // 플레이어 앞 / 뒤 판별
+        // Combat
+        [Header("Combat")]
+        [SerializeField] private float _attackDuration = 0.1f;
+        [SerializeField] private float _maxChargeTime = 0.6f;
 
-    // 무기 애니메이션 방향 결정 프로터피
-    public Vector2 CurrentMovement => movement;     // 현재 이동 방향 벡터
-    public Vector2 LastMovement => lastMovement;    // 마지막 이동 방향 벡터
-    protected override void Awake()
-    {
-        base.Awake();
+        [Header("Debug")]
+        [SerializeField] private bool _useDummyInput = true;
+        [SerializeField] private bool _logStateChanges = false;
 
-        rb = GetComponent<Rigidbody2D>();
-        myAnim = GetComponent<Animator>();
-        mySprite = GetComponent<SpriteRenderer>();
-        dash = GetComponent<Dash>();                            // Dash 컴포넌트 참조
-        ghostEffect = GetComponent<Ghost>();                    // Ghost 컴포넌트 참조
-        knockback = GetComponent<Knockback>();                  // Knockback 컴포넌트 참조
-    }
-    private void Start()
-    {
-        startingMoveSpeed = moveSpeed;
-    }
-    private void OnEnable()
-    {
-        if (InputManager.Instance != null)
-        {
-            InputManager.Instance.OnMoveInput += Move;
-            InputManager.Instance.OnDodgeInput += Dodge;
-        }
-    }
+        // 외부 접근용 프로퍼티
+        public float MoveSpeed => _moveSpeed;
+        public float DodgeSpeed => _dodgeSpeed;
+        public float DodgeDuration => _dodgeDuration;
+        public float HitStunDuration => _hitStunDuration;
 
-    private void OnDisable()
-    {
-        if (InputManager.Instance != null)
-        {
-            InputManager.Instance.OnMoveInput -= Move;
-            InputManager.Instance.OnDodgeInput -= Dodge;
-        }
-    }
-    private void Update()
-    {
+        public float AttackDuration => _attackDuration;
+        public float MaxChargeTime => _maxChargeTime;
+        public float ChargeTime { get; set; }
+        public Vector2 MoveInput { get; private set; }
+        public bool AttackPressed { get; private set; }
+        public bool AttackHeld { get; private set; }
+        public bool DodgePressed { get; private set; }
+        #endregion
 
-    }
-    private void FixedUpdate()
-    {
-        PlayerMovement();           // 물리 프레임 당 플레이어 이동 계산
-        PlayerDirection();          // 플레이어 방향 계산
-    }
+        public PlayerLocomotionStateId LocomotionState => _locomotionFsm.CurrentStateId;    // 현재 Locomotion 상태
+        public PlayerCombatStateId CombatState => _combatFsm.CurrentStateId;                // 현재 Combat 상태
+        private PlayerFsmContext _ctx;  // FSM 공유 컨텍스트
+        private StateMachine<PlayerLocomotionStateId, PlayerFsmContext> _locomotionFsm;
+        private StateMachine<PlayerCombatStateId, PlayerFsmContext> _combatFsm;
 
-    public void Move(Vector2 moveInput) // Input Manager 키보드 이벤트 구독용 메서드
-    {
-        movement = moveInput.normalized; // 정규화하여 저장
-        // 플레이어 이동 애니메이션 및 방향 설정
-        if (movement.magnitude > 0.1f)
+        // Combat FSM 확장 포인트 이벤트
+        public event Action AttackStarted;
+        public event Action AttackEnded;
+        public event Action ChargeStarted;
+        public event Action ChargeReachedMax;
+        public event Action ChargeCanceled;
+        public event Action HoldStarted;
+
+        // 이전 상태 로깅용
+        private PlayerLocomotionStateId _prevL;
+        private PlayerCombatStateId _prevC;
+
+
+        private void Awake()
         {
-            lastMovement = movement.normalized;  // 정규화하여 저장
-            myAnim.SetFloat("moveX", movement.x);
-            myAnim.SetFloat("moveY", movement.y);
-        }
-        else
-        {
-            // 이동 입력이 없을 때는 0으로 설정
-            myAnim.SetFloat("moveX", 0f);
-            myAnim.SetFloat("moveY", 0f);
-        }
-    }
-    private void PlayerDirection()
-    {
-        // (스킬 시전 중, 공격 중, 죽음 중) 방향 전환 불가 상태 관리
-        if (dash.IsDashing ||
-        knockback.isKnockback ||
-        PlayerHealth.Instance.isDead)
-        {
-            return;
-        }
-        Vector3 mousePos = Input.mousePosition;
-        Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(transform.position);
-        if (mousePos.x < playerScreenPoint.x)
-        {
-            mySprite.flipX = true;
-            facingLeft = true;
-        }
-        else
-        {
-            mySprite.flipX = false;
-            facingLeft = false;
-        }
-        facingBack = mousePos.y > playerScreenPoint.y;
-        myAnim?.SetBool("isBack", facingBack);
-    }
-    public void Dodge() // Input Manager 키보드 이벤트 구독용 메서드
-    {
-        // (스킬 시전 중, 공격 중, 죽음 중) 대시 불가 상태 관리
-        if (dash.IsDashing ||
-        knockback.isKnockback ||
-        PlayerHealth.Instance.isDead)
-        {
-            return;
+            BuildFsm();
         }
 
-        if (!dash.IsDashing)  // Dash 컴포넌트의 대시 상태 확인
+        private void Start()
         {
-            Vector2 dashDirection = GetDashDirection();
+            InitializeFsm();
+            CachePrevStates();
+        }
 
-            // 잔상 효과 시작 (대시 지속시간 동안)
-            if (ghostEffect != null)
+        /// <summary>
+        /// 입력 수집(임시) -> 게이트 검사 -> 정책 적용 -> 병렬 Tick -> 1프레임 입력 초기화
+        /// </summary>
+        private void Update()
+        {
+            // [TODO] InputManager 시스템으로 교체 예정
+            if(_useDummyInput) 
             {
-                ghostEffect.StartGhostEffect(dashDuration);
+                PollDummyInput();
             }
+            // 게이트 검사
+            if (!CanTickFsmThisFrame())
+            {
+                ClearOneFrameInput();
+                return;
+            }
+            ApplyCrossFsmPoliciesPreTick();   // 정책 적용
+            _locomotionFsm.Tick();          // 병렬 Tick
+            _combatFsm.Tick();
 
-            dash.Dash_(dashDirection, dashForce, dashDuration);
+            ClearOneFrameInput();           // 1프레임 입력 초기화
         }
-    }
-    private Vector2 GetDashDirection()
-    {
-        if (movement.magnitude > 0.1f)
-            return movement;
-        else if (lastMovement.magnitude > 0.1f)
-            return lastMovement;
-        else
-            return facingLeft ? Vector2.left : Vector2.right;
-    }
-
-    private void PlayerMovement()
-    {
-        // (스킬 시전 중, 공격 중, 죽음 중) 이동 불가 상태 관리
-        if (dash.IsDashing ||
-        knockback.isKnockback ||
-        PlayerHealth.Instance.isDead)
+        private void LateUpdate()
         {
-            return;
+            if(!_logStateChanges) return;
+            LogStateIfChanged();
         }
-        rb.MovePosition(rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
+
+        #region Bridge/Gate Policies
+        /// <summary>
+        /// Pause 상위 게이트
+        /// Pause면 FSM Tick을 수행하지 않는다.
+        /// </summary>
+        public void SetPaused(bool paused)
+        {
+            _isPaused = paused;
+        }
+
+        /// <summary>
+        /// Locomotion FSM 상태 전환 헬퍼
+        /// </summary>
+        public void SetLocomotion(PlayerLocomotionStateId id)
+        {
+            _locomotionFsm.ChangeState(id);
+        }
+
+        /// <summary>
+        /// Combat FSM 상태 전환 헬퍼
+        /// </summary>
+        public void SetCombat(PlayerCombatStateId id)
+        {
+            _combatFsm.ChangeState(id);
+        }
+
+        /// <summary>
+        /// 강제 이벤트 브릿지
+        /// Locomotion->Hit 전환, Combat->None 전환
+        /// </summary>
+        public void ForceHit()
+        {
+            if (IsDead) return;
+
+            _locomotionFsm.ChangeState(PlayerLocomotionStateId.Hit);
+            _combatFsm.ChangeState(PlayerCombatStateId.None);
+        }
+
+        /// <summary>
+        /// 강제 이벤트 브릿지
+        /// Locomotion->Dead 전환, Combat->None 전환
+        /// 두 FSM 비활성화
+        /// </summary>
+        public void ForceDead()
+        {
+            if (IsDead) return;
+
+            IsDead = true;
+
+            _locomotionFsm.ChangeState(PlayerLocomotionStateId.Dead);
+            _combatFsm.ChangeState(PlayerCombatStateId.None);
+
+            // FSM 비활성화
+            _locomotionFsm.Deactivate();
+            _combatFsm.Deactivate();
+        }
+        #endregion
+
+        // Combat FSM 확장 포인트 알림 메서드
+        public void NotifyAttackStarted() => AttackStarted?.Invoke();
+        public void NotifyAttackEnded() => AttackEnded?.Invoke();
+        public void NotifyChargeStarted() => ChargeStarted?.Invoke();
+        public void NotifyChargeReachedMax() => ChargeReachedMax?.Invoke();
+        public void NotifyChargeCanceled() => ChargeCanceled?.Invoke();
+        public void NotifyHoldStarted() => HoldStarted?.Invoke();
+
+
+        #region 내부 구성/구동
+        /// <summary>
+        /// FSM 빌드 (컨텍스트 + FSM 생성/등록)
+        /// </summary>
+        private void BuildFsm()
+        {
+            // 공통 컨텍스트 생성: 모든 State가 이를 통해 player controller에 접근 가능
+            _ctx = new PlayerFsmContext(this);
+
+            // Composer를 통해 FSM 생성 및 상태 등록(State 등록, 전이 규칙 설정)
+            _locomotionFsm = PlayerLocomotionFsmComposer.Create();
+            _combatFsm = PlayerCombatFsmComposer.Create();
+        }
+
+        /// <summary>
+        /// FSM 초기화 (초기 상태 설정)
+        /// </summary>
+        private void InitializeFsm()
+        {
+            // 초기 locomotion: Idle
+            _locomotionFsm.Initialize(_ctx, PlayerLocomotionStateId.Idle);
+            // 초기 Combat: None
+            _combatFsm.Initialize(_ctx, PlayerCombatStateId.None);
+        }
+
+        /// <summary>
+        /// FSM Tick 가능 여부 검사
+        /// Pause, Dead 게이트 검사
+        /// </summary>
+        private bool CanTickFsmThisFrame()
+        {
+            if (_isPaused) return false;
+            if (IsDead) return false;
+            return true;
+        }
+
+        /// <summary>
+        /// FSM 간 브릿지 정책 적용
+        /// - 두 FSM 간 입력/상태 충돌 방지
+        /// - 강제 취소/차단 같은 상위 정책 반영
+        /// </summary>
+        private void ApplyCrossFsmPoliciesPreTick()
+        {
+            // 1. 정책 1: Dodge 중에는 Combat FSM이 None 상태여야 함
+            if(IsCombatBlockedByLocomotion())
+            {
+                CancelCombat();
+            }
+        }
+        #endregion
+
+        #region Cross-FSM Policies
+        /// <summary>
+        /// 정책 1 검사: Locomotion FSM이 Dodge 상태인지
+        /// </summary>
+        private bool IsCombatBlockedByLocomotion()
+        {
+            return _locomotionFsm.CurrentStateId == PlayerLocomotionStateId.Dodge;
+        }
+
+        /// <summary>
+        /// Combat FSM 강제 취소: None 상태로 전환
+        /// </summary>
+        private void CancelCombat()
+        {
+            if (_combatFsm.CurrentStateId != PlayerCombatStateId.None)
+                _combatFsm.ChangeState(PlayerCombatStateId.None);
+        }
+        #endregion
+
+        #region Input (임시)
+        // [TODO] InputManager 시스템으로 교체 예정
+        private void PollDummyInput()
+        {
+            float x = 0f;
+            float y = 0f;
+
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) x -= 1f;
+            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) x += 1f;
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) y += 1f;
+            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) y -= 1f;
+
+            MoveInput = new Vector2(x, y).normalized;
+
+            AttackPressed = Input.GetKeyDown(KeyCode.J);
+            AttackHeld = Input.GetKey(KeyCode.J);
+            DodgePressed = Input.GetKeyDown(KeyCode.Space);
+
+            if (Input.GetKeyDown(KeyCode.P)) SetPaused(!IsPaused);
+            if (Input.GetKeyDown(KeyCode.H)) ForceHit();
+            if (Input.GetKeyDown(KeyCode.K)) ForceDead();
+        }
+
+        private void ClearOneFrameInput()
+        {
+            AttackPressed = false;
+            DodgePressed = false;
+        }
+        #endregion
+        private void CachePrevStates()
+        {
+            _prevL = LocomotionState;
+            _prevC = CombatState;
+        }
+        private void LogStateIfChanged()
+        {
+            if(_prevL==LocomotionState && _prevC==CombatState) return;
+            Debug.Log($"[FSM] L:{LocomotionState} C:{CombatState}");
+            CachePrevStates();
+        }
     }
 }

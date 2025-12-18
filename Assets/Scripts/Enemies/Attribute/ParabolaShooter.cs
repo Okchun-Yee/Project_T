@@ -19,7 +19,7 @@ public class ParabolaShooter : MonoBehaviour, IEnemy
     public void Attack()
     {
         anim.SetTrigger(ATTACK_HASH);
-        if (transform.position.x - PlayerController.Instance.transform.position.x < 0)
+        if (transform.position.x - PlayerLegacyController.Instance.transform.position.x < 0)
         {
             spriteRenderer.flipX = false;
         }

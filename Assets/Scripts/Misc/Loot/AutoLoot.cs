@@ -34,7 +34,7 @@ public class AutoLoot : MonoBehaviour
     }
     private void Update()
     {
-        Vector3 playerPos = PlayerController.Instance.transform.position;
+        Vector3 playerPos = PlayerLegacyController.Instance.transform.position;
         if (Vector3.Distance(transform.position, playerPos) < lootDistance)
         {
             moveDir = (playerPos - transform.position).normalized;
@@ -52,7 +52,7 @@ public class AutoLoot : MonoBehaviour
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.gameObject.GetComponent<PlayerController>())
+        if (collision.gameObject.GetComponent<PlayerLegacyController>())
         {
             DetectPickupType();
             Destroy(gameObject);

@@ -104,9 +104,9 @@ public class EnemyAI : MonoBehaviour
         currentMoveTarget = roamPosition;
 
         // 플레이어 존재 확인
-        if (PlayerController.Instance != null)
+        if (PlayerLegacyController.Instance != null)
         {
-            float dist = Vector2.Distance(transform.position, PlayerController.Instance.transform.position);
+            float dist = Vector2.Distance(transform.position, PlayerLegacyController.Instance.transform.position);
             if (dist < trackingRange) SetState(State.Tracking);
         }
 
@@ -121,13 +121,13 @@ public class EnemyAI : MonoBehaviour
     private void Attacking()
     {
         // 플레이어 존재 확인
-        if (PlayerController.Instance == null)
+        if (PlayerLegacyController.Instance == null)
         {
             SetState(State.Roaming);
             return;
         }
 
-        float dist = Vector2.Distance(transform.position, PlayerController.Instance.transform.position);
+        float dist = Vector2.Distance(transform.position, PlayerLegacyController.Instance.transform.position);
         // 공격에서 이탈 기준에 히스테리시스 적용
         float attackExit = attackRange + trackingHysteresis;
         if (attackRange > 0f && dist > attackExit)
@@ -151,13 +151,13 @@ public class EnemyAI : MonoBehaviour
     private void Tracking()
     {
         // 플레이어 존재 확인
-        if (PlayerController.Instance == null)
+        if (PlayerLegacyController.Instance == null)
         {
             SetState(State.Roaming);
             return;
         }
 
-        float dist = Vector2.Distance(transform.position, PlayerController.Instance.transform.position);
+        float dist = Vector2.Distance(transform.position, PlayerLegacyController.Instance.transform.position);
 
         // 추적 탈출(히스테리시스 적용)
         float trackingExit = trackingRange + trackingHysteresis;
@@ -175,7 +175,7 @@ public class EnemyAI : MonoBehaviour
         }
 
         // 플레이어를 따라 이동
-        currentMoveTarget = PlayerController.Instance.transform.position;
+        currentMoveTarget = PlayerLegacyController.Instance.transform.position;
         shouldStopMoving = false;
     }
 
