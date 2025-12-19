@@ -11,7 +11,6 @@ namespace ProjectT.Game.Player.FSM.Combat.States
         private float _timeLeft;
         public override void Enter(PlayerFsmContext ctx)
         {
-            _timeLeft = Math.Max(0f, ctx.Controller.AttackDuration);
             ctx.Controller.ChargeTime = 0f;
             ctx.Controller.NotifyAttackStarted();
         }

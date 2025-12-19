@@ -62,7 +62,7 @@ public class PlayerLegacyController : Singleton<PlayerLegacyController>
         PlayerDirection();          // 플레이어 방향 계산
     }
 
-    public void Move(Vector2 moveInput) // Input Manager 키보드 이벤트 구독용 메서드
+    public void SetMoveInput(Vector2 moveInput) // Input Manager 키보드 이벤트 구독용 메서드
     {
         movement = moveInput.normalized; // 정규화하여 저장
         // 플레이어 이동 애니메이션 및 방향 설정
@@ -103,7 +103,7 @@ public class PlayerLegacyController : Singleton<PlayerLegacyController>
         _facingBack = mousePos.y > playerScreenPoint.y;
         _anim?.SetBool("isBack", _facingBack);
     }
-    public void Dodge() // Input Manager 키보드 이벤트 구독용 메서드
+    public void TryDodge() // Input Manager 키보드 이벤트 구독용 메서드
     {
         // (스킬 시전 중, 공격 중, 죽음 중) 대시 불가 상태 관리
         if (_dash.IsDashing ||
@@ -138,13 +138,6 @@ public class PlayerLegacyController : Singleton<PlayerLegacyController>
 
     private void PlayerMovement()
     {
-        // (스킬 시전 중, 공격 중, 죽음 중) 이동 불가 상태 관리
-        if (_dash.IsDashing ||
-        _knockback.isKnockback ||
-        PlayerHealth.Instance.isDead)
-        {
-            return;
-        }
         _rb.MovePosition(_rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
     }
 }

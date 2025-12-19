@@ -23,15 +23,6 @@ namespace ProjectT.Game.Player.FSM.Combat.States
                 pc.SetCombat(PlayerCombatStateId.None);
                 return;
             }
-            pc.ChargeTime += Time.deltaTime;
-
-            if(!_reachedMax && pc.ChargeTime >= pc.MaxChargeTime)
-            {
-                _reachedMax = true;
-                pc.NotifyChargeReachedMax();
-                pc.SetCombat(PlayerCombatStateId.Holding);
-                return;
-            }
         }
         public override void Exit(PlayerFsmContext ctx) { }
     }
