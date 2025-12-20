@@ -28,6 +28,8 @@ public class Dash : MonoBehaviour
         yield return new WaitForSeconds(duration);
 
         rb.velocity = Vector2.zero; // 대시 후 속도 초기화
+
+         yield return new WaitForFixedUpdate();
         isDashing = false;
     }
 }

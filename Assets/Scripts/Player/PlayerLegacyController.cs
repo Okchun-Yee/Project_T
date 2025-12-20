@@ -6,7 +6,7 @@ using System;
 public class PlayerLegacyController : Singleton<PlayerLegacyController>
 {
     public bool FacingLeft { get { return _facingLeft; } }
-    public bool FacingBack {get { return _facingBack; }}
+    public bool FacingBack { get { return _facingBack; } }
 
     [Header("Components")]
     [SerializeField] private Rigidbody2D _rb;
@@ -21,7 +21,7 @@ public class PlayerLegacyController : Singleton<PlayerLegacyController>
     [Header("Dash Settings")]
     [SerializeField] private float dashForce = 15f;    // 대시 힘
     [SerializeField] private float dashDuration = 0.2f; // 대시 지속시간
-    
+
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 4f;  // 플레이어 이동 속도
     private Vector2 movement;
@@ -50,7 +50,7 @@ public class PlayerLegacyController : Singleton<PlayerLegacyController>
     }
     private void Start()
     {
-        
+
     }
     private void Update()
     {
@@ -138,6 +138,10 @@ public class PlayerLegacyController : Singleton<PlayerLegacyController>
 
     private void PlayerMovement()
     {
+        // Execution 안전장치 (최소)
+        if (_dash != null && _dash.IsDashing) return;
+        if (_knockback != null && _knockback.isKnockback) return;
+        if (_isDead) return; // 또는 PlayerHealth.Instance.isDead
         _rb.MovePosition(_rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
     }
 }

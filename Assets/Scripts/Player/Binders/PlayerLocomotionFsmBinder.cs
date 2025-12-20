@@ -51,7 +51,7 @@ namespace ProjectT.Game.Player
             }
 
             // 2) DodgeState "진입 순간"에만 TryDodge 1회 호출
-            var current = _decision.LocomotionState;
+            PlayerLocomotionStateId current = _decision.LocomotionState;
             if (current == PlayerLocomotionStateId.Dodge && _prevLocomotionState != PlayerLocomotionStateId.Dodge)
             {
                 _execution.TryDodge();
