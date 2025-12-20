@@ -56,7 +56,7 @@ namespace ProjectT.Game.Player
             {
                 _execution.TryDodge();
             }
-
+ 
             _prevLocomotionState = current;
         }
     }

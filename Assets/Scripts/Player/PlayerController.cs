@@ -28,7 +28,6 @@ namespace ProjectT.Game.Player
         // public bool IsHit { get; private set; }     // 피격 상태 (추후 사용 예정)
 
         [Header("Debug")]
-        [SerializeField] private bool _useDummyInput = true;
         [SerializeField] private bool _logStateChanges = false;
 
         // 외부 접근용 프로퍼티
@@ -37,6 +36,8 @@ namespace ProjectT.Game.Player
         public bool AttackPressed { get; private set; }
         public bool AttackHeld { get; private set; }
         public bool DodgePressed { get; private set; }
+        public bool CanChargeAttack { get; set; }
+        public bool IsChargeMaxReached { get; set; }
 
         public PlayerLocomotionStateId LocomotionState => _locomotionFsm.CurrentStateId;    // 현재 Locomotion 상태
         public PlayerCombatStateId CombatState => _combatFsm.CurrentStateId;                // 현재 Combat 상태
@@ -67,17 +68,32 @@ namespace ProjectT.Game.Player
             InitializeFsm();
             CachePrevStates();
         }
+        private void OnEnable()
+        {
+            if (InputManager.Instance == null) return;
+
+            InputManager.Instance.OnMoveInput += OnMoveInput;
+            InputManager.Instance.OnAttackInput += OnAttackStarted;
+            InputManager.Instance.OnAttackCanceled += OnAttackCanceled;
+            InputManager.Instance.OnDodgeInput += OnDodgeInput;
+        }
+
+        private void OnDisable()
+        {
+            if (InputManager.Instance == null) return;
+
+            InputManager.Instance.OnMoveInput -= OnMoveInput;
+            InputManager.Instance.OnAttackInput -= OnAttackStarted;
+            InputManager.Instance.OnAttackCanceled -= OnAttackCanceled;
+            InputManager.Instance.OnDodgeInput -= OnDodgeInput;
+        }
+
 
         /// <summary>
         /// 입력 수집(임시) -> 게이트 검사 -> 정책 적용 -> 병렬 Tick -> 1프레임 입력 초기화
         /// </summary>
         private void Update()
-        {
-            // [TODO] InputManager 시스템으로 교체 예정
-            if(_useDummyInput) 
-            {
-                PollDummyInput();
-            }
+        {  
             // 게이트 검사
             if (!CanTickFsmThisFrame())
             {
@@ -92,7 +108,7 @@ namespace ProjectT.Game.Player
         }
         private void LateUpdate()
         {
-            if(!_logStateChanges) return;
+            if (!_logStateChanges) return;
             LogStateIfChanged();
         }
 
@@ -207,7 +223,7 @@ namespace ProjectT.Game.Player
         private void ApplyCrossFsmPoliciesPreTick()
         {
             // 1. 정책 1: Dodge 중에는 Combat FSM이 None 상태여야 함
-            if(IsCombatBlockedByLocomotion())
+            if (IsCombatBlockedByLocomotion())
             {
                 CancelCombat();
             }
@@ -233,35 +249,11 @@ namespace ProjectT.Game.Player
         }
         #endregion
 
-        #region Input (임시)
-        // [TODO] InputManager 시스템으로 교체 예정
-        private void PollDummyInput()
-        {
-            float x = 0f;
-            float y = 0f;
-
-            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)) x -= 1f;
-            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) x += 1f;
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) y += 1f;
-            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) y -= 1f;
-
-            MoveInput = new Vector2(x, y).normalized;
-
-            AttackPressed = Input.GetKeyDown(KeyCode.J);
-            AttackHeld = Input.GetKey(KeyCode.J);
-            DodgePressed = Input.GetKeyDown(KeyCode.Space);
-
-            if (Input.GetKeyDown(KeyCode.P)) SetPaused(!IsPaused);
-            if (Input.GetKeyDown(KeyCode.H)) ForceHit();
-            if (Input.GetKeyDown(KeyCode.K)) ForceDead();
-        }
-
         private void ClearOneFrameInput()
         {
             AttackPressed = false;
             DodgePressed = false;
         }
-        #endregion
         private void CachePrevStates()
         {
             _prevL = LocomotionState;
@@ -269,9 +261,31 @@ namespace ProjectT.Game.Player
         }
         private void LogStateIfChanged()
         {
-            if(_prevL==LocomotionState && _prevC==CombatState) return;
+            if (_prevL == LocomotionState && _prevC == CombatState) return;
             Debug.Log($"[FSM] L:{LocomotionState} C:{CombatState}");
             CachePrevStates();
         }
+        #region  Action Handlers
+        private void OnMoveInput(Vector2 input)
+        {
+            MoveInput = input;
+        }
+
+        private void OnAttackStarted()
+        {
+            AttackPressed = true;   // 1프레임 트리거
+            AttackHeld = true;      // 유지 입력
+        }
+
+        private void OnAttackCanceled()
+        {
+            AttackHeld = false;
+        }
+
+        private void OnDodgeInput()
+        {
+            DodgePressed = true;    // 1프레임 트리거
+        }
+        #endregion
     }
 }

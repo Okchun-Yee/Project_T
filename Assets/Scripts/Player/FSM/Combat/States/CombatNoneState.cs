@@ -8,18 +8,18 @@ namespace ProjectT.Game.Player.FSM.Combat.States
         public override void Enter(PlayerFsmContext ctx)
         {
             ctx.Controller.ChargeTime = 0f;
+            ctx.Controller.IsChargeMaxReached = false; // 최대 차징 도달 플래그 초기화
         }
         public override void Tick(PlayerFsmContext ctx)
         {
             PlayerController pc = ctx.Controller;
-            if(pc.AttackPressed)
+            if (pc.AttackPressed)
             {
-                pc.SetCombat(PlayerCombatStateId.Attack);
-                return;
-            }
-            if (pc.AttackHeld)
-            {
-                pc.SetCombat(PlayerCombatStateId.Charging);
+                if (pc.CanChargeAttack)
+                    pc.SetCombat(PlayerCombatStateId.Charging);
+                else
+                    pc.SetCombat(PlayerCombatStateId.Attack);
+
                 return;
             }
         }

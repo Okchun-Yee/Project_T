@@ -108,6 +108,7 @@ public class InputManager : Singleton<InputManager>
         {
             return;
         }
+        Debug.Log("Attack Input Started");
         OnAttackInput?.Invoke();
     }
     private void HandleAttack_Canceled(InputAction.CallbackContext context)

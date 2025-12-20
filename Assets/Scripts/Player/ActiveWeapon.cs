@@ -17,9 +17,6 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
     {
         if (InputManager.Instance != null)
         {
-            InputManager.Instance.OnAttackInput += OnAttackStarted;               // 공격 입력 이벤트 구독
-            InputManager.Instance.OnAttackCanceled += OnAttackCanceled;              // 공격 입력 취소 이벤트 구독
-
             InputManager.Instance.OnSkillInput += OnSkillStarted;                 // 스킬 입력 이벤트 구독
             InputManager.Instance.OnSkillCanceled += OnSkillCanceled;                // 스킬 입력 취소 이벤트 구독
         }
@@ -28,9 +25,6 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
     {
         if (InputManager.Instance != null)
         {
-            InputManager.Instance.OnAttackInput -= OnAttackStarted;               // 공격 입력 이벤트 구독 해제
-            InputManager.Instance.OnAttackCanceled -= OnAttackCanceled;              // 공격 입력 취소 이벤트 구독 해제
-
             InputManager.Instance.OnSkillInput -= OnSkillStarted;                 // 스킬 입력 이벤트 구독 해제
             InputManager.Instance.OnSkillCanceled -= OnSkillCanceled;                // 스킬 입력 취소 이벤트 구독 해제
         }
@@ -58,7 +52,7 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
     // 공격 버튼 입력 상태 관리 매서드
     private void OnAttackStarted()
     {
-        if(currentWeapon == null) return;
+        if (currentWeapon == null) return;
 
         attackButtonDown = true;
         currentWeapon.Attack();     // 공격 메서드 호출
@@ -66,11 +60,41 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
     // 공격 버튼 입력 상태 관리 매서드
     private void OnAttackCanceled()
     {
-        if(currentWeapon == null) return;
-        
+        if (currentWeapon == null) return;
+
         attackButtonDown = false;
         ActionCancel();             // 차징 or 홀딩 종료
     }
+    // 차징 or 홀딩 종료 매서드
+    private void ActionCancel()
+    {
+        ChargingManager.Instance?.EndCharging();        // 차징 종료
+        HoldingManager.Instance?.EndHolding();          // 홀딩 종료
+    }
+    /// <summary>
+    /// FSM에서 공격 진입점
+    /// </summary>
+    public void Fsm_AttackExecute(bool charged)
+    {
+        if (currentWeapon == null) return;
+
+        if (currentWeapon is BaseWeapon bw)
+        {
+            bw.ExecuteAttackFromFsm(charged);
+        }
+        else
+        {
+            // 인터페이스만 구현된 특수 무기면 fallback
+            currentWeapon.Attack();
+        }
+    }
+    public void Fsm_CancelAction()
+    {
+        // 기존 private ActionCancel 내용 그대로 호출하게 만들면 됨
+        ChargingManager.Instance?.EndCharging();
+        HoldingManager.Instance?.EndHolding();
+    }
+
     // 스킬 시전 매서드
     private void OnSkillStarted(int skillIndex)
     {
@@ -113,12 +137,5 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
     {
         ISkill[] skills = (currentWeapon as BaseWeapon)?.GetSkills();
         skills?[skillIndex]?.UnsubscribeSkillEvents();
-    }
-    
-    // 차징 or 홀딩 종료 매서드
-    private void ActionCancel()
-    {
-        ChargingManager.Instance?.EndCharging();        // 차징 종료
-        HoldingManager.Instance?.EndHolding();          // 홀딩 종료
     }
 }

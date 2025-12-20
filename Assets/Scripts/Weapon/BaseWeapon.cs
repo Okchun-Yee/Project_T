@@ -36,7 +36,7 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     {
         // 1) 무기 정보 주입
         weaponInfo = info;
-        weaponCooldown = info.weaponCooldown;
+        weaponCooldown = info.weaponCooldown; 
     }
     // 스킬 초기화 매서드
     private void SkillInitialization(EquippableItemSO info)
@@ -94,6 +94,14 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
         if (isCooldown) { return; }
         OnAttack_Charged();
         CooldownCoroutine = StartCoroutine(CooldownRoutine());
+    }
+    /// <summary>
+    /// FSM에서 공격 진입점
+    /// </summary>
+    public void ExecuteAttackFromFsm(bool charged)
+    {
+        if (charged) _AttackCharged();
+        else _Attack();
     }
 
     // 무기 쿨다운 코루틴
