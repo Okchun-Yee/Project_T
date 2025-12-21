@@ -53,12 +53,14 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
     {
         if (currentWeapon == null) return;
 
-        if (currentWeapon is BaseWeapon bw)
+        if (currentWeapon is not BaseWeapon bw)
         {
-            bw.ExecuteAttackFromFsm(charged);
+            // 비 BaseWeapon인 경우 경고 로그 출력
+            Debug.LogWarning($"[ActiveWeapon] Fsm_AttackExecute called but currentWeapon is not BaseWeapon: {currentWeapon}");
+            return;
         }
-        // 비 BaseWeapon인 경우 경고 로그 출력
-        Debug.LogWarning($"[ActiveWeapon] Fsm_AttackExecute called but currentWeapon is not BaseWeapon: {currentWeapon}");
+
+        bw.ExecuteAttackFromFsm(charged);
     }
     public void Fsm_CancelAction()
     {
