@@ -19,8 +19,10 @@ namespace ProjectT.Game.Player.FSM.Combat.States
             PlayerController pc = ctx.Controller;
             if(!pc.AttackHeld)
             {
-                pc.NotifyChargeCanceled();
-                pc.SetCombat(PlayerCombatStateId.None);
+                // 취소 처리 X
+
+                // 공격 상태로 전환
+                pc.SetCombat(PlayerCombatStateId.Attack);
                 return;
             }
         }

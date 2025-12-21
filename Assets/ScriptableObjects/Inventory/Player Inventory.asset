@@ -18,9 +18,7 @@ MonoBehaviour:
     itemState: []
   - quantity: 1
     item: {fileID: 11400000, guid: 89061a440056b514dbb706b0ed5e3cda, type: 2}
-    itemState:
-    - itemParameter: {fileID: 11400000, guid: 1b3642186f71b224b972d4e5fcd9e669, type: 2}
-      value: 80
+    itemState: []
   - quantity: 0
     item: {fileID: 0}
     itemState: []

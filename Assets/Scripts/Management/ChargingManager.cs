@@ -39,6 +39,8 @@ public class ChargingManager : Singleton<ChargingManager>
         chargeTime = skillChargeTime;
         chargeTimeElapsed = 0f;         // 차징 시작 시 초기화
         isChargingComplete = false;     // 차징 시작 시 초기화
+        Debug.Log("[Exec] StartCharging called");
+
 
         // Start charging logic
         chargingSkill = ChargingRoutine();

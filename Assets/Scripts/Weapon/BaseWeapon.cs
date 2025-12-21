@@ -72,6 +72,7 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
         {
             // 기본적으로 차징 시작
             ChargingManager.Instance?.StartCharging(ChargingType.Attack, weaponInfo.chargeDuration);
+            Debug.Log("[BaseWeapon] Attack() legacy called");
             return;
         }
         else
