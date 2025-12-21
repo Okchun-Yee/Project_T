@@ -175,10 +175,7 @@ namespace ProjectT.Game.Player
         // Combat FSM 확장 포인트 알림 메서드
         public void NotifyAttackStarted() => AttackStarted?.Invoke();
         public void NotifyAttackEnded() => AttackEnded?.Invoke();
-        public void NotifyChargeStarted() {
-            Debug.Log("[FSM] ChargeStarted event fired");
-            ChargeStarted?.Invoke();
-        }
+        public void NotifyChargeStarted() => ChargeStarted?.Invoke();
         public void NotifyChargeReachedMax() => ChargeReachedMax?.Invoke();
         public void NotifyChargeCanceled() => ChargeCanceled?.Invoke();
         public void NotifyHoldStarted() => HoldStarted?.Invoke();

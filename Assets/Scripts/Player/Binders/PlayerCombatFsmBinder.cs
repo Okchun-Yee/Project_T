@@ -58,7 +58,6 @@ namespace ProjectT.Game.Player
             _activeWeapon.Fsm_AttackExecute(_charged);
             // 공격이 실행되면 charged는 소비되는 게 자연스러움
             _charged = false;
-            Debug.Log("[Binder] AttackStarted received");
         }
 
         private void OnAttackEnded()
@@ -81,6 +80,9 @@ namespace ProjectT.Game.Player
             // 공격 차징 시작
             ChargingManager.Instance?.StartCharging(ChargingType.Attack, info.chargeDuration);
         }
+        // TODO: subscribe ChargingManager.Completed -> pc.NotifyChargeReachedMax()
+
+        // TODO: set pc.IsChargeMaxReached
 
         private void OnChargeReachedMax()
         {
