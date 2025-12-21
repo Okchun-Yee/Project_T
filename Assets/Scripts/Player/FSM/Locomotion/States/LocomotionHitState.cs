@@ -9,9 +9,13 @@ namespace ProjectT.Game.Player.FSM.Locomotion.States
     public sealed class LocomotionHitState : PlayerLocomotionStateBase
     {
         private float _timeLeft;
+
+        [SerializeField] private float _hitStunDuration = 0.2f;
+        public float HitStunDuration => _hitStunDuration;
+
         public override void Enter(PlayerFsmContext ctx)
         {
-            _timeLeft = ctx.Controller.HitStunDuration;
+            _timeLeft = HitStunDuration;
             if(ctx.Rigid != null) ctx.Rigid.velocity = Vector2.zero;
         }
         public override void Tick(PlayerFsmContext ctx)

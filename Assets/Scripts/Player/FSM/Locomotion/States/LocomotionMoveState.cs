@@ -25,8 +25,6 @@ namespace ProjectT.Game.Player.FSM.Locomotion.States
                 pc.SetLocomotion(PlayerLocomotionStateId.Idle);
                 return;
             }
-            // 이동
-            Move(ctx, pc.MoveInput, pc.MoveSpeed);
         }
         public override void Exit(PlayerFsmContext ctx)
         {

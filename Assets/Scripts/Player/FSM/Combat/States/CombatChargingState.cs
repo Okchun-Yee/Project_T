@@ -19,17 +19,10 @@ namespace ProjectT.Game.Player.FSM.Combat.States
             PlayerController pc = ctx.Controller;
             if(!pc.AttackHeld)
             {
-                pc.NotifyChargeCanceled();
-                pc.SetCombat(PlayerCombatStateId.None);
-                return;
-            }
-            pc.ChargeTime += Time.deltaTime;
+                // 취소 처리 X
 
-            if(!_reachedMax && pc.ChargeTime >= pc.MaxChargeTime)
-            {
-                _reachedMax = true;
-                pc.NotifyChargeReachedMax();
-                pc.SetCombat(PlayerCombatStateId.Holding);
+                // 공격 상태로 전환
+                pc.SetCombat(PlayerCombatStateId.Attack);
                 return;
             }
         }

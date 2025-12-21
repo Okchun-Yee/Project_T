@@ -99,7 +99,7 @@ public class Shooter : MonoBehaviour, IEnemy
 
     private void TargetConeOfInfluence(out float startAngle, out float currentAngle, out float angleStep, out float endAngle)
     {
-        Vector2 targetDirection = PlayerController.Instance.transform.position - transform.position;
+        Vector2 targetDirection = PlayerLegacyController.Instance.transform.position - transform.position;
         float targetAngle = Mathf.Atan2(targetDirection.y, targetDirection.x) * Mathf.Rad2Deg;
 
         startAngle = targetAngle;

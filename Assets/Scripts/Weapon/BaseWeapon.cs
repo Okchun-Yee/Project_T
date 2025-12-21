@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Inventory.Model;
+using System;
 
 public abstract class BaseWeapon : MonoBehaviour, IWeapon
 {
@@ -36,7 +37,7 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     {
         // 1) 무기 정보 주입
         weaponInfo = info;
-        weaponCooldown = info.weaponCooldown;
+        weaponCooldown = info.weaponCooldown; 
     }
     // 스킬 초기화 매서드
     private void SkillInitialization(EquippableItemSO info)
@@ -65,21 +66,10 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
     }
 
     // 공격 진입점 매서드
+    [Obsolete("Do not call Attack() from FSM path. Use ExecuteAttackFromFsm(charged) via binder.", false)]
     public void Attack()
     {
-        if (isCooldown) { return; }
-        if (weaponInfo != null && weaponInfo.chargeDuration > 0f)
-        {
-            // 기본적으로 차징 시작
-            ChargingManager.Instance?.StartCharging(ChargingType.Attack, weaponInfo.chargeDuration);
-            return;
-        }
-        else
-        {
-            // 차징이 필요 없는 무기의 경우 즉시 공격 시전
-            OnAttack();
-            CooldownCoroutine = StartCoroutine(CooldownRoutine());
-        }
+        // [TODO] 기존 Attack() 메서드는 더 이상 사용하지 않음.
     }
     // 새 헬퍼: 무기가 (차징 취소 시) 직접 즉시 공격을 트리거할 때 사용.
     // ForceAttack은 공격 쿨다운 검사를 포함하고 CooldownRoutine을 시작합니다.
@@ -94,6 +84,14 @@ public abstract class BaseWeapon : MonoBehaviour, IWeapon
         if (isCooldown) { return; }
         OnAttack_Charged();
         CooldownCoroutine = StartCoroutine(CooldownRoutine());
+    }
+    /// <summary>
+    /// FSM에서 공격 진입점
+    /// </summary>
+    public void ExecuteAttackFromFsm(bool charged)
+    {
+        if (charged) _AttackCharged();
+        else _Attack();
     }
 
     // 무기 쿨다운 코루틴

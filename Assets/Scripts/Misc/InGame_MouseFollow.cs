@@ -33,7 +33,7 @@ public class InGame_MouseFollow : MonoBehaviour
         // if ( ) { return; }
 
         Vector3 mousePos = Input.mousePosition;
-        Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(PlayerController.Instance.transform.position);
+        Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(PlayerLegacyController.Instance.transform.position);
 
 
         float angle = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;

@@ -239,6 +239,7 @@ GameObject:
   - component: {fileID: 5121238362513783214}
   - component: {fileID: 3291965318036132146}
   - component: {fileID: 239997871225431392}
+  - component: {fileID: 911714171923386200}
   - component: {fileID: 46091410835244951}
   - component: {fileID: 8997236477992658678}
   - component: {fileID: 6607252703563164941}
@@ -504,6 +505,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &911714171923386200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3969855821128286577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6475bb50e1d6a734b8c4398ac3c4fa69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isPaused: 0
+  _useDummyInput: 1
+  _logStateChanges: 0
 --- !u!114 &46091410835244951
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -516,9 +532,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a80f071a6519bb47b6e8ecca13b962b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 4
+  _rb: {fileID: 0}
+  _anim: {fileID: 0}
+  _sprite: {fileID: 0}
+  _dash: {fileID: 6607252703563164941}
+  _ghostEffect: {fileID: 0}
+  _knockback: {fileID: 0}
   dashForce: 15
   dashDuration: 0.2
+  moveSpeed: 4
+  _facingLeft: 0
+  _facingBack: 0
+  _isDead: 0
 --- !u!114 &8997236477992658678
 MonoBehaviour:
   m_ObjectHideFlags: 0

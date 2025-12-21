@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class ActiveWeapon : Singleton<ActiveWeapon>
 {
-    private bool attackButtonDown = false; // 공격 버튼 상태
-    private int? currentSkillIndex = 0; // 현재 스킬 인덱스 (Nullable int)
+    private int? currentSkillIndex = 0; // 현재 스킬 인덱스
 
     public IWeapon currentWeapon; // 현재 활성화된 무기
 
@@ -17,9 +16,6 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
     {
         if (InputManager.Instance != null)
         {
-            InputManager.Instance.OnAttackInput += OnAttackStarted;               // 공격 입력 이벤트 구독
-            InputManager.Instance.OnAttackCanceled += OnAttackCanceled;              // 공격 입력 취소 이벤트 구독
-
             InputManager.Instance.OnSkillInput += OnSkillStarted;                 // 스킬 입력 이벤트 구독
             InputManager.Instance.OnSkillCanceled += OnSkillCanceled;                // 스킬 입력 취소 이벤트 구독
         }
@@ -28,9 +24,6 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
     {
         if (InputManager.Instance != null)
         {
-            InputManager.Instance.OnAttackInput -= OnAttackStarted;               // 공격 입력 이벤트 구독 해제
-            InputManager.Instance.OnAttackCanceled -= OnAttackCanceled;              // 공격 입력 취소 이벤트 구독 해제
-
             InputManager.Instance.OnSkillInput -= OnSkillStarted;                 // 스킬 입력 이벤트 구독 해제
             InputManager.Instance.OnSkillCanceled -= OnSkillCanceled;                // 스킬 입력 취소 이벤트 구독 해제
         }
@@ -47,30 +40,35 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
         // 새로운 무기 설정
         currentWeapon = weapon;     // 현재 무기 설정
         currentSkillIndex = null;   // 현재 스킬 인덱스 초기화 (NULLABLE)
-        attackButtonDown = false;   // 공격 버튼 상태 초기화
     }
     // 무기 상태 초기화 매서드
     public void ClearWeapon()
     {
         currentWeapon = null;
-        attackButtonDown = false;
     }
-    // 공격 버튼 입력 상태 관리 매서드
-    private void OnAttackStarted()
+    /// <summary>
+    /// FSM에서 공격 진입점
+    /// </summary>
+    public void Fsm_AttackExecute(bool charged)
     {
-        if(currentWeapon == null) return;
+        if (currentWeapon == null) return;
 
-        attackButtonDown = true;
-        currentWeapon.Attack();     // 공격 메서드 호출
+        if (currentWeapon is not BaseWeapon bw)
+        {
+            // 비 BaseWeapon인 경우 경고 로그 출력
+            Debug.LogWarning($"[ActiveWeapon] Fsm_AttackExecute called but currentWeapon is not BaseWeapon: {currentWeapon}");
+            return;
+        }
+
+        bw.ExecuteAttackFromFsm(charged);
     }
-    // 공격 버튼 입력 상태 관리 매서드
-    private void OnAttackCanceled()
+    public void Fsm_CancelAction()
     {
-        if(currentWeapon == null) return;
-        
-        attackButtonDown = false;
-        ActionCancel();             // 차징 or 홀딩 종료
+        // 기존 private ActionCancel 내용 그대로 호출하게 만들면 됨
+        ChargingManager.Instance?.EndCharging();
+        HoldingManager.Instance?.EndHolding();
     }
+
     // 스킬 시전 매서드
     private void OnSkillStarted(int skillIndex)
     {
@@ -100,7 +98,7 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
         {
             currentSkillIndex = null;           // 현재 스킬 인덱스 초기화 (NULLABLE)
         }
-        ActionCancel();                         // 차징 or 홀딩 종료
+        Fsm_CancelAction();                     // 차징 or 홀딩 종료
     }
     // 스킬 구독 매서드
     private void SubscribeSkill(int skillIndex)
@@ -113,12 +111,5 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
     {
         ISkill[] skills = (currentWeapon as BaseWeapon)?.GetSkills();
         skills?[skillIndex]?.UnsubscribeSkillEvents();
-    }
-    
-    // 차징 or 홀딩 종료 매서드
-    private void ActionCancel()
-    {
-        ChargingManager.Instance?.EndCharging();        // 차징 종료
-        HoldingManager.Instance?.EndHolding();          // 홀딩 종료
     }
 }

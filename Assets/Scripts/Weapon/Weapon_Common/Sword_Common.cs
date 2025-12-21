@@ -24,6 +24,7 @@ public class Sword_Common : BaseWeapon, ICharging
     private GameObject slashAnim;                   // 현재 활성화된 슬래시 애니메이션 인스턴스
     private InGame_MouseFollow mouseFollow;         // 마우스 추적 스크립트
     private Flash flash;                            // 피격시 깜빡임 스크립트
+    private bool _chargeReady = false;              // 차징 완료 플래그
 
     private static readonly int HASH_INDEX = Animator.StringToHash("AttackIndex");  // 현재 콤보 인덱스
     private static readonly int HASH_ATTACK = Animator.StringToHash("Attack");      // 다음 콤보 트리거
@@ -120,6 +121,7 @@ public class Sword_Common : BaseWeapon, ICharging
     protected override void OnAttack_Charged()
     {
         Debug.Log($"Sword OnAttack_Charged");
+        StartCoroutine(flash.FlashRoutine()); // 차징 완료 플래시 효과
     }
 
     // Combo state and timing delegated to Combo component; local timer/index removed.
@@ -130,9 +132,9 @@ public class Sword_Common : BaseWeapon, ICharging
 
         weaponColliders.gameObject.SetActive(index >= 0);
         // PlayerController의 FacingLeft를 읽어 콜라이더 좌우 반전 적용 (로컬 스케일 사용)
-        bool facingLeft = PlayerController.Instance != null && PlayerController.Instance.FacingLeft;
+        bool facingLeft = PlayerLegacyController.Instance != null && PlayerLegacyController.Instance.FacingLeft;
         // 추가: 앞/뒤 판별
-        bool facingBack = PlayerController.Instance != null && PlayerController.Instance.FacingBack;
+        bool facingBack = PlayerLegacyController.Instance != null && PlayerLegacyController.Instance.FacingBack;
 
         if (facingLeft)
             weaponColliders.transform.rotation = Quaternion.Euler(0, 180, 0);
@@ -199,7 +201,7 @@ public class Sword_Common : BaseWeapon, ICharging
     {
         if (slashAnim == null) return;
         slashAnim.transform.rotation = Quaternion.Euler(-180, 0, 0);
-        if (PlayerController.Instance.FacingLeft)
+        if (PlayerLegacyController.Instance.FacingLeft)
         {
             SpriteRenderer sr = slashAnim.GetComponent<SpriteRenderer>();
             if (sr != null) sr.flipX = true;
@@ -209,7 +211,7 @@ public class Sword_Common : BaseWeapon, ICharging
     {
         if (slashAnim == null) return;
         slashAnim.transform.rotation = Quaternion.Euler(0, 0, 0);
-        if (PlayerController.Instance.FacingLeft)
+        if (PlayerLegacyController.Instance.FacingLeft)
         {
             SpriteRenderer sr = slashAnim.GetComponent<SpriteRenderer>();
             if (sr != null) sr.flipX = true;
@@ -217,32 +219,34 @@ public class Sword_Common : BaseWeapon, ICharging
     }
 
     // 차징 이벤트 콜백 매서드 모음
+    #region Charging Event Callbacks
     public void OnChargingCanceled(ChargingType type)
     {
         if (ActiveWeapon.Instance == null) return;
         // 기본 공격 & 스킬 구분
-        if (type == ChargingType.Attack)
-        {
-            // 차징 취소 시 공격 실행
-            _Attack();
-        }
+        if (type != ChargingType.Attack) return;
+        // _Attack() 호출 하지 않고 플래그 갱신
+        _chargeReady = false;
     }
 
     public void OnChargingCompleted(ChargingType type)
     {
         if (ActiveWeapon.Instance == null) return;
         // 기본 공격 & 스킬 구분
-        if (type == ChargingType.Attack)
-        {
-            StartCoroutine(flash.FlashRoutine()); // 피격시 깜빡임 효과
-            _AttackCharged();
-        }
+        if (type != ChargingType.Attack) return;
+        
+        _chargeReady = true;    // 차징 완료 플래그 갱신
     }
 
     public void OnChargingProgress(ChargingType type, float elapsed, float duration)
     {
         if (ActiveWeapon.Instance == null) return;
+        if (type != ChargingType.Attack) return;
     }
+    #endregion
+    public bool IsChargeReady => _chargeReady;
+    public void ConsumeChargeReady() => _chargeReady = false;
+
 
     #if UNITY_EDITOR
     private void OnDrawGizmos()
