@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class ActiveWeapon : Singleton<ActiveWeapon>
 {
-    private bool attackButtonDown = false; // 공격 버튼 상태
-    private int? currentSkillIndex = 0; // 현재 스킬 인덱스 (Nullable int)
+    private int? currentSkillIndex = null; // 현재 스킬 인덱스 (Nullable int)
 
     public IWeapon currentWeapon; // 현재 활성화된 무기
 
@@ -41,35 +40,11 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
         // 새로운 무기 설정
         currentWeapon = weapon;     // 현재 무기 설정
         currentSkillIndex = null;   // 현재 스킬 인덱스 초기화 (NULLABLE)
-        attackButtonDown = false;   // 공격 버튼 상태 초기화
     }
     // 무기 상태 초기화 매서드
     public void ClearWeapon()
     {
         currentWeapon = null;
-        attackButtonDown = false;
-    }
-    // 공격 버튼 입력 상태 관리 매서드
-    private void OnAttackStarted()
-    {
-        if (currentWeapon == null) return;
-
-        attackButtonDown = true;
-        currentWeapon.Attack();     // 공격 메서드 호출
-    }
-    // 공격 버튼 입력 상태 관리 매서드
-    private void OnAttackCanceled()
-    {
-        if (currentWeapon == null) return;
-
-        attackButtonDown = false;
-        ActionCancel();             // 차징 or 홀딩 종료
-    }
-    // 차징 or 홀딩 종료 매서드
-    private void ActionCancel()
-    {
-        ChargingManager.Instance?.EndCharging();        // 차징 종료
-        HoldingManager.Instance?.EndHolding();          // 홀딩 종료
     }
     /// <summary>
     /// FSM에서 공격 진입점
@@ -82,11 +57,8 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
         {
             bw.ExecuteAttackFromFsm(charged);
         }
-        else
-        {
-            // 인터페이스만 구현된 특수 무기면 fallback
-            currentWeapon.Attack();
-        }
+        // 비 BaseWeapon인 경우 경고 로그 출력
+        Debug.LogWarning($"[ActiveWeapon] Fsm_AttackExecute called but currentWeapon is not BaseWeapon: {currentWeapon}");
     }
     public void Fsm_CancelAction()
     {
@@ -124,7 +96,7 @@ public class ActiveWeapon : Singleton<ActiveWeapon>
         {
             currentSkillIndex = null;           // 현재 스킬 인덱스 초기화 (NULLABLE)
         }
-        ActionCancel();                         // 차징 or 홀딩 종료
+        Fsm_CancelAction();                     // 차징 or 홀딩 종료
     }
     // 스킬 구독 매서드
     private void SubscribeSkill(int skillIndex)
