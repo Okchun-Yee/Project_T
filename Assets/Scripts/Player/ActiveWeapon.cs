@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ActiveWeapon : Singleton<ActiveWeapon>
 {
-    private int? currentSkillIndex = null; // 현재 스킬 인덱스 (Nullable int)
+    private int? currentSkillIndex = 0; // 현재 스킬 인덱스
 
     public IWeapon currentWeapon; // 현재 활성화된 무기
 
