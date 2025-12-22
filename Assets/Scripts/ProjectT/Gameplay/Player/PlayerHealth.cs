@@ -5,6 +5,7 @@ using ProjectT.Core;
 using ProjectT.Gameplay.Combat;
 using ProjectT.Systems.Camera;
 using ProjectT.Systems.UI;
+using ProjectT.Gameplay.Enemies;
 
 
 namespace ProjectT.Gameplay.Player
