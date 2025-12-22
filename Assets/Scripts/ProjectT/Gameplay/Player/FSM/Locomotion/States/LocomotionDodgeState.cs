@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace ProjectT.Game.Player.FSM.Locomotion.States
+namespace ProjectT.Gameplay.Player.FSM.Locomotion.States
 {
     /// <summary>
     /// Locomotion Dodge State

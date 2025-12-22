@@ -1,7 +1,7 @@
 using ProjectT.Core.FSM;
-using ProjectT.Game.Player.FSM.Locomotion.States;
+using ProjectT.Gameplay.Player.FSM.Locomotion.States;
 
-namespace ProjectT.Game.Player.FSM.Locomotion
+namespace ProjectT.Gameplay.Player.FSM.Locomotion
 {
     /// <summary>
     /// Player locomotion FSM composer.

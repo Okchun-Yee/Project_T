@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ProjectT.Game.Player
+namespace ProjectT.Gameplay.Player
 {
     public sealed class PlayerCombatFsmBinder : MonoBehaviour
     {

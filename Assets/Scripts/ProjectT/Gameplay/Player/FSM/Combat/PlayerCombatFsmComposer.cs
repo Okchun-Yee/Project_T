@@ -1,7 +1,7 @@
 using ProjectT.Core.FSM;
-using ProjectT.Game.Player.FSM.Combat.States;
+using ProjectT.Gameplay.Player.FSM.Combat.States;
 
-namespace ProjectT.Game.Player.FSM.Combat
+namespace ProjectT.Gameplay.Player.FSM.Combat
 {
     /// <summary>
     /// Composer for player combat FSM.

@@ -1,4 +1,4 @@
-namespace ProjectT.Game.Player.FSM.Combat
+namespace ProjectT.Gameplay.Player.FSM.Combat
 {
     /// <summary>
     /// Player Combat State Identifiers

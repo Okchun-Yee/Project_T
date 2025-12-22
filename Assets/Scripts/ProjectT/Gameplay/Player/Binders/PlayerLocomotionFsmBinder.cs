@@ -1,7 +1,7 @@
-using ProjectT.Game.Player.FSM.Locomotion;
+using ProjectT.Gameplay.Player.FSM.Locomotion;
 using UnityEngine;
 
-namespace ProjectT.Game.Player
+namespace ProjectT.Gameplay.Player
 {
     /// <summary>
     /// Locomotion FSM(Decision) → Legacy Controller(Execution) 연결자

@@ -1,6 +1,6 @@
 using ProjectT.Core.FSM;
 
-namespace ProjectT.Game.Player.FSM
+namespace ProjectT.Gameplay.Player.FSM
 {
     /// <summary>
     /// * 플레이어 상태들의 공통 베이스 클래스

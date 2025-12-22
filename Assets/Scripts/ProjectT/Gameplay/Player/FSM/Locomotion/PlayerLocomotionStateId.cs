@@ -1,4 +1,4 @@
-namespace ProjectT.Game.Player.FSM.Locomotion
+namespace ProjectT.Gameplay.Player.FSM.Locomotion
 {
     /// <summary>
     /// Player Locomotion State Identifiers

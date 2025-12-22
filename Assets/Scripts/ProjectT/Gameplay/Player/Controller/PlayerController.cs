@@ -1,11 +1,11 @@
 using System;
 using UnityEngine;
 using ProjectT.Core.FSM;
-using ProjectT.Game.Player.FSM;
-using ProjectT.Game.Player.FSM.Locomotion;
-using ProjectT.Game.Player.FSM.Combat;
+using ProjectT.Gameplay.Player.FSM;
+using ProjectT.Gameplay.Player.FSM.Locomotion;
+using ProjectT.Gameplay.Player.FSM.Combat;
 
-namespace ProjectT.Game.Player
+namespace ProjectT.Gameplay.Player
 {
     /// <summary>
     /// Player Controller

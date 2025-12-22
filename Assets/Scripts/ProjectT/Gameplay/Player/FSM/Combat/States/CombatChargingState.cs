@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ProjectT.Game.Player.FSM.Combat.States
+namespace ProjectT.Gameplay.Player.FSM.Combat.States
 {
     /// <summary>
     /// Player combat charging state.

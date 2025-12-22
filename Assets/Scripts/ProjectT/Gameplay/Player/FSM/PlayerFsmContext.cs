@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ProjectT.Game.Player.FSM
+namespace ProjectT.Gameplay.Player.FSM
 {
     /// <summary>
     /// * 플레이어 FSM 컨텍스트
