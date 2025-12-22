@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 4330515513686813912}
   - component: {fileID: 859453920472577975}
   - component: {fileID: 4263555069581439361}
-  - component: {fileID: 8394179461081621522}
-  - component: {fileID: -7065711494882762583}
+  - component: {fileID: 4287089715249406049}
+  - component: {fileID: 2539118869747708517}
   m_Layer: 0
   m_Name: EnemyProjectile
   m_TagString: Untagged
@@ -150,7 +150,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &8394179461081621522
+--- !u!114 &4287089715249406049
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -159,16 +159,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 791695264422601474}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfa31b55d67a3e748b2678478ac42aa6, type: 3}
+  m_Script: {fileID: 11500000, guid: dd825cc3257e840469ce8eb0000b5169, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lifetime: 2
+  lifetime: 1.5
   autoDestroy: 1
   moveSpeed: 22
   particleOnHitPrefabVFX: {fileID: 988950910461005932, guid: c138cf0f47717a14ba8f156e07d97b7c, type: 3}
   isEnemyProjectile: 1
   projectileRange: 10
---- !u!114 &-7065711494882762583
+--- !u!114 &2539118869747708517
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -177,7 +177,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 791695264422601474}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fd54b8d616c6c9468b464ce559b85fd, type: 3}
+  m_Script: {fileID: 11500000, guid: 4e4f08ae7bc3a664991d36a867180b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 1

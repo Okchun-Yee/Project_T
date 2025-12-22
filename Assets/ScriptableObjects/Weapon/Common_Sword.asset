@@ -9,17 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b27aa3464281f09488aef44f900b2318, type: 3}
+  m_Script: {fileID: 11500000, guid: 1d7df894405aa3a44a854d94ed799217, type: 3}
   m_Name: Common_Sword
   m_EditorClassIdentifier: 
   <IsStackable>k__BackingField: 0
   <MaxStackSize>k__BackingField: 1
-  <Name>k__BackingField: Bow
-  <Description>k__BackingField: Bow123
-  <ItemImage>k__BackingField: {fileID: 254607224, guid: eeb9a0002cd5d98479a7cffdbf4c0563, type: 3}
+  <Name>k__BackingField: Swrod
+  <Description>k__BackingField: Swrod
+  <ItemImage>k__BackingField: {fileID: 1205952765, guid: eeb9a0002cd5d98479a7cffdbf4c0563, type: 3}
   <DefaultParametersList>k__BackingField:
   - itemParameter: {fileID: 11400000, guid: 1b3642186f71b224b972d4e5fcd9e669, type: 2}
-    value: 100
+    value: 150
   weaponPrefab: {fileID: 4528167299006447994, guid: 72fa1ff43415646428fb94c206bc30c7, type: 3}
   weaponCategory: 0
   skillInfos:

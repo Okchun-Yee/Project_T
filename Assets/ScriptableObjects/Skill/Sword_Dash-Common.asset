@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3da6ef9e1deff9341bf56fe6127092bb, type: 3}
+  m_Script: {fileID: 11500000, guid: 13b91cd82b2118c468107497666dba83, type: 3}
   m_Name: Sword_Dash-Common
   m_EditorClassIdentifier: 
   icon: {fileID: 21300000, guid: c0cbc89dbcdeac5418f46823e6663cf9, type: 3}

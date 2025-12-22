@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 4330515513686813912}
   - component: {fileID: -7933592944730322544}
   - component: {fileID: 4263555069581439361}
-  - component: {fileID: -7065711494882762583}
-  - component: {fileID: 7956100284353845867}
+  - component: {fileID: 4311415483255119588}
+  - component: {fileID: 8587280123273114477}
   m_Layer: 0
   m_Name: EnemyParabolaProjectile
   m_TagString: Untagged
@@ -150,7 +150,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &-7065711494882762583
+--- !u!114 &4311415483255119588
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -159,11 +159,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 791695264422601474}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fd54b8d616c6c9468b464ce559b85fd, type: 3}
+  m_Script: {fileID: 11500000, guid: 4e4f08ae7bc3a664991d36a867180b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   damageAmount: 1
---- !u!114 &7956100284353845867
+--- !u!114 &8587280123273114477
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -172,7 +172,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 791695264422601474}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78c7bbaa560a0a041b071c0acff7c743, type: 3}
+  m_Script: {fileID: 11500000, guid: af55d786ca9ae4d408e0e3bda41a346d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   lifetime: 2
@@ -192,12 +192,12 @@ MonoBehaviour:
       outWeight: 0
     - serializedVersion: 3
       time: 1
-      value: 0.000000059604645
-      inSlope: -1.9811304
-      outSlope: -1.9811304
+      value: 0
+      inSlope: -0.92353547
+      outSlope: -0.92353547
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.01666665
+      inWeight: 0.07916665
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2

@@ -119,10 +119,5 @@ namespace ProjectT.Gameplay.Player
             ISkill[] skills = (currentWeapon as BaseWeapon)?.GetSkills();
             skills?[skillIndex]?.UnsubscribeSkillEvents();
         }
-
-        internal void NewWeapon(BaseWeapon bw)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

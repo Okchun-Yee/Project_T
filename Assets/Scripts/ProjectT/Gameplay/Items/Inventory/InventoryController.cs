@@ -24,9 +24,13 @@ namespace ProjectT.Gameplay.Items.Inventory
         }
         private void OnEnable()
         {
+            // InputManager Ready 이벤트 구독
+            InputManager.Ready += OnInputManagerReady;
+            
+            // 이미 InputManager가 준비된 경우 바로 바인딩
             if (InputManager.Instance != null)
             {
-                InputManager.Instance.OnInventoryInput += InventoryInput;
+                BindInputEvents();
             }
             PrepareUI();
             PrepareInventoryData();
@@ -34,10 +38,40 @@ namespace ProjectT.Gameplay.Items.Inventory
 
         private void OnDisable()
         {
+            // InputManager Ready 이벤트 구독 해제
+            InputManager.Ready -= OnInputManagerReady;
+            
             if (inventoryData != null)
             {
                 inventoryData.OnInventoryUpdated -= UpdateInventoryUI;
             }
+            UnbindInputEvents();
+        }
+        
+        /// <summary>
+        /// InputManager 준비 완료 시 호출되는 콜백
+        /// </summary>
+        private void OnInputManagerReady()
+        {
+            BindInputEvents();
+        }
+        
+        /// <summary>
+        /// InputManager 입력 이벤트 바인딩
+        /// </summary>
+        private void BindInputEvents()
+        {
+            if (InputManager.Instance != null)
+            {
+                InputManager.Instance.OnInventoryInput += InventoryInput;
+            }
+        }
+        
+        /// <summary>
+        /// InputManager 입력 이벤트 바인딩 해제
+        /// </summary>
+        private void UnbindInputEvents()
+        {
             if (InputManager.Instance != null)
             {
                 InputManager.Instance.OnInventoryInput -= InventoryInput;

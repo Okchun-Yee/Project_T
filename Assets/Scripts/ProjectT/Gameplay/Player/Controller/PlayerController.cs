@@ -29,7 +29,7 @@ namespace ProjectT.Gameplay.Player
         // public bool IsHit { get; private set; }     // 피격 상태 (추후 사용 예정)
 
         [Header("Debug")]
-        [SerializeField] private bool _logStateChanges = false;
+        [SerializeField] private bool _logStateChanges;
 
         // 외부 접근용 프로퍼티
         public float ChargeTime { get; set; }
@@ -60,6 +60,7 @@ namespace ProjectT.Gameplay.Player
         private PlayerLocomotionStateId _prevL;
         private PlayerCombatStateId _prevC;
 
+        private bool _isBound;
 
         private void Awake()
         {
@@ -73,30 +74,21 @@ namespace ProjectT.Gameplay.Player
         }
         private void OnEnable()
         {
-            if (InputManager.Instance == null) return;
-
-            InputManager.Instance.OnMoveInput += OnMoveInput;
-            InputManager.Instance.OnAttackInput += OnAttackStarted;
-            InputManager.Instance.OnAttackCanceled += OnAttackCanceled;
-            InputManager.Instance.OnDodgeInput += OnDodgeInput;
+            InputManager.Ready += TryBindInput;
         }
 
         private void OnDisable()
         {
-            if (InputManager.Instance == null) return;
-
-            InputManager.Instance.OnMoveInput -= OnMoveInput;
-            InputManager.Instance.OnAttackInput -= OnAttackStarted;
-            InputManager.Instance.OnAttackCanceled -= OnAttackCanceled;
-            InputManager.Instance.OnDodgeInput -= OnDodgeInput;
+            InputManager.Ready -= TryBindInput;
+            UnbindInput();
+            _isBound = false;
         }
-
 
         /// <summary>
         /// 입력 수집(임시) -> 게이트 검사 -> 정책 적용 -> 병렬 Tick -> 1프레임 입력 초기화
         /// </summary>
         private void Update()
-        {  
+        {
             // 게이트 검사
             if (!CanTickFsmThisFrame())
             {
@@ -206,6 +198,30 @@ namespace ProjectT.Gameplay.Player
             // 초기 Combat: None
             _combatFsm.Initialize(_ctx, PlayerCombatStateId.None);
         }
+        private void TryBindInput()
+        {
+            if (_isBound) return;
+            if (InputManager.Instance == null) return;
+
+            InputManager.Instance.OnMoveInput += OnMoveInput;
+            InputManager.Instance.OnAttackInput += OnAttackStarted;
+            InputManager.Instance.OnAttackCanceled += OnAttackCanceled;
+            InputManager.Instance.OnDodgeInput += OnDodgeInput;
+
+            _isBound = true;
+            Debug.Log("[PC] Input bound");
+        }
+
+        private void UnbindInput()
+        {
+            if (InputManager.Instance == null) return;
+
+            InputManager.Instance.OnMoveInput -= OnMoveInput;
+            InputManager.Instance.OnAttackInput -= OnAttackStarted;
+            InputManager.Instance.OnAttackCanceled -= OnAttackCanceled;
+            InputManager.Instance.OnDodgeInput -= OnDodgeInput;
+        }
+
 
         /// <summary>
         /// FSM Tick 가능 여부 검사

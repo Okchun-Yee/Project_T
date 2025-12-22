@@ -136,4 +136,4 @@ MonoBehaviour:
   lootingType: 0
   canLoot: 1
   lootAnimDuration: 0.3
-  weaponData: {fileID: 11400000, guid: 4524fb3ce0f05b641ba0c307b3c2c674, type: 2}
+  weaponData: {fileID: 11400000, guid: c405c6d759ef6624ba4323f11487f38b, type: 2}

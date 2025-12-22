@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 6235632514502664195}
   - component: {fileID: 5514901125581367987}
   - component: {fileID: 6695898887638999465}
-  - component: {fileID: 6039210322250237298}
-  - component: {fileID: 5019796880249711903}
   - component: {fileID: 876897273998244622}
+  - component: {fileID: 991736913516987050}
+  - component: {fileID: 2132031863720752758}
   - component: {fileID: 3727368844708923466}
   m_Layer: 7
   m_Name: Enemy_Shooter01
@@ -203,33 +203,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 1.2
---- !u!114 &6039210322250237298
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8496211585052764540}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2637af95ee0e65c40aaac87d6a7eb413, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  knockBackTime: 0.2
---- !u!114 &5019796880249711903
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8496211585052764540}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46085622b88b7ba4eb5766112a8951ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  whiteFlashMat: {fileID: 2100000, guid: 978b214c36181d54a8ba568bea9fd507, type: 2}
-  restoreDefaultMatTime: 0.2
 --- !u!114 &876897273998244622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -254,6 +227,33 @@ MonoBehaviour:
   restTime: 0.5
   stagger: 1
   oscillate: 1
+--- !u!114 &991736913516987050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8496211585052764540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e49434fb7792a4244bd676249cb0229a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  whiteFlashMat: {fileID: 2100000, guid: 978b214c36181d54a8ba568bea9fd507, type: 2}
+  restoreDefaultMatTime: 0.2
+--- !u!114 &2132031863720752758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8496211585052764540}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1be3e1cbf0d873e46afd6bd2c4a8fa73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  knockBackTime: 0.2
 --- !u!210 &3727368844708923466
 SortingGroup:
   m_ObjectHideFlags: 0

@@ -212,7 +212,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5974486035742185706}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2637af95ee0e65c40aaac87d6a7eb413, type: 3}
+  m_Script: {fileID: 11500000, guid: 1be3e1cbf0d873e46afd6bd2c4a8fa73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   knockBackTime: 0.2
@@ -225,7 +225,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5974486035742185706}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46085622b88b7ba4eb5766112a8951ca, type: 3}
+  m_Script: {fileID: 11500000, guid: e49434fb7792a4244bd676249cb0229a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   whiteFlashMat: {fileID: 2100000, guid: 978b214c36181d54a8ba568bea9fd507, type: 2}

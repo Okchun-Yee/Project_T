@@ -22,10 +22,13 @@ namespace ProjectT.Gameplay.Player.Input
         public event Action OnInteractInput;                // 상호작용 입력 이벤트
         private PlayerControls playerControls;
 
+        public static event Action Ready;                   // InputManager 준비 완료 이벤트
+
         protected override void Awake()
         {
             base.Awake();
             playerControls = new PlayerControls();
+            Ready?.Invoke();    // InputManager 준비 완료 알림
         }
         // 이벤트 구독 활성화
         private void OnEnable()
@@ -111,7 +114,6 @@ namespace ProjectT.Gameplay.Player.Input
             {
                 return;
             }
-            Debug.Log("Attack Input Started");
             OnAttackInput?.Invoke();
         }
         private void HandleAttack_Canceled(InputAction.CallbackContext context)
