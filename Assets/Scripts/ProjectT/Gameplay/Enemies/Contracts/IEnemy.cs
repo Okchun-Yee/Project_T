@@ -1,4 +1,7 @@
-public interface IEnemy
+namespace ProjectT.Gameplay.Enemies.Contracts
 {
-    public void Attack();
+    public interface IEnemy
+    {
+        public void Attack();
+    }
 }

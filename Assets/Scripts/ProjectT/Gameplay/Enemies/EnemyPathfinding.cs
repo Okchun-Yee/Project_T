@@ -1,42 +1,44 @@
-using System.Collections;
-using System.Collections.Generic;
+using ProjectT.Gameplay.Combat;
 using UnityEngine;
 
-public class EnemyPathfinding : MonoBehaviour
+namespace ProjectT.Gameplay.Enemies
 {
-    [SerializeField] private float moveSpeed = 2f;
-    private Rigidbody2D rb;
-    private Vector2 moveDir;
-    private Knockback knockback;
-    private SpriteRenderer spriteRenderer;
+    public class EnemyPathfinding : MonoBehaviour
+    {
+        [SerializeField] private float moveSpeed = 2f;
+        private Rigidbody2D rb;
+        private Vector2 moveDir;
+        private Knockback knockback;
+        private SpriteRenderer spriteRenderer;
 
-    private void Awake()
-    {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        rb = GetComponent<Rigidbody2D>();
-        knockback = GetComponent<Knockback>();
-    }
-    private void FixedUpdate()
-    {
-        if (knockback.isKnockback) { return; }
+        private void Awake()
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            rb = GetComponent<Rigidbody2D>();
+            knockback = GetComponent<Knockback>();
+        }
+        private void FixedUpdate()
+        {
+            if (knockback.isKnockback) { return; }
 
-        rb.MovePosition(rb.position + moveDir * (moveSpeed * Time.fixedDeltaTime));
-        if (moveDir.x < 0)
-        {
-            spriteRenderer.flipX = false;
+            rb.MovePosition(rb.position + moveDir * (moveSpeed * Time.fixedDeltaTime));
+            if (moveDir.x < 0)
+            {
+                spriteRenderer.flipX = false;
+            }
+            else if (moveDir.x > 0)
+            {
+                spriteRenderer.flipX = true;
+            }
         }
-        else if (moveDir.x > 0)
+        public void MoveTo(Vector2 targetPosition)
         {
-            spriteRenderer.flipX = true;
+            Vector2 dir = (targetPosition - rb.position).normalized;
+            moveDir = dir;
         }
-    }
-    public void MoveTo(Vector2 targetPosition)
-    {
-        Vector2 dir = (targetPosition - rb.position).normalized;
-        moveDir = dir;
-    }
-    public void StopMoving()
-    {
-        moveDir = Vector3.zero;
+        public void StopMoving()
+        {
+            moveDir = Vector3.zero;
+        }
     }
 }

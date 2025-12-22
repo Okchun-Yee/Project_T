@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Inventory.Model
+namespace ProjectT.Data.ScriptableObjects.StatsModifiers
 {
     [CreateAssetMenu(menuName = "New ItemParameter")]
     public class ItemParameterSO : ScriptableObject

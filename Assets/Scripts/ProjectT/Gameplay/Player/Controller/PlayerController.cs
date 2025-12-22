@@ -4,18 +4,19 @@ using ProjectT.Core.FSM;
 using ProjectT.Gameplay.Player.FSM;
 using ProjectT.Gameplay.Player.FSM.Locomotion;
 using ProjectT.Gameplay.Player.FSM.Combat;
+using ProjectT.Gameplay.Player.Input;
 
+/// <summary>
+/// Player Controller
+/// 두 개의 독립적인 FSM(이동, 전투)를 병렬 관리
+/// 입력 처리 <-> 상태 간 상호작용 조율
+/// [Architecture]
+/// * Locomotion FSM: 이동, 회피, 피격, 사망 상태 관리
+/// * Combat FSM: 공격, 차징, 홀딩 상태 관리
+/// - 두 FSM는 병렬 동작 => 특정 조건에서 서로 영향을 줌
+/// </summary>
 namespace ProjectT.Gameplay.Player
 {
-    /// <summary>
-    /// Player Controller
-    /// 두 개의 독립적인 FSM(이동, 전투)를 병렬 관리
-    /// 입력 처리 <-> 상태 간 상호작용 조율
-    /// [Architecture]
-    /// * Locomotion FSM: 이동, 회피, 피격, 사망 상태 관리
-    /// * Combat FSM: 공격, 차징, 홀딩 상태 관리
-    /// - 두 FSM는 병렬 동작 => 특정 조건에서 서로 영향을 줌
-    /// </summary>
     public sealed class PlayerController : MonoBehaviour
     {
         #region PAUSE 상위 게이트

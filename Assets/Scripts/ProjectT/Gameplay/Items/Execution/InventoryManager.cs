@@ -1,9 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using ProjectT.Gameplay.Items.Inventory;
 using UnityEngine;
 
-namespace Inventory.UI
+namespace ProjectT.Gameplay.Items.Execution
 {
     public class InventoryManager : MonoBehaviour
     {

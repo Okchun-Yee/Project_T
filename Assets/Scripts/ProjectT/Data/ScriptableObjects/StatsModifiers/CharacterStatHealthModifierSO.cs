@@ -1,16 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using ProjectT.Gameplay.Player;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "New HealthItem")]
-public class CharacterStatHealthModifierSO : CharacterStatModifierSO
+namespace ProjectT.Data.ScriptableObjects.StatsModifiers
 {
-    public override void AffectCharacter(GameObject character, float value)
+    [CreateAssetMenu(menuName = "New HealthItem")]
+    public class CharacterStatHealthModifierSO : CharacterStatModifierSO
     {
-        PlayerHealth playerHealth = character.GetComponent<PlayerHealth>();
-        if (playerHealth != null)
+        public override void AffectCharacter(GameObject character, float value)
         {
-            playerHealth.HealPlayer((int)value);
+            PlayerHealth playerHealth = character.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.HealPlayer((int)value);
+            }
         }
     }
 }

@@ -2,7 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseSingleton : Singleton<BaseSingleton>
+namespace ProjectT.Core
 {
+    public class BaseSingleton : Singleton<BaseSingleton>
+    {
     
+    }
 }

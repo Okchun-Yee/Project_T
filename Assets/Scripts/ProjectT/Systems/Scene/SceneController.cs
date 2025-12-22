@@ -1,13 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+using ProjectT.Core;
 
-public class SceneController : Singleton<SceneController>
+namespace ProjectT.Systems.Scene
 {
-    public string SceneTransitionName { get; private set; }
-    public void SetTransitionName(string sceneTransitionName)
+    public class SceneController : Singleton<SceneController>
     {
-        this.SceneTransitionName = sceneTransitionName;
+        public string SceneTransitionName { get; private set; }
+        public void SetTransitionName(string sceneTransitionName)
+        {
+            this.SceneTransitionName = sceneTransitionName;
+        }
     }
 }

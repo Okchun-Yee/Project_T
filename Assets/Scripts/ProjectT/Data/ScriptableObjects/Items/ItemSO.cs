@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using ProjectT.Data.ScriptableObjects.StatsModifiers;
 using UnityEngine;
 
-namespace Inventory.Model
+namespace ProjectT.Data.ScriptableObjects.Items
 {
     /// <summary>
     /// 아이템의 기본 속성들을 정의하는 추상 클래스

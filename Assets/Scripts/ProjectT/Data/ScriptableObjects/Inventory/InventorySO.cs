@@ -2,9 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ProjectT.Data.ScriptableObjects.Items;
 using UnityEngine;
 
-namespace Inventory.Model
+namespace ProjectT.Data.ScriptableObjects.Inventory
 {
     [CreateAssetMenu(menuName = "New Inventory")]
     public class InventorySO : ScriptableObject

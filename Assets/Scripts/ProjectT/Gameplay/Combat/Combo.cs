@@ -1,61 +1,63 @@
 using System;
 using System.Collections;
 using UnityEngine;
-
-public class Combo : MonoBehaviour
+namespace ProjectT.Gameplay.Combat
 {
-    [SerializeField] private int comboLength = 3;
-    [SerializeField] private float comboDelay = 0.6f;
-
-    private int comboIndex = -1;
-    private Coroutine timeoutCoroutine;
-
-    public event Action<int> OnComboAdvanced;
-    public event Action OnComboReset;
-
-    public int CurrentIndex => comboIndex;
-
-    public int Advance()
+    public class Combo : MonoBehaviour
     {
-        comboIndex = (comboIndex + 1) % Mathf.Max(1, comboLength);
-        OnComboAdvanced?.Invoke(comboIndex);
-        RestartTimeout();
-        return comboIndex;
-    }
+        [SerializeField] private int comboLength = 3;
+        [SerializeField] private float comboDelay = 0.6f;
 
-    public void Reset()
-    {
-        comboIndex = -1;
-        if (timeoutCoroutine != null)
+        private int comboIndex = -1;
+        private Coroutine timeoutCoroutine;
+
+        public event Action<int> OnComboAdvanced;
+        public event Action OnComboReset;
+
+        public int CurrentIndex => comboIndex;
+
+        public int Advance()
         {
-            StopCoroutine(timeoutCoroutine);
-            timeoutCoroutine = null;
+            comboIndex = (comboIndex + 1) % Mathf.Max(1, comboLength);
+            OnComboAdvanced?.Invoke(comboIndex);
+            RestartTimeout();
+            return comboIndex;
         }
-        OnComboReset?.Invoke();
-    }
 
-    private void RestartTimeout()
-    {
-        if (timeoutCoroutine != null)
+        public void Reset()
         {
-            StopCoroutine(timeoutCoroutine);
-            timeoutCoroutine = null;
+            comboIndex = -1;
+            if (timeoutCoroutine != null)
+            {
+                StopCoroutine(timeoutCoroutine);
+                timeoutCoroutine = null;
+            }
+            OnComboReset?.Invoke();
         }
-        if (comboDelay > 0f)
-            timeoutCoroutine = StartCoroutine(ComboTimeout());
-    }
 
-    private IEnumerator ComboTimeout()
-    {
-        float t = 0f;
-        while (t < comboDelay)
+        private void RestartTimeout()
         {
-            t += Time.deltaTime;
-            yield return null;
+            if (timeoutCoroutine != null)
+            {
+                StopCoroutine(timeoutCoroutine);
+                timeoutCoroutine = null;
+            }
+            if (comboDelay > 0f)
+                timeoutCoroutine = StartCoroutine(ComboTimeout());
         }
-        Reset();
-    }
 
-    public void SetComboLength(int len) => comboLength = Mathf.Max(1, len);
-    public void SetComboDelay(float d) => comboDelay = Mathf.Max(0f, d);
+        private IEnumerator ComboTimeout()
+        {
+            float t = 0f;
+            while (t < comboDelay)
+            {
+                t += Time.deltaTime;
+                yield return null;
+            }
+            Reset();
+        }
+
+        public void SetComboLength(int len) => comboLength = Mathf.Max(1, len);
+        public void SetComboDelay(float d) => comboDelay = Mathf.Max(0f, d);
+    }
 }

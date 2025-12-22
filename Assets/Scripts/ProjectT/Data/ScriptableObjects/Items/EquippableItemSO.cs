@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
-using Inventory.Model;
+using ProjectT.Data.ScriptableObjects.Skills;
+using ProjectT.Data.ScriptableObjects.Weapons;
+using ProjectT.Gameplay.Weapon;
 using UnityEngine;
-namespace Inventory.Model
+namespace ProjectT.Data.ScriptableObjects.Items
 {
     [CreateAssetMenu(menuName = "New EquippableItem")]
     public class EquippableItemSO : ItemSO, IDestroyableItem, IItemAction

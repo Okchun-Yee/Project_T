@@ -1,3 +1,4 @@
+using ProjectT.Gameplay.Weapon;
 using UnityEngine;
 
 namespace ProjectT.Gameplay.Player

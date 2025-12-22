@@ -1,13 +1,13 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using Inventory.Model;
-using Inventory.UI;
+using ProjectT.Data.ScriptableObjects.Inventory;
 using UnityEngine;
-using UnityEngine.AI;
+using ProjectT.Core;
+using ProjectT.Gameplay.Player.Input;
+using ProjectT.Data.ScriptableObjects.Items;
+using ProjectT.Gameplay.Items.Execution;
 
-namespace Inventory
+namespace ProjectT.Gameplay.Items.Inventory
 {
     public class InventoryController : Singleton<InventoryController>
     {

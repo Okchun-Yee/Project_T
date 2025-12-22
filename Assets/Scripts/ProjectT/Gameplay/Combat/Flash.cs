@@ -7,27 +7,30 @@ using UnityEngine;
 /// 플레이어, 적 공통으로 사용되는 클래스입니다.
 /// 피격시 변경되는 색상은 지정가능합니다.
 /// </summary>
-public class Flash : MonoBehaviour
+namespace ProjectT.Gameplay.Combat
 {
-    [SerializeField] private Material whiteFlashMat;
-    [SerializeField] private float restoreDefaultMatTime = .2f;
+    public class Flash : MonoBehaviour
+    {
+        [SerializeField] private Material whiteFlashMat;
+        [SerializeField] private float restoreDefaultMatTime = .2f;
 
-    private Material defaultMat;
-    private SpriteRenderer spriteRenderer;
+        private Material defaultMat;
+        private SpriteRenderer spriteRenderer;
 
-    private void Awake()
-    {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        defaultMat = spriteRenderer.material;
-    }
-    public float GetRestoreMatTime()
-    {
-        return restoreDefaultMatTime;
-    }
-    public IEnumerator FlashRoutine()
-    {
-        spriteRenderer.material = whiteFlashMat;
-        yield return new WaitForSeconds(restoreDefaultMatTime);
-        spriteRenderer.material = defaultMat;
+        private void Awake()
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            defaultMat = spriteRenderer.material;
+        }
+        public float GetRestoreMatTime()
+        {
+            return restoreDefaultMatTime;
+        }
+        public IEnumerator FlashRoutine()
+        {
+            spriteRenderer.material = whiteFlashMat;
+            yield return new WaitForSeconds(restoreDefaultMatTime);
+            spriteRenderer.material = defaultMat;
+        }
     }
 }

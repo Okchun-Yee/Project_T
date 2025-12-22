@@ -1,23 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Sword_Blade : BaseSkill
+namespace ProjectT.Gameplay.Skills.Common.Melee
 {
-    private float damage;
-    private void Start()
+    public class Sword_Blade : BaseSkill
     {
-        if (skillInfo != null)
+        private float damage;
+        private void Start()
         {
-            damage = GetSkillDamage();
+            if (skillInfo != null)
+            {
+                damage = GetSkillDamage();
+            }
+            else
+            {
+                Debug.LogError("[Sword_Blade] SkillInfo is not set.");
+            }
         }
-        else
+        protected override void OnSkillActivated()
         {
-            Debug.LogError("[Sword_Blade] SkillInfo is not set.");
+            Debug.Log($"[Sword]: Blade Skill Activated, Damage {damage} ");
         }
-    }
-    protected override void OnSkillActivated()
-    {
-        Debug.Log($"[Sword]: Blade Skill Activated, Damage {damage} ");
     }
 }

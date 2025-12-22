@@ -1,24 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Bow_Homing : BaseSkill
+namespace ProjectT.Gameplay.Skills.Common.Range
 {
-    private float damage;
-    private void Start()
+    public class Bow_Homing : BaseSkill
     {
-        if (skillInfo != null)
+        private float damage;
+        private void Start()
         {
-            damage = GetSkillDamage();
+            if (skillInfo != null)
+            {
+                damage = GetSkillDamage();
+            }
+            else
+            {
+                Debug.LogError("[Bow_Homing] SkillInfo is not set.");
+            }
         }
-        else
+        protected override void OnSkillActivated()
         {
-            Debug.LogError("[Bow_Homing] SkillInfo is not set.");
+            // Implement the skill activation logic here
+            Debug.Log($"[Bow_Homing] Skill Activated");
         }
-    }
-    protected override void OnSkillActivated()
-    {
-        // Implement the skill activation logic here
-        Debug.Log($"[Bow_Homing] Skill Activated");
     }
 }

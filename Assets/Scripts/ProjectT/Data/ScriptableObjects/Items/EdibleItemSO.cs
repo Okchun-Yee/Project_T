@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using ProjectT.Data.ScriptableObjects.StatsModifiers;
 
-namespace Inventory.Model
+namespace ProjectT.Data.ScriptableObjects.Items
 {
     [CreateAssetMenu(menuName = "New EdibleItem")]
     public class EdibleItemSO : ItemSO, IDestroyableItem, IItemAction
