@@ -209,7 +209,9 @@ namespace ProjectT.Gameplay.Player
             InputManager.Instance.OnDodgeInput += OnDodgeInput;
 
             _isBound = true;
+#if UNITY_EDITOR
             Debug.Log("[PC] Input bound");
+#endif
         }
 
         private void UnbindInput()
