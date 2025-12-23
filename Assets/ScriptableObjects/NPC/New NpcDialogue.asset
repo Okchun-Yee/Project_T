@@ -9,14 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 565fde5b98bfe09488bae11f162e44bd, type: 3}
+  m_Script: {fileID: 11500000, guid: cbcf1a3ee49d34642a3a2b31010b2a3d, type: 3}
   m_Name: New NpcDialogue
   m_EditorClassIdentifier: 
   npcName: NPC-01
-  npcProfileImage: {fileID: 21300000, guid: 7bb24c8d19798494ab1234735459f1c9, type: 3}
+  npcProfileImage: {fileID: 21300000, guid: 8a2d5a327f3decb4ab022f2fec11ed8d, type: 3}
   dialogueLines:
-  - Hello
-  - Hello World!
+  - Hello!
+  - World!
   autoProgressLines: 0100
   autoProgressDelay: 1
   typingSpeed: 0.05

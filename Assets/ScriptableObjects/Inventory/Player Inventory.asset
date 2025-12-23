@@ -9,15 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3493092b2d25d3e4dba28d3bb2fcb16b, type: 3}
+  m_Script: {fileID: 11500000, guid: 66ddce1880257194fa5ed03287ac1125, type: 3}
   m_Name: Player Inventory
   m_EditorClassIdentifier: 
   inventoryItems:
   - quantity: 3
     item: {fileID: 11400000, guid: e63e3e4263ab6ab44839643666c1200a, type: 2}
-    itemState: []
-  - quantity: 1
-    item: {fileID: 11400000, guid: 89061a440056b514dbb706b0ed5e3cda, type: 2}
+    itemState:
+    - itemParameter: {fileID: 11400000, guid: 1b3642186f71b224b972d4e5fcd9e669, type: 2}
+      value: 1
+  - quantity: 0
+    item: {fileID: 0}
     itemState: []
   - quantity: 0
     item: {fileID: 0}
