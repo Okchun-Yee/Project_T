@@ -28,7 +28,6 @@ namespace ProjectT.Gameplay.Player.Input
         {
             base.Awake();
             playerControls = new PlayerControls();
-            Ready?.Invoke();    // InputManager 준비 완료 알림
         }
         // 이벤트 구독 활성화
         private void OnEnable()
@@ -55,6 +54,8 @@ namespace ProjectT.Gameplay.Player.Input
             playerControls.System.Interact.performed += HandleInteract;                   // 상호작용 입력 감지
             // 플레이어 임시 UI 2 이벤트 구독
             playerControls.System.TempUI2.performed += HandleTempUI2;                   // 임시 UI 2 입력 감지
+
+            Ready?.Invoke();    // InputManager 준비 완료 알림
         }
 
         // 이벤트 구독 해제
