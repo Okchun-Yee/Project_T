@@ -76,7 +76,7 @@ namespace ProjectT.Gameplay.Weapon
         [Obsolete("Do not call Attack() from FSM path. Use ExecuteAttackFromFsm(charged) via binder.", false)]
         public void Attack()
         {
-            // [TODO] 기존 Attack() 메서드는 더 이상 사용하지 않음.
+            throw new NotImplementedException("BaseWeapon.Attack() is obsolete. Use ExecuteAttackFromFsm(bool charged) instead.");
         }
         // 새 헬퍼: 무기가 (차징 취소 시) 직접 즉시 공격을 트리거할 때 사용.
         // ForceAttack은 공격 쿨다운 검사를 포함하고 CooldownRoutine을 시작합니다.
