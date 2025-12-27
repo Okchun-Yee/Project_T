@@ -1,11 +1,10 @@
-using System;
-using UnityEngine;
-
 namespace ProjectT.Gameplay.Player.FSM.Locomotion.States
 {
     /// <summary>
     /// Locomotion Move State
     /// 플레이어 이동 상태
+    /// 
+    /// Step 4: State는 전이 결정만, 물리 실행은 Binder에서 처리
     /// </summary>
     public sealed class LocomotionMoveState : PlayerLocomotionStateBase
     {
@@ -20,7 +19,7 @@ namespace ProjectT.Gameplay.Player.FSM.Locomotion.States
                 return;
             }
             // Idle 상태 전환
-            if (pc.MoveInput == Vector2.zero)
+            if (pc.MoveInput == UnityEngine.Vector2.zero)
             {
                 pc.SetLocomotion(PlayerLocomotionStateId.Idle);
                 return;
@@ -28,23 +27,7 @@ namespace ProjectT.Gameplay.Player.FSM.Locomotion.States
         }
         public override void Exit(PlayerFsmContext ctx)
         {
-            Stop(ctx);
+            // 물리 실행(Stop)은 Binder가 OnStateChanged에서 처리
         }
-    #region Methods
-        // [TODO] 기존 이동 로직 점검 후 통합
-        private static void Move(PlayerFsmContext ctx, Vector2 dir, float speed)
-        {
-            if(ctx.Rigid!=null)
-            {
-                ctx.Rigid.velocity = dir.normalized * speed;
-                return;
-            }
-             ctx.Transform.Translate(dir * speed * Time.deltaTime);
-        }
-        private static void Stop(PlayerFsmContext ctx)
-        {
-            if(ctx.Rigid!=null) ctx.Rigid.velocity = Vector2.zero;
-        }
-    #endregion
     }
 }

@@ -49,6 +49,11 @@ namespace ProjectT.Gameplay.Player
         /// </summary>
         public StateMachine<PlayerCombatStateId, PlayerFsmContext> CombatFsm => _combatFsm;
         
+        /// <summary>
+        /// Locomotion FSM 인스턴스 (Binder가 OnStateChanged 콜백을 구독하기 위해 노출)
+        /// </summary>
+        public StateMachine<PlayerLocomotionStateId, PlayerFsmContext> LocomotionFsm => _locomotionFsm;
+        
         private PlayerFsmContext _ctx;  // FSM 공유 컨텍스트
         private StateMachine<PlayerLocomotionStateId, PlayerFsmContext> _locomotionFsm;
         private StateMachine<PlayerCombatStateId, PlayerFsmContext> _combatFsm;

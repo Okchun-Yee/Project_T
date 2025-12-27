@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace ProjectT.Gameplay.Player.FSM.Locomotion.States
@@ -6,6 +5,8 @@ namespace ProjectT.Gameplay.Player.FSM.Locomotion.States
     /// <summary>
     /// Locomotion Dodge State
     /// 플레이어 이동 회피 상태
+    /// 
+    /// Step 4: State는 전이 결정만, 물리 실행은 Binder에서 처리
     /// </summary>
     public sealed class LocomotionDodgeState : PlayerLocomotionStateBase
     {
@@ -15,7 +16,6 @@ namespace ProjectT.Gameplay.Player.FSM.Locomotion.States
 
         public override void Enter(PlayerFsmContext ctx)
         {
-            PlayerController pc = ctx.Controller;
             _timeLeft = DodgeDuration;
         }
         public override void Tick(PlayerFsmContext ctx)
@@ -31,7 +31,7 @@ namespace ProjectT.Gameplay.Player.FSM.Locomotion.States
 
         public override void Exit(PlayerFsmContext ctx)
         {
-            if(ctx.Rigid!=null) ctx.Rigid.velocity = Vector2.zero;
+            // 물리 실행(Stop)은 Binder가 OnStateChanged에서 처리
         }
     }
 }

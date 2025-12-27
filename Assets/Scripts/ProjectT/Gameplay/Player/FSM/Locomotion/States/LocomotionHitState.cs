@@ -5,6 +5,8 @@ namespace ProjectT.Gameplay.Player.FSM.Locomotion.States
     /// <summary>
     /// Locomotion Hit State
     /// 플레이어 피격 상태
+    /// 
+    /// Step 4: State는 전이 결정만, 물리 실행은 Binder에서 처리
     /// </summary>
     public sealed class LocomotionHitState : PlayerLocomotionStateBase
     {
@@ -16,7 +18,7 @@ namespace ProjectT.Gameplay.Player.FSM.Locomotion.States
         public override void Enter(PlayerFsmContext ctx)
         {
             _timeLeft = HitStunDuration;
-            if(ctx.Rigid != null) ctx.Rigid.velocity = Vector2.zero;
+            // 물리 실행(Stop)은 Binder가 OnStateChanged에서 처리
         }
         public override void Tick(PlayerFsmContext ctx)
         {
