@@ -7,8 +7,8 @@ namespace ProjectT.Gameplay.Player.FSM.Combat.States
     {
         public override void Enter(PlayerFsmContext ctx)
         {
-            ctx.Controller.ChargeTime = 0f;
-            ctx.Controller.IsChargeMaxReached = false; // 최대 차징 도달 플래그 초기화
+            // SSOT: 상태 진입 시 별도 플래그 초기화 불필요
+            // FSM 상태 자체가 유일한 권위
         }
         public override void Tick(PlayerFsmContext ctx)
         {

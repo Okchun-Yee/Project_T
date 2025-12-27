@@ -11,7 +11,6 @@ namespace ProjectT.Gameplay.Player.FSM.Combat.States
         private float _timeLeft;
         public override void Enter(PlayerFsmContext ctx)
         {
-            ctx.Controller.ChargeTime = 0f;
             ctx.Controller.NotifyAttackStarted();
         }
         public override void Tick(PlayerFsmContext ctx)

@@ -7,11 +7,8 @@ namespace ProjectT.Gameplay.Player.FSM.Combat.States
     /// </summary>
     public sealed class CombatChargingState : PlayerCombatStateBase
     {
-        private bool _reachedMax;
         public override void Enter(PlayerFsmContext ctx)
         {
-            _reachedMax = false;
-            ctx.Controller.ChargeTime = 0f;
             ctx.Controller.NotifyChargeStarted();
         }
         public override void Tick(PlayerFsmContext ctx)

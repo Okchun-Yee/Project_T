@@ -31,15 +31,14 @@ namespace ProjectT.Gameplay.Player
         [Header("Debug")]
         [SerializeField] private bool _logStateChanges;
 
-        // 외부 접근용 프로퍼티
-        public float ChargeTime { get; set; }
+        // 외부 접근용 프로퍼티 (입력 상태)
         public Vector2 MoveInput { get; private set; }
         public bool AttackPressed { get; private set; }
         public bool AttackHeld { get; private set; }
         public bool DodgePressed { get; private set; }
+        
+        // 무기 설정 기반 (Binder에서 설정, FSM 전이 조건으로 사용)
         public bool CanChargeAttack { get; set; }
-        public bool IsChargeMaxReached { get; set; }
-        public bool NextAttackIsCharged { get; set; }
 
 
         public PlayerLocomotionStateId LocomotionState => _locomotionFsm.CurrentStateId;    // 현재 Locomotion 상태
@@ -60,7 +59,7 @@ namespace ProjectT.Gameplay.Player
         private PlayerLocomotionStateId _prevL;
         private PlayerCombatStateId _prevC;
 
-        private bool _isBound;
+        private bool _isBound = false;
 
         private void Awake()
         {
@@ -75,6 +74,12 @@ namespace ProjectT.Gameplay.Player
         private void OnEnable()
         {
             InputManager.Ready += TryBindInput;
+            
+            // InputManager가 이미 준비된 경우 즉시 바인딩 시도
+            if (InputManager.Instance != null)
+            {
+                TryBindInput();
+            }
         }
 
         private void OnDisable()
@@ -201,7 +206,10 @@ namespace ProjectT.Gameplay.Player
         private void TryBindInput()
         {
             if (_isBound) return;
-            if (InputManager.Instance == null) return;
+            if (InputManager.Instance == null) {
+                Debug.LogWarning("[PC] InputManager Instance is null, cannot bind input.");
+                return;
+            }
 
             InputManager.Instance.OnMoveInput += OnMoveInput;
             InputManager.Instance.OnAttackInput += OnAttackStarted;

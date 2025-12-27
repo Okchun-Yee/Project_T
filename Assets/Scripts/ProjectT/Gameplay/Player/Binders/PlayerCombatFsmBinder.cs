@@ -3,13 +3,26 @@ using UnityEngine;
 
 namespace ProjectT.Gameplay.Player
 {
+    /// <summary>
+    /// Combat FSM (Decision) → Weapon (Execution) 연결자
+    /// FSM 이벤트를 구독하여 실행 레이어(무기)에 명령 전달
+    /// </summary>
     public sealed class PlayerCombatFsmBinder : MonoBehaviour
     {
         [Header("References")]
         [SerializeField] private PlayerController _decision; // FSM PlayerController
         [SerializeField] private ActiveWeapon _activeWeapon; // Singleton이라면 null이어도 Awake에서 가져옴
 
-        private bool _charged; // 차징 완료/홀드 여부 (FSM 이벤트로만 갱신)
+        // ============================================================
+        // 일시적 캐시 (Transient Cache)
+        // - FSM 상태 결정에 절대 사용 금지
+        // - Attack 실행 시점에 "이번 공격이 차징인지" 결정하는 용도
+        // - SSOT: 차징 완료 여부는 FSM 상태(Holding)로 판단
+        // 
+        // TODO (Step 2): AttackStarted 이벤트에 charged 파라미터 추가 검토
+        //                → _charged 필드 제거하고 이벤트 파라미터로 대체
+        // ============================================================
+        private bool _charged;
 
         private void Awake()
         {

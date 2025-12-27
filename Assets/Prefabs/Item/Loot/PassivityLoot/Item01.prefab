@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 0484113a90f859b4999a0c04f8ab3423, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ce61f26b467af2a4ca0ace469d90b978, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -136,7 +136,7 @@ MonoBehaviour:
   lootingType: 1
   canLoot: 1
   lootAnimDuration: 0.3
-  inventoryData: {fileID: 0}
+  inventoryData: {fileID: 11400000, guid: e63e3e4263ab6ab44839643666c1200a, type: 2}
   quantity: 12
   targetInventory: {fileID: 11400000, guid: 599806ef280ef5e49a3ab8741677cf1a, type: 2}
   lootSound: {fileID: 0}

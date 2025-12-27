@@ -13,7 +13,9 @@ namespace ProjectT.Gameplay.Weapon
 {
     public abstract class BaseWeapon : MonoBehaviour, IWeapon
     {
-        public bool isAttacking { get; private set; } = false;      // 공격 상태
+        // SSOT: "공격 중" 여부는 FSM 상태(CombatState == Attack)로 판단
+        // isAttacking 플래그 제거됨
+        
         public EquippableItemSO weaponInfo { get; private set; }    // 무기 정보
 
         private Coroutine CooldownCoroutine;                    //무기 공격 쿨다운 코루틴
@@ -104,12 +106,9 @@ namespace ProjectT.Gameplay.Weapon
         // 무기 쿨다운 코루틴
         private IEnumerator CooldownRoutine()
         {
-            // 공격 애니메이션 종료 후 isAttacking false로 변경 (애니메이션 이벤트에서 호출)
             isCooldown = true;
             yield return new WaitForSeconds(weaponCooldown);
             isCooldown = false;
-
-            // 쿨다운 끝나면 ActiveWeapon에 통보
         }
         // 객체 비활성 시 처리 매서드 (코루틴 정리)
         protected virtual void OnDisable()

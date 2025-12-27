@@ -7,9 +7,13 @@ using ProjectT.Core;
 /// <summary>
 /// 차징 매니저 클래스
 /// * 스킬, 기본 공격 등 모든 차징 관리
-/// * 싱글톤 패턴 적용, 인터페이스로 차징 매서드 구현
+/// * 싱글톤 패턴 적용
 /// * 차징 시작, 진행, 완료, 취소 이벤트 제공
-/// * Enum 으로 스킬 or 기본 공격 구분
+/// 
+/// SSOT 규칙:
+/// - "차징 중" 여부는 FSM 상태(CombatState == Charging)로 판단
+/// - ChargingManager는 값(elapsed, normalized)만 제공
+/// - "완료" 여부는 값 기반 파생(ChargeNormalized >= 1)
 /// </summary>
 namespace ProjectT.Gameplay.Weapon
 {
@@ -20,67 +24,78 @@ namespace ProjectT.Gameplay.Weapon
     }
     public class ChargingManager : Singleton<ChargingManager>
     {
-        private IEnumerator chargingSkill; // 현재 충전 중인 스킬 코루틴
-        private float chargeTime = 0f; // 충전 시간
-        private float chargeTimeElapsed = 0f;
-        private bool isChargingComplete = false;
+        // ============================================================
+        // 값 기반 상태 (FSM 결정에 직접 사용 금지, UI/실행 레이어용)
+        // ============================================================
+        private IEnumerator _chargingRoutine;   // 현재 충전 중인 코루틴
+        private float _chargeDuration = 0f;     // 충전 목표 시간
+        private float _chargeElapsed = 0f;      // 경과 시간
+        private ChargingType _chargingType;     // 현재 충전 타입
 
-
-        //차징 완료 or 취소 이벤트
+        // 읽기 전용 프로퍼티 (값 기반 파생)
+        public bool IsCharging => _chargingRoutine != null;
+        public float ChargeElapsed => _chargeElapsed;
+        public float ChargeDuration => _chargeDuration;
+        public float ChargeNormalized => (_chargeDuration > 0f) 
+            ? Mathf.Clamp01(_chargeElapsed / _chargeDuration) 
+            : 0f;
+        // 실행 레이어 이벤트 (Binder가 구독하여 FSM 전이 요청에 사용)
         public event Action<ChargingType> OnChargingCompleted;              // 차징 완료 이벤트
         public event Action<ChargingType> OnChargingCanceled;               // 차징 취소 이벤트
         public event Action<ChargingType, float, float> OnChargingProgress; // 차징 중 이벤트 (chargingType, elapsed, duration)
 
-        private ChargingType chargingType; // 현재 충전 중인 타입 (스킬 or 기본 공격)
-        public void StartCharging(ChargingType type, float skillChargeTime)
+        public void StartCharging(ChargingType type, float duration)
         {
-            if (chargingSkill != null)
+            if (_chargingRoutine != null)
                 EndCharging(); // 중복 차징 방지
 
-            chargingType = type;            // 현재 차징 타입 설정
-            chargeTime = skillChargeTime;
-            chargeTimeElapsed = 0f;         // 차징 시작 시 초기화
-            isChargingComplete = false;     // 차징 시작 시 초기화
+            _chargingType = type;
+            _chargeDuration = duration;
+            _chargeElapsed = 0f;
 #if UNITY_EDITOR
-            Debug.Log("[Exec] StartCharging called");
+            Debug.Log("[ChargingManager] StartCharging called");
 #endif
-            // Start charging logic
-            chargingSkill = ChargingRoutine();
-            StartCoroutine(chargingSkill);
+            _chargingRoutine = ChargingRoutine();
+            StartCoroutine(_chargingRoutine);
         }
 
         public void EndCharging()
         {
-            // Stop charging logic
-            if (chargingSkill != null)
+            if (_chargingRoutine != null)
             {
-                StopCoroutine(chargingSkill);
-                chargingSkill = null;
+                StopCoroutine(_chargingRoutine);
+                _chargingRoutine = null;
             }
-            chargeTimeElapsed = 0f; // 차징 취소 시 초기화
-            if (!isChargingComplete)
-                OnChargingCanceled?.Invoke(chargingType);
+            
+            // 값 기반 파생: 완료 전에 취소된 경우에만 Canceled 이벤트
+            bool wasComplete = (_chargeElapsed >= _chargeDuration);
+            _chargeElapsed = 0f;
+            
+            if (!wasComplete)
+                OnChargingCanceled?.Invoke(_chargingType);
         }
+
         private IEnumerator ChargingRoutine()
         {
-            chargeTimeElapsed = 0f;
+            _chargeElapsed = 0f;
 
-            while (chargeTimeElapsed < chargeTime)
+            while (_chargeElapsed < _chargeDuration)
             {
-                chargeTimeElapsed += Time.deltaTime;
-                OnChargingProgress?.Invoke(chargingType, Mathf.Clamp(chargeTimeElapsed, 0, chargeTime), chargeTime);
-                yield return null; // Wait for the next frame
+                _chargeElapsed += Time.deltaTime;
+                OnChargingProgress?.Invoke(_chargingType, Mathf.Clamp(_chargeElapsed, 0, _chargeDuration), _chargeDuration);
+                yield return null;
             }
-            chargingSkill = null;
-            chargeTimeElapsed = 0f;     // 차징 완료 시 초기화
-            isChargingComplete = true;  // 차징 완료 상태 업데이트
-
-            OnChargingCompleted?.Invoke(chargingType);
+            
+            _chargingRoutine = null;
+            // 값 기반: _chargeElapsed >= _chargeDuration 이면 완료
+            // elapsed는 유지 (ChargeNormalized >= 1 로 파생 가능)
+            
+            OnChargingCompleted?.Invoke(_chargingType);
         }
 
         public void SetType(ChargingType type)
         {
-            chargingType = type;
+            _chargingType = type;
         }
     }
 }

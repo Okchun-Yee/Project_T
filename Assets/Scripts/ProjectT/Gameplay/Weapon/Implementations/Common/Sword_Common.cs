@@ -32,7 +32,7 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
         private GameObject slashAnim;                   // 현재 활성화된 슬래시 애니메이션 인스턴스
         private InGame_MouseFollow mouseFollow;         // 마우스 추적 스크립트
         private Flash flash;                            // 피격시 깜빡임 스크립트
-        private bool _chargeReady = false;              // 차징 완료 플래그
+        // SSOT: 차징 완료 여부는 FSM 상태(Holding)로 판단, 로컬 플래그 제거됨
 
         private static readonly int HASH_INDEX = Animator.StringToHash("AttackIndex");  // 현재 콤보 인덱스
         private static readonly int HASH_ATTACK = Animator.StringToHash("Attack");      // 다음 콤보 트리거
@@ -226,34 +226,30 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
             }
         }
 
-        // 차징 이벤트 콜백 매서드 모음
+        // 차징 이벤트 콜백 매서드 모음 (실행 레이어 - VFX/피드백 전용)
         #region Charging Event Callbacks
         public void OnChargingCanceled(ChargingType type)
         {
             if (ActiveWeapon.Instance == null) return;
-            // 기본 공격 & 스킬 구분
             if (type != ChargingType.Attack) return;
-            // _Attack() 호출 하지 않고 플래그 갱신
-            _chargeReady = false;
+            // SSOT: 차징 취소 시 실행 레이어 처리 (필요 시 VFX 정리 등)
         }
 
         public void OnChargingCompleted(ChargingType type)
         {
             if (ActiveWeapon.Instance == null) return;
-            // 기본 공격 & 스킬 구분
             if (type != ChargingType.Attack) return;
-        
-            _chargeReady = true;    // 차징 완료 플래그 갱신
+            // SSOT: 차징 완료 시 실행 레이어 처리 (플래시 VFX 등)
+            StartCoroutine(flash.FlashRoutine());
         }
 
         public void OnChargingProgress(ChargingType type, float elapsed, float duration)
         {
             if (ActiveWeapon.Instance == null) return;
             if (type != ChargingType.Attack) return;
+            // 실행 레이어: 차징 진행 중 VFX (필요 시 구현)
         }
         #endregion
-        public bool IsChargeReady => _chargeReady;
-        public void ConsumeChargeReady() => _chargeReady = false;
 
 
         #if UNITY_EDITOR
