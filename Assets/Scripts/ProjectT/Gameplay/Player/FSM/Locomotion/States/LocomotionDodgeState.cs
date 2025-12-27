@@ -6,7 +6,7 @@ namespace ProjectT.Gameplay.Player.FSM.Locomotion.States
     /// Locomotion Dodge State
     /// 플레이어 이동 회피 상태
     /// 
-    /// Step 4: State는 전이 결정만, 물리 실행은 Binder에서 처리
+    /// Step 5: 타이머 기반 전이는 State 내부에서 처리 (Guard로 중앙화 어려움)
     /// </summary>
     public sealed class LocomotionDodgeState : PlayerLocomotionStateBase
     {
@@ -21,17 +21,11 @@ namespace ProjectT.Gameplay.Player.FSM.Locomotion.States
         public override void Tick(PlayerFsmContext ctx)
         {
             _timeLeft -= Time.deltaTime;
-
             if (_timeLeft <= 0f)
             {
                 ctx.Controller.SetLocomotion(PlayerLocomotionStateId.Idle);
-                return;
             }
         }
-
-        public override void Exit(PlayerFsmContext ctx)
-        {
-            // 물리 실행(Stop)은 Binder가 OnStateChanged에서 처리
-        }
+        public override void Exit(PlayerFsmContext ctx) { }
     }
 }
