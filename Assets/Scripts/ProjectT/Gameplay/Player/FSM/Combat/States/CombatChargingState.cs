@@ -4,12 +4,13 @@ namespace ProjectT.Gameplay.Player.FSM.Combat.States
 {
     /// <summary>
     /// Player combat charging state.
+    /// 이벤트 발행은 Binder가 담당 (State는 결정만)
     /// </summary>
     public sealed class CombatChargingState : PlayerCombatStateBase
     {
         public override void Enter(PlayerFsmContext ctx)
         {
-            ctx.Controller.NotifyChargeStarted();
+            // 이벤트 발행은 Binder가 전이 감지로 처리
         }
         public override void Tick(PlayerFsmContext ctx)
         {

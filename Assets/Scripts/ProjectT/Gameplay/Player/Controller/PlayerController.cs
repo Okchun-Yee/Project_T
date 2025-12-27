@@ -43,17 +43,18 @@ namespace ProjectT.Gameplay.Player
 
         public PlayerLocomotionStateId LocomotionState => _locomotionFsm.CurrentStateId;    // 현재 Locomotion 상태
         public PlayerCombatStateId CombatState => _combatFsm.CurrentStateId;                // 현재 Combat 상태
+        
+        /// <summary>
+        /// Combat FSM 인스턴스 (Binder가 OnStateChanged 콜백을 구독하기 위해 노출)
+        /// </summary>
+        public StateMachine<PlayerCombatStateId, PlayerFsmContext> CombatFsm => _combatFsm;
+        
         private PlayerFsmContext _ctx;  // FSM 공유 컨텍스트
         private StateMachine<PlayerLocomotionStateId, PlayerFsmContext> _locomotionFsm;
         private StateMachine<PlayerCombatStateId, PlayerFsmContext> _combatFsm;
 
-        // Combat FSM 확장 포인트 이벤트
-        public event Action AttackStarted;
-        public event Action AttackEnded;
-        public event Action ChargeStarted;
-        public event Action ChargeReachedMax;
-        public event Action ChargeCanceled;
-        public event Action HoldStarted;
+        // 이벤트는 Binder(PlayerCombatFsmBinder)가 소유
+        // PlayerController는 FSM 상태만 관리
 
         // 이전 상태 로깅용
         private PlayerLocomotionStateId _prevL;
@@ -170,14 +171,8 @@ namespace ProjectT.Gameplay.Player
         }
         #endregion
 
-        // Combat FSM 확장 포인트 알림 메서드
-        public void NotifyAttackStarted() => AttackStarted?.Invoke();
-        public void NotifyAttackEnded() => AttackEnded?.Invoke();
-        public void NotifyChargeStarted() => ChargeStarted?.Invoke();
-        public void NotifyChargeReachedMax() => ChargeReachedMax?.Invoke();
-        public void NotifyChargeCanceled() => ChargeCanceled?.Invoke();
-        public void NotifyHoldStarted() => HoldStarted?.Invoke();
-
+        // 이벤트 발행은 Binder(PlayerCombatFsmBinder)가 담당
+        // State에서 직접 Notify 호출하지 않음
 
         #region 내부 구성/구동
         /// <summary>

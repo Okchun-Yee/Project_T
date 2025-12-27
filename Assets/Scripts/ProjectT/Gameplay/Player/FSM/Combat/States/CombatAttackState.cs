@@ -5,13 +5,14 @@ namespace ProjectT.Gameplay.Player.FSM.Combat.States
 {
     /// <summary>
     /// Player combat attack state.
+    /// 이벤트 발행은 Binder가 담당 (State는 결정만)
     /// </summary>
     public sealed class CombatAttackState : PlayerCombatStateBase
     {
         private float _timeLeft;
         public override void Enter(PlayerFsmContext ctx)
         {
-            ctx.Controller.NotifyAttackStarted();
+            // 이벤트 발행은 Binder가 전이 감지로 처리
         }
         public override void Tick(PlayerFsmContext ctx)
         {
@@ -23,7 +24,7 @@ namespace ProjectT.Gameplay.Player.FSM.Combat.States
         }
         public override void Exit(PlayerFsmContext ctx)
         {
-            ctx.Controller.NotifyAttackEnded();
+            // 이벤트 발행은 Binder가 전이 감지로 처리
         }
     }
 } 
