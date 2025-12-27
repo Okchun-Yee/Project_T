@@ -5,15 +5,9 @@ using System;
 using ProjectT.Core;
 
 /// <summary>
-/// 차징 매니저 클래스
-/// * 스킬, 기본 공격 등 모든 차징 관리
-/// * 싱글톤 패턴 적용
-/// * 차징 시작, 진행, 완료, 취소 이벤트 제공
-/// 
-/// SSOT 규칙:
-/// - "차징 중" 여부는 FSM 상태(CombatState == Charging)로 판단
-/// - ChargingManager는 값(elapsed, normalized)만 제공
-/// - "완료" 여부는 값 기반 파생(ChargeNormalized >= 1)
+/// 차징 매니저 - 값 제공자 역할
+/// - 값 제공: ChargeElapsed, ChargeNormalized, ChargeDuration
+/// - FSM이 ChargeNormalized >= 1 로 Holding 전이 결정 (여기서 ChangeState 호출 금지)
 /// </summary>
 namespace ProjectT.Gameplay.Weapon
 {
