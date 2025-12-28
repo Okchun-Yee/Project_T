@@ -11,7 +11,6 @@ namespace ProjectT.Gameplay.Skills
 {
     public abstract class BaseSkill : MonoBehaviour, ISkill
     {
-        private bool isSkillActive = false;             // 스킬 활성화 상태
         private bool isOnCooldown = false;              // 스킬 쿨타임 상태
         public SkillSO skillInfo { get; private set; }  // 스킬 정보
 

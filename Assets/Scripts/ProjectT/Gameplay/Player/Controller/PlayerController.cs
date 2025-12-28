@@ -126,14 +126,14 @@ namespace ProjectT.Gameplay.Player
             // 게이트 검사
             if (!CanTickFsmThisFrame())
             {
-                ClearOneFrameInput();
+                ConsumeOneFrameInputs();
                 return;
             }
             ApplyCrossFsmPoliciesPreTick();   // 정책 적용
             _locomotionFsm.Tick();          // 병렬 Tick
             _combatFsm.Tick();
 
-            ClearOneFrameInput();           // 1프레임 입력 초기화
+            ConsumeOneFrameInputs();           // 1프레임 입력 초기화 (Pressed/Released 소비)
         }
         private void LateUpdate()
         {
@@ -403,10 +403,15 @@ namespace ProjectT.Gameplay.Player
         }
         #endregion
 
-        private void ClearOneFrameInput()
+        /// <summary>
+        /// 1프레임 입력 소비 규칙
+        /// - Pressed/Released: 이번 프레임에만 유효하므로 Update 마지막에 소비
+        /// - Held는 별도(입력 취소 이벤트에서만 변경)
+        /// </summary>
+        private void ConsumeOneFrameInputs()
         {
-            AttackPressed = false;
-            DodgePressed = false;
+            AttackPressed = false; // 1프레임 트리거 소비
+            DodgePressed = false;  // 1프레임 트리거 소비
         }
         private void CachePrevStates()
         {

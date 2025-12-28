@@ -101,3 +101,6 @@ InitTestScene*.unity*
 # 폴더 구조 기록용 txt 파일
 scripts_cs_files.txt
 scripts_folders.txt
+
+# docs 문서
+docs/
