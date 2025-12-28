@@ -86,11 +86,12 @@ namespace ProjectT.Gameplay.Player
 
         private void Awake()
         {
-            BuildFsm();
+            // BuildFsm moved to Start for safe DI initialization order
         }
 
         private void Start()
         {
+            BuildFsm();
             InitializeFsm();
             CachePrevStates();
         }
@@ -385,7 +386,9 @@ namespace ProjectT.Gameplay.Player
             // Charging/Holding 상태면 ChargingManager에 취소 사유 전달
             if (IsInCombatChargingOrHolding())
             {
-                ChargingManager.Instance?.EndCharging(reason);
+                // Step 8: Context를 통해 ChargingManager 접근 (또는 Singleton fallback)
+                var cm = ChargingManager.Instance;
+                cm?.EndCharging(reason);
             }
 
             if (CombatState != PlayerCombatStateId.None)

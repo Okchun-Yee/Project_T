@@ -214,6 +214,6 @@ namespace ProjectT.Gameplay.Player
             // 다른 상태 = 인터럽트
             return nextState == PlayerCombatStateId.None ? AttackEndReason.Finished : AttackEndReason.Interrupted;
         }
-        #endregion
+        #endregion 
     }
 }

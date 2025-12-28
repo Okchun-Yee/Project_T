@@ -1,6 +1,5 @@
 using ProjectT.Core.FSM;
 using ProjectT.Gameplay.Player.FSM.Combat.States;
-using ProjectT.Gameplay.Weapon;
 
 namespace ProjectT.Gameplay.Player.FSM.Combat
 {
@@ -9,7 +8,7 @@ namespace ProjectT.Gameplay.Player.FSM.Combat
     /// - 상태 등록
     /// - 전이 규칙 등록 (Guard 기반)
     /// 
-    /// Step 5: 전이 규칙 중앙화
+    /// Step 8: Guard가 ctx.ChargingProvider로 접근 (전역 참조 제거)
     /// </summary>
     public static class PlayerCombatFsmComposer
     {
@@ -42,13 +41,13 @@ namespace ProjectT.Gameplay.Player.FSM.Combat
             fsm.AddTransition(PlayerCombatStateId.None, PlayerCombatStateId.Attack,
                 ctx => ctx.Controller.AttackPressed && !ctx.Controller.CanChargeAttack);
 
-            // Charging → Holding: ChargeNormalized >= 1
+            // Charging → Holding: ChargeNormalized >= 1 (Step 8: ctx 기반)
             fsm.AddTransition(PlayerCombatStateId.Charging, PlayerCombatStateId.Holding,
-                ctx => ChargingManager.Instance != null && ChargingManager.Instance.ChargeNormalized >= 1f);
+                ctx => ctx.ChargingProvider != null && ctx.ChargingProvider.ChargeNormalized >= 1f);
 
-            // Charging → Attack: Release (AttackHeld == false)
+            // Charging → Attack: Release (AttackHeld == false) OR quick click
             fsm.AddTransition(PlayerCombatStateId.Charging, PlayerCombatStateId.Attack,
-                ctx => !ctx.Controller.AttackHeld);
+                ctx => !ctx.Controller.AttackHeld || ctx.Controller.AttackPressed);
 
             // Holding → Attack: Release (AttackHeld == false)
             fsm.AddTransition(PlayerCombatStateId.Holding, PlayerCombatStateId.Attack,

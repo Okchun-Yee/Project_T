@@ -6,7 +6,7 @@ using ProjectT.Core;
 using ProjectT.Gameplay.Player;
 
 /// <summary>
-/// 차징 매니저 - 값 제공자 역할
+/// 차징 매니저 - 값 제공자 역할 (Step 8: IChargingProvider 구현)
 /// - 값 제공: ChargeElapsed, ChargeNormalized, ChargeDuration, LastCancelReason
 /// - FSM이 ChargeNormalized >= 1 로 Holding 전이 결정 (여기서 ChangeState 호출 금지)
 /// </summary>
@@ -17,7 +17,8 @@ namespace ProjectT.Gameplay.Weapon
         Skill,
         Attack
     }
-    public class ChargingManager : Singleton<ChargingManager>
+    [DefaultExecutionOrder(-100)]
+    public class ChargingManager : Singleton<ChargingManager>, IChargingProvider
     {
         // ============================================================
         // 값 기반 상태 (FSM 결정에 직접 사용 금지, UI/실행 레이어용)

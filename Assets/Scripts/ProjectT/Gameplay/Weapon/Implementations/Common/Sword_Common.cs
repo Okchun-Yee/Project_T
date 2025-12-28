@@ -56,11 +56,6 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
                 // Null 방어 코드
                 Debug.LogWarning($"[Sword_Common] Animator component not found on {name}. Animator-dependent features will be disabled.");
             }
-            if (comboController != null)
-            {
-                comboController.OnComboAdvanced += OnComboAdvanced;
-                comboController.OnComboReset += OnComboReset;
-            }
         }
 
         private void Start()
@@ -91,6 +86,11 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
                 ChargingManager.Instance.OnChargingProgress += OnChargingProgress;
                 ChargingManager.Instance.OnChargingCompleted += OnChargingCompleted;
                 ChargingManager.Instance.OnChargingCanceled += OnChargingCanceled;
+            }
+            if (comboController != null)
+            {
+                comboController.OnComboAdvanced += OnComboAdvanced;
+                comboController.OnComboReset += OnComboReset;
             }
         }
         private void Update()

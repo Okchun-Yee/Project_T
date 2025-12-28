@@ -276,6 +276,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2596966346658294078, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
+      propertyPath: _rb
+      value: 
+      objectReference: {fileID: 928934765}
     - target: {fileID: 3969855821128286577, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
       propertyPath: m_Name
       value: Player
@@ -296,6 +300,10 @@ PrefabInstance:
       propertyPath: initialItems.Array.data[0].quantity
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 8261797712670417899, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
+      propertyPath: _rb
+      value: 
+      objectReference: {fileID: 928934765}
     - target: {fileID: 8261797712670417899, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
       propertyPath: _zeroMoveInputWhenNotMoveState
       value: 1
