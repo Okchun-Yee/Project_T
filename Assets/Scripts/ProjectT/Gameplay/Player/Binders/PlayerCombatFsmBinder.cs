@@ -154,7 +154,7 @@ namespace ProjectT.Gameplay.Player
 
         private void EmitChargeCanceled(PlayerCombatStateId prev, PlayerCombatStateId next)
         {
-            // reason은 ChargingManager에서 가져옴 (Coordinator가 설정)
+            // reason은 ChargingManager에서 가져옴 (Coordinator가 설정한 1회성 스냅샷)
             var cm = ChargingManager.Instance;
             ChargeCancelReason reason = cm != null ? cm.LastCancelReason : ChargeCancelReason.Other;
             float snapshot = cm != null ? cm.ChargeNormalized : 0f;
@@ -162,9 +162,6 @@ namespace ProjectT.Gameplay.Player
             var evt = new ChargeCanceledEvent(reason, snapshot);
             ChargeCanceled?.Invoke(evt);
 
-            // 차징 루틴 종료 (이미 Coordinator가 호출했을 수 있으므로 안전하게)
-            cm?.EndCharging();
-            
             // 실행: 무기 취소 액션
             _activeWeapon?.Fsm_CancelAction();
         }

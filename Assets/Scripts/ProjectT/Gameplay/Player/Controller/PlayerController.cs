@@ -10,15 +10,29 @@ using ProjectT.Gameplay.Weapon;
 namespace ProjectT.Gameplay.Player
 {
     /// <summary>
+    /// 강제 상태 전이 타입 (Step 7)
+    /// 우선순위: Dead(1) > Pause(2) > Hit(3)
+    /// Dodge는 입력 기반 정책으로 처리 (Step 6)
+    /// </summary>
+    public enum ForceStateType
+    {
+        None = 0,
+        Hit = 3,
+        Pause = 2,
+        Dead = 1
+    }
+
+    /// <summary>
     /// Player Controller
     /// 두 개의 독립적인 FSM(Locomotion, Combat)를 병렬 관리
     /// 
-    /// [Architecture - Step 6]
+    /// [Architecture - Step 7]
     /// * Locomotion FSM: Idle, Move, Dodge, Hit, Dead
     /// * Combat FSM: None, Charging, Holding, Attack
     /// * Cross-FSM Coordinator: 두 FSM 간 충돌 정책 적용
+    /// * Force State: 강제 전이 단일 진입점 (ApplyForceState)
     /// 
-    /// 정책 우선순위: Dead > Hit > Pause > Dodge > 일반 전이
+    /// 강제 상태 우선순위: Dead > Pause > Hit > Dodge
     /// </summary>
     public sealed class PlayerController : MonoBehaviour
     {
@@ -154,33 +168,79 @@ namespace ProjectT.Gameplay.Player
         }
 
         /// <summary>
-        /// 강제 Hit 전이 (외부 이벤트: 피격)
-        /// Policy: L=Hit, C=None (Cancel:Hit)
+        /// 강제 Hit 전이 (외부 API)
         /// </summary>
-        public void ForceHit()
-        {
-            if (IsDead) return;
+        public void ForceHit() => ApplyForceState(ForceStateType.Hit);
 
-            CancelCombatWithReason(ChargeCancelReason.Hit);
-            _locomotionFsm.ChangeState(PlayerLocomotionStateId.Hit);
+        /// <summary>
+        /// 강제 Dead 전이 (외부 API)
+        /// </summary>
+        public void ForceDead() => ApplyForceState(ForceStateType.Dead);
+        #endregion
+
+        #region Force State (Step 7)
+        /// <summary>
+        /// 강제 상태 전이 단일 진입점
+        /// - 우선순위 검사: 현재 상태보다 낮은 우선순위 요청은 무시
+        /// - 동반 조치: Combat 취소, FSM 비활성화 등
+        /// - 상태 전이: Locomotion FSM 전이
+        /// </summary>
+        private void ApplyForceState(ForceStateType type)
+        {
+            // 1. 우선순위 검사
+            if (!CanApplyForceState(type)) return;
+
+            // 2. Cancel reason 매핑
+            ChargeCancelReason reason = MapToCancelReason(type);
+
+            // 3. 동반 조치: Combat 취소
+            CancelCombatWithReason(reason);
+
+            // 4. 상태별 전이 및 추가 조치
+            switch (type)
+            {
+                case ForceStateType.Hit:
+                    _locomotionFsm.ChangeState(PlayerLocomotionStateId.Hit);
+                    break;
+
+                case ForceStateType.Dead:
+                    IsDead = true;
+                    _locomotionFsm.ChangeState(PlayerLocomotionStateId.Dead);
+                    _locomotionFsm.Deactivate();
+                    _combatFsm.Deactivate();
+                    break;
+            }
         }
 
         /// <summary>
-        /// 강제 Dead 전이 (외부 이벤트: 사망)
-        /// Policy: L=Dead, C=None, FSM 비활성화
+        /// 강제 상태 적용 가능 여부 (우선순위 기반)
         /// </summary>
-        public void ForceDead()
+        private bool CanApplyForceState(ForceStateType type)
         {
-            if (IsDead) return;
+            // Dead면 Dead만 허용 (이미 Dead면 무시)
+            if (IsDead) return false;
 
-            IsDead = true;
+            // Pause 중에는 Dead만 허용
+            if (_isPaused && type != ForceStateType.Dead) return false;
 
-            CancelCombatWithReason(ChargeCancelReason.Dead);
-            _locomotionFsm.ChangeState(PlayerLocomotionStateId.Dead);
+            // Hit 중 Hit 요청은 무시 (중복 방지)
+            if (IsHit() && type == ForceStateType.Hit) return false;
 
-            // FSM 비활성화
-            _locomotionFsm.Deactivate();
-            _combatFsm.Deactivate();
+            return true;
+        }
+
+        /// <summary>
+        /// ForceStateType → ChargeCancelReason 매핑
+        /// </summary>
+        private ChargeCancelReason MapToCancelReason(ForceStateType type)
+        {
+            return type switch
+            {
+                ForceStateType.Dead => ChargeCancelReason.Dead,
+                ForceStateType.Hit => ChargeCancelReason.Hit,
+                ForceStateType.Pause => ChargeCancelReason.Pause,
+                _ => ChargeCancelReason.Other
+            };
         }
         #endregion
 

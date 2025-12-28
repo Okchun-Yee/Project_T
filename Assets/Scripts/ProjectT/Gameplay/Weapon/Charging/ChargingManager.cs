@@ -28,7 +28,10 @@ namespace ProjectT.Gameplay.Weapon
         private ChargingType _chargingType;     // 현재 충전 타입
 
         /// <summary>
-        /// 마지막 취소 사유 (Coordinator가 설정, Binder가 읽음)
+        /// 마지막 취소 사유 (1회성 스냅샷)
+        /// - Coordinator(PlayerController)가 EndCharging(reason) 호출 시 설정
+        /// - Binder가 이벤트 발행 시 읽음
+        /// - EndCharging() 호출마다 갱신되므로 이전 값은 보장되지 않음
         /// </summary>
         public ChargeCancelReason LastCancelReason { get; private set; } = ChargeCancelReason.Other;
 
