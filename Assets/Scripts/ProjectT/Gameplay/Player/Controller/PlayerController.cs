@@ -5,18 +5,21 @@ using ProjectT.Gameplay.Player.FSM;
 using ProjectT.Gameplay.Player.FSM.Locomotion;
 using ProjectT.Gameplay.Player.FSM.Combat;
 using ProjectT.Gameplay.Player.Input;
+using ProjectT.Gameplay.Weapon;
 
-/// <summary>
-/// Player Controller
-/// 두 개의 독립적인 FSM(이동, 전투)를 병렬 관리
-/// 입력 처리 <-> 상태 간 상호작용 조율
-/// [Architecture]
-/// * Locomotion FSM: 이동, 회피, 피격, 사망 상태 관리
-/// * Combat FSM: 공격, 차징, 홀딩 상태 관리
-/// - 두 FSM는 병렬 동작 => 특정 조건에서 서로 영향을 줌
-/// </summary>
 namespace ProjectT.Gameplay.Player
 {
+    /// <summary>
+    /// Player Controller
+    /// 두 개의 독립적인 FSM(Locomotion, Combat)를 병렬 관리
+    /// 
+    /// [Architecture - Step 6]
+    /// * Locomotion FSM: Idle, Move, Dodge, Hit, Dead
+    /// * Combat FSM: None, Charging, Holding, Attack
+    /// * Cross-FSM Coordinator: 두 FSM 간 충돌 정책 적용
+    /// 
+    /// 정책 우선순위: Dead > Hit > Pause > Dodge > 일반 전이
+    /// </summary>
     public sealed class PlayerController : MonoBehaviour
     {
         #region PAUSE 상위 게이트
@@ -126,6 +129,12 @@ namespace ProjectT.Gameplay.Player
         public void SetPaused(bool paused)
         {
             _isPaused = paused;
+            
+            // Pause 진입 시 Charging/Holding 취소
+            if (paused && IsInCombatChargingOrHolding())
+            {
+                CancelCombatWithReason(ChargeCancelReason.Pause);
+            }
         }
 
         /// <summary>
@@ -145,21 +154,20 @@ namespace ProjectT.Gameplay.Player
         }
 
         /// <summary>
-        /// 강제 이벤트 브릿지
-        /// Locomotion->Hit 전환, Combat->None 전환
+        /// 강제 Hit 전이 (외부 이벤트: 피격)
+        /// Policy: L=Hit, C=None (Cancel:Hit)
         /// </summary>
         public void ForceHit()
         {
             if (IsDead) return;
 
+            CancelCombatWithReason(ChargeCancelReason.Hit);
             _locomotionFsm.ChangeState(PlayerLocomotionStateId.Hit);
-            _combatFsm.ChangeState(PlayerCombatStateId.None);
         }
 
         /// <summary>
-        /// 강제 이벤트 브릿지
-        /// Locomotion->Dead 전환, Combat->None 전환
-        /// 두 FSM 비활성화
+        /// 강제 Dead 전이 (외부 이벤트: 사망)
+        /// Policy: L=Dead, C=None, FSM 비활성화
         /// </summary>
         public void ForceDead()
         {
@@ -167,8 +175,8 @@ namespace ProjectT.Gameplay.Player
 
             IsDead = true;
 
+            CancelCombatWithReason(ChargeCancelReason.Dead);
             _locomotionFsm.ChangeState(PlayerLocomotionStateId.Dead);
-            _combatFsm.ChangeState(PlayerCombatStateId.None);
 
             // FSM 비활성화
             _locomotionFsm.Deactivate();
@@ -248,33 +256,82 @@ namespace ProjectT.Gameplay.Player
         /// FSM 간 브릿지 정책 적용
         /// - 두 FSM 간 입력/상태 충돌 방지
         /// - 강제 취소/차단 같은 상위 정책 반영
+        /// 
+        /// [Step 6] Cross-FSM Policy 적용 순서:
+        /// 1. Dodge 진입 시 Combat 취소
+        /// 2. Charging/Holding 중 Dodge 입력 → Combat 취소 (Dodge 전이는 Guard가 처리)
+        /// 3. 입력 차단 (Dodge/Hit 중 Attack 무시)
         /// </summary>
         private void ApplyCrossFsmPoliciesPreTick()
         {
-            // 1. 정책 1: Dodge 중에는 Combat FSM이 None 상태여야 함
-            if (IsCombatBlockedByLocomotion())
+            // Policy 1: Dodge 상태면 Combat 강제 취소
+            if (IsDodging() && CombatState != PlayerCombatStateId.None)
             {
-                CancelCombat();
+                CancelCombatWithReason(ChargeCancelReason.Dodge);
+            }
+
+            // Policy 2: Charging/Holding 중 Dodge 입력 → Combat 취소
+            // (Dodge 전이 자체는 Locomotion Guard가 처리)
+            if (DodgePressed && IsInCombatChargingOrHolding())
+            {
+                CancelCombatWithReason(ChargeCancelReason.Dodge);
+            }
+
+            // Policy 3: 입력 차단 (Dodge/Hit 중 Attack 무시)
+            if (ShouldBlockAttackInput())
+            {
+                AttackPressed = false;
+                AttackHeld = false;
             }
         }
         #endregion
 
-        #region Cross-FSM Policies
+        #region Cross-FSM Coordinator (Step 6)
+        
         /// <summary>
-        /// 정책 1 검사: Locomotion FSM이 Dodge 상태인지
+        /// Locomotion이 Dodge 상태인지
         /// </summary>
-        private bool IsCombatBlockedByLocomotion()
+        private bool IsDodging() => LocomotionState == PlayerLocomotionStateId.Dodge;
+
+        /// <summary>
+        /// Locomotion이 Hit 상태인지
+        /// </summary>
+        private bool IsHit() => LocomotionState == PlayerLocomotionStateId.Hit;
+
+        /// <summary>
+        /// Combat이 Charging 또는 Holding 상태인지
+        /// </summary>
+        private bool IsInCombatChargingOrHolding()
         {
-            return _locomotionFsm.CurrentStateId == PlayerLocomotionStateId.Dodge;
+            return CombatState == PlayerCombatStateId.Charging 
+                || CombatState == PlayerCombatStateId.Holding;
         }
 
         /// <summary>
-        /// Combat FSM 강제 취소: None 상태로 전환
+        /// Attack 입력을 차단해야 하는지
+        /// Dodge/Hit 중에는 공격 입력 무시
         /// </summary>
-        private void CancelCombat()
+        private bool ShouldBlockAttackInput()
         {
-            if (_combatFsm.CurrentStateId != PlayerCombatStateId.None)
+            return IsDodging() || IsHit();
+        }
+
+        /// <summary>
+        /// Combat FSM 취소 (사유 포함)
+        /// ChargingManager에 Cancel reason 전달 후 None 전이
+        /// </summary>
+        private void CancelCombatWithReason(ChargeCancelReason reason)
+        {
+            // Charging/Holding 상태면 ChargingManager에 취소 사유 전달
+            if (IsInCombatChargingOrHolding())
+            {
+                ChargingManager.Instance?.EndCharging(reason);
+            }
+
+            if (CombatState != PlayerCombatStateId.None)
+            {
                 _combatFsm.ChangeState(PlayerCombatStateId.None);
+            }
         }
         #endregion
 

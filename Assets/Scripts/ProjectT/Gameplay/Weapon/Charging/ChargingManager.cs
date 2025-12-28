@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using ProjectT.Core;
+using ProjectT.Gameplay.Player;
 
 /// <summary>
 /// 차징 매니저 - 값 제공자 역할
-/// - 값 제공: ChargeElapsed, ChargeNormalized, ChargeDuration
+/// - 값 제공: ChargeElapsed, ChargeNormalized, ChargeDuration, LastCancelReason
 /// - FSM이 ChargeNormalized >= 1 로 Holding 전이 결정 (여기서 ChangeState 호출 금지)
 /// </summary>
 namespace ProjectT.Gameplay.Weapon
@@ -25,6 +26,11 @@ namespace ProjectT.Gameplay.Weapon
         private float _chargeDuration = 0f;     // 충전 목표 시간
         private float _chargeElapsed = 0f;      // 경과 시간
         private ChargingType _chargingType;     // 현재 충전 타입
+
+        /// <summary>
+        /// 마지막 취소 사유 (Coordinator가 설정, Binder가 읽음)
+        /// </summary>
+        public ChargeCancelReason LastCancelReason { get; private set; } = ChargeCancelReason.Other;
 
         // 읽기 전용 프로퍼티 (값 기반 파생)
         public bool IsCharging => _chargingRoutine != null;
@@ -55,6 +61,17 @@ namespace ProjectT.Gameplay.Weapon
 
         public void EndCharging()
         {
+            EndCharging(ChargeCancelReason.Other);
+        }
+
+        /// <summary>
+        /// 차징 종료 (사유 포함)
+        /// Coordinator(PlayerController)가 정책 결정 후 호출
+        /// </summary>
+        public void EndCharging(ChargeCancelReason reason)
+        {
+            LastCancelReason = reason;
+            
             if (_chargingRoutine != null)
             {
                 StopCoroutine(_chargingRoutine);

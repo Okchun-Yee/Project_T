@@ -154,15 +154,16 @@ namespace ProjectT.Gameplay.Player
 
         private void EmitChargeCanceled(PlayerCombatStateId prev, PlayerCombatStateId next)
         {
-            // reason 결정
-            ChargeCancelReason reason = DetermineChargeCancelReason(next);
-            float snapshot = ChargingManager.Instance != null ? ChargingManager.Instance.ChargeNormalized : 0f;
+            // reason은 ChargingManager에서 가져옴 (Coordinator가 설정)
+            var cm = ChargingManager.Instance;
+            ChargeCancelReason reason = cm != null ? cm.LastCancelReason : ChargeCancelReason.Other;
+            float snapshot = cm != null ? cm.ChargeNormalized : 0f;
 
             var evt = new ChargeCanceledEvent(reason, snapshot);
             ChargeCanceled?.Invoke(evt);
 
-            // 차징 루틴 종료는 "Cancel 이벤트 발행 시점"에 수행 (전이와 독립)
-            ChargingManager.Instance?.EndCharging();
+            // 차징 루틴 종료 (이미 Coordinator가 호출했을 수 있으므로 안전하게)
+            cm?.EndCharging();
             
             // 실행: 무기 취소 액션
             _activeWeapon?.Fsm_CancelAction();
@@ -208,36 +209,6 @@ namespace ProjectT.Gameplay.Player
             if (info == null || info.chargeDuration <= 0f) return;
 
             ChargingManager.Instance?.StartCharging(ChargingType.Attack, info.chargeDuration);
-        }
-
-        /// <summary>
-        /// Cancel reason 판별 (우선순위: Dead > Hit > Pause > Dodge > Other)
-        /// 한 프레임에 다중 원인이 겹칠 경우 우선순위 순서로 반환
-        /// </summary>
-        private ChargeCancelReason DetermineChargeCancelReason(PlayerCombatStateId nextState)
-        {
-            if (_decision == null) return ChargeCancelReason.Other;
-            
-            var locomotion = _decision.LocomotionState;
-            
-            // 1. Dead (최우선)
-            if (_decision.IsDead || locomotion == FSM.Locomotion.PlayerLocomotionStateId.Dead)
-                return ChargeCancelReason.Dead;
-            
-            // 2. Hit
-            if (locomotion == FSM.Locomotion.PlayerLocomotionStateId.Hit)
-                return ChargeCancelReason.Hit;
-            
-            // 3. Pause
-            if (_decision.IsPaused)
-                return ChargeCancelReason.Pause;
-            
-            // 4. Dodge
-            if (locomotion == FSM.Locomotion.PlayerLocomotionStateId.Dodge)
-                return ChargeCancelReason.Dodge;
-            
-            // 5. Other
-            return ChargeCancelReason.Other;
         }
 
         private AttackEndReason DetermineAttackEndReason(PlayerCombatStateId nextState)
