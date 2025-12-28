@@ -47,6 +47,13 @@ namespace ProjectT.Gameplay.Weapon
             // 1) 무기 정보 주입
             weaponInfo = info;
             weaponCooldown = info.weaponCooldown; 
+            // 장착(초기화) 시점에 이전 코루틴이 남아있을 수 있으므로 쿨다운 초기화
+            if (CooldownCoroutine != null)
+            {
+                try { StopCoroutine(CooldownCoroutine); } catch { }
+                CooldownCoroutine = null;
+            }
+            isCooldown = false;
         }
         // 스킬 초기화 매서드
         private void SkillInitialization(EquippableItemSO info)
@@ -99,6 +106,10 @@ namespace ProjectT.Gameplay.Weapon
         /// </summary>
         public void ExecuteAttackFromFsm(bool charged)
         {
+            if (isCooldown)
+            {
+                return;
+            }
             if (charged) _AttackCharged();
             else _Attack();
         }

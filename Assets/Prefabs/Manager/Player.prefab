@@ -241,8 +241,6 @@ GameObject:
   - component: {fileID: 239997871225431392}
   - component: {fileID: 911714171923386200}
   - component: {fileID: 46091410835244951}
-  - component: {fileID: 8261797712670417899}
-  - component: {fileID: 2837498236076418067}
   - component: {fileID: 8997236477992658678}
   - component: {fileID: 2596966346658294078}
   - component: {fileID: 4766824949432415399}
@@ -547,35 +545,6 @@ MonoBehaviour:
   _facingLeft: 0
   _facingBack: 0
   _isDead: 0
---- !u!114 &8261797712670417899
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3969855821128286577}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ead6bbdb1b725847bba2f23783cf3af, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _decision: {fileID: 911714171923386200}
-  _execution: {fileID: 46091410835244951}
-  _zeroMoveInputWhenNotMoveState: 1
---- !u!114 &2837498236076418067
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3969855821128286577}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1651dd17cb0a5524ca9c7a2d4c275968, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _decision: {fileID: 911714171923386200}
-  _activeWeapon: {fileID: 6882450491504140009}
 --- !u!114 &8997236477992658678
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -605,6 +574,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _decision: {fileID: 911714171923386200}
   _execution: {fileID: 46091410835244951}
+  _rb: {fileID: 1001530150808849982}
   _zeroMoveInputWhenNotMoveState: 1
 --- !u!114 &4766824949432415399
 MonoBehaviour:
@@ -634,7 +604,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventoryUI: {fileID: 0}
   inventoryData: {fileID: 11400000, guid: 599806ef280ef5e49a3ab8741677cf1a, type: 2}
-  initialItems: []
+  initialItems:
+  - quantity: 3
+    item: {fileID: 11400000, guid: e63e3e4263ab6ab44839643666c1200a, type: 2}
+    itemState: []
   dropSound: {fileID: 0}
   audioSource: {fileID: 0}
 --- !u!114 &2264942319886809100

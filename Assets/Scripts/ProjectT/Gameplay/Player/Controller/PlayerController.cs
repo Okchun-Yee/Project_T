@@ -36,6 +36,9 @@ namespace ProjectT.Gameplay.Player
     /// </summary>
     public sealed class PlayerController : MonoBehaviour
     {
+        // Fired when FSMs have been built and initialized (CombatFsm/LocomotionFsm ready)
+        public event Action OnFsmBuilt;
+
         #region PAUSE 상위 게이트
         [Header("Gate")]
         [SerializeField] private bool _isPaused;    // 일시정지 상태
@@ -94,6 +97,8 @@ namespace ProjectT.Gameplay.Player
             BuildFsm();
             InitializeFsm();
             CachePrevStates();
+            // Notify listeners that FSMs are ready (Binder may be waiting)
+            OnFsmBuilt?.Invoke();
         }
         private void OnEnable()
         {
