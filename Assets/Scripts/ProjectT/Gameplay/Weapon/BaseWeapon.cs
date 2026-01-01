@@ -50,7 +50,13 @@ namespace ProjectT.Gameplay.Weapon
             // 장착(초기화) 시점에 이전 코루틴이 남아있을 수 있으므로 쿨다운 초기화
             if (CooldownCoroutine != null)
             {
-                try { StopCoroutine(CooldownCoroutine); } catch { }
+                try { StopCoroutine(CooldownCoroutine); } 
+                catch (System.Exception ex) 
+                { 
+                #if UNITY_EDITOR
+                    Debug.LogWarning($"[BaseWeapon] Failed to stop cooldown coroutine: {ex.Message}");
+                #endif
+                }
                 CooldownCoroutine = null;
             }
             isCooldown = false;
