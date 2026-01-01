@@ -2,19 +2,14 @@ namespace ProjectT.Gameplay.Player.FSM.Combat.States
 {
     /// <summary>
     /// Player combat holding state.
+    /// Step 5: 전이 로직은 Composer에서 중앙 관리
     /// </summary>
     public sealed class CombatHoldingState : PlayerCombatStateBase
     {
-        public override void Enter(PlayerFsmContext ctx)
-        {
-            ctx.Controller.NotifyHoldStarted();
-        }
+        public override void Enter(PlayerFsmContext ctx) { }
         public override void Tick(PlayerFsmContext ctx)
         {
-            PlayerController pc = ctx.Controller;
-            if(pc.AttackHeld) return;
-
-            pc.SetCombat(PlayerCombatStateId.Attack);
+            // 전이 규칙은 Composer에서 Guard로 처리
         }
         public override void Exit(PlayerFsmContext ctx) { }
     }

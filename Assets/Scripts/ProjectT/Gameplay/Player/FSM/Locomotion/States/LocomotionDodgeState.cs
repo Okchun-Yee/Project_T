@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace ProjectT.Gameplay.Player.FSM.Locomotion.States
@@ -6,6 +5,8 @@ namespace ProjectT.Gameplay.Player.FSM.Locomotion.States
     /// <summary>
     /// Locomotion Dodge State
     /// 플레이어 이동 회피 상태
+    /// 
+    /// Step 5: 타이머 기반 전이는 State 내부에서 처리 (Guard로 중앙화 어려움)
     /// </summary>
     public sealed class LocomotionDodgeState : PlayerLocomotionStateBase
     {
@@ -15,23 +16,16 @@ namespace ProjectT.Gameplay.Player.FSM.Locomotion.States
 
         public override void Enter(PlayerFsmContext ctx)
         {
-            PlayerController pc = ctx.Controller;
             _timeLeft = DodgeDuration;
         }
         public override void Tick(PlayerFsmContext ctx)
         {
             _timeLeft -= Time.deltaTime;
-
             if (_timeLeft <= 0f)
             {
                 ctx.Controller.SetLocomotion(PlayerLocomotionStateId.Idle);
-                return;
             }
         }
-
-        public override void Exit(PlayerFsmContext ctx)
-        {
-            if(ctx.Rigid!=null) ctx.Rigid.velocity = Vector2.zero;
-        }
+        public override void Exit(PlayerFsmContext ctx) { }
     }
 }

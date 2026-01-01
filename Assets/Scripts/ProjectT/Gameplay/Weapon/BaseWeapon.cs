@@ -13,7 +13,9 @@ namespace ProjectT.Gameplay.Weapon
 {
     public abstract class BaseWeapon : MonoBehaviour, IWeapon
     {
-        public bool isAttacking { get; private set; } = false;      // 공격 상태
+        // SSOT: "공격 중" 여부는 FSM 상태(CombatState == Attack)로 판단
+        // isAttacking 플래그 제거됨
+        
         public EquippableItemSO weaponInfo { get; private set; }    // 무기 정보
 
         private Coroutine CooldownCoroutine;                    //무기 공격 쿨다운 코루틴
@@ -45,6 +47,19 @@ namespace ProjectT.Gameplay.Weapon
             // 1) 무기 정보 주입
             weaponInfo = info;
             weaponCooldown = info.weaponCooldown; 
+            // 장착(초기화) 시점에 이전 코루틴이 남아있을 수 있으므로 쿨다운 초기화
+            if (CooldownCoroutine != null)
+            {
+                try { StopCoroutine(CooldownCoroutine); } 
+                catch (System.Exception ex) 
+                { 
+                #if UNITY_EDITOR
+                    Debug.LogWarning($"[BaseWeapon] Failed to stop cooldown coroutine: {ex.Message}");
+                #endif
+                }
+                CooldownCoroutine = null;
+            }
+            isCooldown = false;
         }
         // 스킬 초기화 매서드
         private void SkillInitialization(EquippableItemSO info)
@@ -97,6 +112,10 @@ namespace ProjectT.Gameplay.Weapon
         /// </summary>
         public void ExecuteAttackFromFsm(bool charged)
         {
+            if (isCooldown)
+            {
+                return;
+            }
             if (charged) _AttackCharged();
             else _Attack();
         }
@@ -104,12 +123,9 @@ namespace ProjectT.Gameplay.Weapon
         // 무기 쿨다운 코루틴
         private IEnumerator CooldownRoutine()
         {
-            // 공격 애니메이션 종료 후 isAttacking false로 변경 (애니메이션 이벤트에서 호출)
             isCooldown = true;
             yield return new WaitForSeconds(weaponCooldown);
             isCooldown = false;
-
-            // 쿨다운 끝나면 ActiveWeapon에 통보
         }
         // 객체 비활성 시 처리 매서드 (코루틴 정리)
         protected virtual void OnDisable()

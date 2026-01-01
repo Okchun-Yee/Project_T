@@ -1,50 +1,136 @@
+using System;
+using ProjectT.Core.FSM;
+using ProjectT.Gameplay.Player.FSM.Combat;
 using ProjectT.Gameplay.Weapon;
 using UnityEngine;
 
 namespace ProjectT.Gameplay.Player
 {
+    /// <summary>
+    /// Combat FSM (Decision) → Execution 연결자
+    /// - FSM.OnStateChanged 콜백에서 즉시 이벤트 발행 (Update 폴링 대신)
+    /// - 무기 실행 명령 전달
+    /// 
+    /// Step 2 보완 (A/B/C):
+    /// - A) Update 폴링 → OnStateChanged 콜백으로 전환 (누락/중복 방지)
+    /// - B) AttackStarted는 next==Attack이면 항상 발행, isCharged는 prev==Holding일 때만 true
+    /// - C) AttackVariant 필드로 향후 콤보/다타 확장 대비
+    /// </summary>
     public sealed class PlayerCombatFsmBinder : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private PlayerController _decision; // FSM PlayerController
-        [SerializeField] private ActiveWeapon _activeWeapon; // Singleton이라면 null이어도 Awake에서 가져옴
+        [SerializeField] private PlayerController _decision;
+        [SerializeField] private ActiveWeapon _activeWeapon;
 
-        private bool _charged; // 차징 완료/홀드 여부 (FSM 이벤트로만 갱신)
+        // ============================================================
+        // Combat 이벤트 (Binder가 소유, 전이 시점에만 발행)
+        // ============================================================
+        public event Action<ChargeStartedEvent> ChargeStarted;
+        public event Action<ChargeReachedMaxEvent> ChargeReachedMax;
+        public event Action<ChargeCanceledEvent> ChargeCanceled;
+        public event Action<AttackStartedEvent> AttackStarted;
+        public event Action<AttackEndedEvent> AttackEnded;
+
+        private bool _isSubscribed = false;
+        private bool _isFsmBuiltHooked = false;
 
         private void Awake()
         {
-            if (_decision == null) _decision = GetComponent<PlayerController>();
-            if (_activeWeapon == null) _activeWeapon = ActiveWeapon.Instance;
+            if (_decision == null)
+            {
+                _decision = GetComponent<PlayerController>();
+                if (_decision == null) _decision = FindObjectOfType<PlayerController>();
+            }
+
+            if (_activeWeapon == null)
+            {
+                _activeWeapon = ActiveWeapon.Instance;
+            }
+
+            
         }
 
         private void OnEnable()
         {
-            if (_decision == null) return;
-
-            _decision.AttackStarted += OnAttackStarted;
-            _decision.AttackEnded += OnAttackEnded;
-
-            _decision.ChargeStarted += OnChargeStarted;
-            _decision.ChargeReachedMax += OnChargeReachedMax;
-            _decision.ChargeCanceled += OnChargeCanceled;
-            _decision.HoldStarted += OnHoldStarted;
+            SubscribeFsmCallback();
         }
 
         private void OnDisable()
         {
-            if (_decision == null) return;
-
-            _decision.AttackStarted -= OnAttackStarted;
-            _decision.AttackEnded -= OnAttackEnded;
-
-            _decision.ChargeStarted -= OnChargeStarted;
-            _decision.ChargeReachedMax -= OnChargeReachedMax;
-            _decision.ChargeCanceled -= OnChargeCanceled;
-            _decision.HoldStarted -= OnHoldStarted;
+            UnsubscribeFsmCallback();
         }
+
         private void Update()
         {
-            if (_decision == null || _activeWeapon == null) return;
+            if (_decision == null) return;
+
+            // 무기 설정 동기화만 Update에서 처리
+            // 상태 전이 감지는 OnStateChanged 콜백에서 처리
+            UpdateWeaponConfig();
+        }
+
+        private void SubscribeFsmCallback()
+        {
+            if (_isSubscribed)
+            {
+                return;
+            }
+
+            if (_decision == null)
+            {
+                return;
+            }
+
+            // CombatFsm may be created later; if so, hook PlayerController.OnFsmBuilt to retry
+            if (_decision.CombatFsm == null)
+            {
+                if (!_isFsmBuiltHooked)
+                {
+                    _decision.OnFsmBuilt += OnDecisionFsmBuilt;
+                    _isFsmBuiltHooked = true;
+                }
+                return;
+            }
+
+            _decision.CombatFsm.OnStateChanged += OnCombatStateChanged;
+            _isSubscribed = true;
+        }
+
+        private void UnsubscribeFsmCallback()
+        {
+            if (_isSubscribed && _decision != null && _decision.CombatFsm != null)
+            {
+                _decision.CombatFsm.OnStateChanged -= OnCombatStateChanged;
+                _isSubscribed = false;
+            }
+
+            if (_isFsmBuiltHooked && _decision != null)
+            {
+                _decision.OnFsmBuilt -= OnDecisionFsmBuilt;
+                _isFsmBuiltHooked = false;
+            }
+        }
+
+        private void Start()
+        {
+            // Awake에서 FSM이 아직 생성 안됐을 수 있으므로 Start에서 재시도
+            SubscribeFsmCallback();
+        }
+
+        private void OnDecisionFsmBuilt()
+        {
+            SubscribeFsmCallback();
+            // Unhook to avoid duplicate calls (unhooked in UnsubscribeFsmCallback too)
+            if (_isFsmBuiltHooked && _decision != null)
+            {
+                _decision.OnFsmBuilt -= OnDecisionFsmBuilt;
+                _isFsmBuiltHooked = false;
+            }
+        }
+
+        private void UpdateWeaponConfig()
+        {
+            if (_activeWeapon == null) return;
 
             BaseWeapon bw = _activeWeapon.currentWeapon as BaseWeapon;
             var info = bw != null ? bw.GetWeaponInfo() : null;
@@ -52,54 +138,142 @@ namespace ProjectT.Gameplay.Player
             _decision.CanChargeAttack = (info != null && info.chargeDuration > 0f);
         }
 
-        private void OnAttackStarted()
+        /// <summary>
+        /// FSM.OnStateChanged 콜백 핸들러
+        /// ChangeState() 직후 동기적으로 호출되어 누락/중복 없이 전이를 감지
+        /// </summary>
+        private void OnCombatStateChanged(StateChangedEventArgs<PlayerCombatStateId> args)
         {
-            if (_activeWeapon == null) return;
+            var prev = args.PrevStateId;
+            var next = args.NextStateId;
 
-            _activeWeapon.Fsm_AttackExecute(_charged);
-            // 공격이 실행되면 charged는 소비되는 게 자연스러움
-            _charged = false;
+            // ChargeStarted: prev != Charging && next == Charging
+            if (prev != PlayerCombatStateId.Charging && next == PlayerCombatStateId.Charging)
+            {
+                EmitChargeStarted();
+            }
+
+            // ChargeReachedMax: prev == Charging && next == Holding
+            if (prev == PlayerCombatStateId.Charging && next == PlayerCombatStateId.Holding)
+            {
+                EmitChargeReachedMax();
+            }
+
+            // ChargeCanceled: prev in {Charging, Holding} && next not in {Attack, prev}
+            // 즉, Charging/Holding에서 Attack이 아닌 다른 상태로 전이 시
+            if ((prev == PlayerCombatStateId.Charging || prev == PlayerCombatStateId.Holding) &&
+                next != PlayerCombatStateId.Attack && next != prev)
+            {
+                EmitChargeCanceled(prev, next);
+            }
+
+            // AttackStarted: next == Attack (어떤 prev에서든)
+            // 보완점 B: "next == Attack이면 항상 발행, isCharged는 prev == Holding일 때만 true"
+            if (next == PlayerCombatStateId.Attack)
+            {
+                EmitAttackStarted(prev);
+            }
+
+            // AttackEnded: prev == Attack && next != Attack
+            if (prev == PlayerCombatStateId.Attack && next != PlayerCombatStateId.Attack)
+            {
+                EmitAttackEnded(next);
+            }
         }
 
-        private void OnAttackEnded()
+        #region Event Emission
+        private void EmitChargeStarted()
         {
-            // 지금 단계에서는 Attack 종료 타이밍을 무기/애니 쪽에서 다듬기 전이라
-            // 최소 정리만 수행
-            _charged = false;
+            var evt = new ChargeStartedEvent(0f);
+            ChargeStarted?.Invoke(evt);
+
+            // 실행: ChargingManager 시작
+            StartChargingExecution();
         }
 
-        private void OnChargeStarted()
+        private void EmitChargeReachedMax()
         {
-            _charged = false;
+            var evt = new ChargeReachedMaxEvent(1f);
+            ChargeReachedMax?.Invoke(evt);
+        }
 
-            // 무기 데이터에서 차징 시간 가져오기 (SSOT: weapon)
+        private void EmitChargeCanceled(PlayerCombatStateId prev, PlayerCombatStateId next)
+        {
+            // reason은 ChargingManager에서 가져옴 (Coordinator가 설정한 1회성 스냅샷)
+            var cm = ChargingManager.Instance;
+            ChargeCancelReason reason = cm != null ? cm.LastCancelReason : ChargeCancelReason.Other;
+            float snapshot = cm != null ? cm.ChargeNormalized : 0f;
+#if UNITY_EDITOR
+            UnityEngine.Debug.Log($"[Binder] EmitChargeCanceled prev:{prev} next:{next} reason:{reason} snapshot:{snapshot}");
+#endif
+
+            var evt = new ChargeCanceledEvent(reason, snapshot);
+            ChargeCanceled?.Invoke(evt);
+
+            // 실행: 무기 취소 액션
+#if UNITY_EDITOR
+            UnityEngine.Debug.Log($"[Binder] Calling ActiveWeapon.Fsm_CancelAction()");
+#endif
+            _activeWeapon?.Fsm_CancelAction();
+        }
+
+        private void EmitAttackStarted(PlayerCombatStateId prevState)
+        {
+            // 보완점 B: isCharged는 prev == Holding일 때만 true
+            bool isCharged = (prevState == PlayerCombatStateId.Holding);
+            
+            // 보완점 C: AttackVariant로 공격 종류 구분 (향후 콤보 확장 대비)
+            AttackVariant variant = isCharged ? AttackVariant.Charged : AttackVariant.Normal;
+
+            var evt = new AttackStartedEvent(isCharged, variant);
+#if UNITY_EDITOR
+            UnityEngine.Debug.Log($"[Binder] EmitAttackStarted prev:{prevState} isCharged:{isCharged} variant:{variant}");
+#endif
+            AttackStarted?.Invoke(evt);
+
+            // 차징 루틴 종료는 "Attack 전이 시점"에 수행 (Charging/Holding에서 온 경우)
+            if (prevState == PlayerCombatStateId.Charging || prevState == PlayerCombatStateId.Holding)
+            {
+#if UNITY_EDITOR
+                UnityEngine.Debug.Log($"[Binder] Ending charging before attack. prevState:{prevState}");
+#endif
+                ChargingManager.Instance?.EndCharging();
+            }
+
+            // 실행: 무기 공격
+#if UNITY_EDITOR
+            UnityEngine.Debug.Log($"[Binder] Calling ActiveWeapon.Fsm_AttackExecute(charged:{isCharged})");
+#endif
+            _activeWeapon?.Fsm_AttackExecute(isCharged);
+        }
+
+        private void EmitAttackEnded(PlayerCombatStateId nextState)
+        {
+            // endReason 결정
+            AttackEndReason reason = DetermineAttackEndReason(nextState);
+
+            var evt = new AttackEndedEvent(reason);
+            AttackEnded?.Invoke(evt);
+        }
+        #endregion
+
+        #region Execution Helpers
+        private void StartChargingExecution()
+        {
             var bw = _activeWeapon != null ? _activeWeapon.currentWeapon as BaseWeapon : null;
             var info = bw != null ? bw.GetWeaponInfo() : null;
 
-            if (info == null) return;
+            if (info == null || info.chargeDuration <= 0f) return;
 
-            // 공격 차징 시작
             ChargingManager.Instance?.StartCharging(ChargingType.Attack, info.chargeDuration);
         }
-        // TODO: subscribe ChargingManager.Completed -> pc.NotifyChargeReachedMax()
 
-        // TODO: set pc.IsChargeMaxReached
-
-        private void OnChargeReachedMax()
+        private AttackEndReason DetermineAttackEndReason(PlayerCombatStateId nextState)
         {
-            _charged = true;
-            // [TODO] 차징 완료 시 효과음 재생 등 피드백 추가
+            // None으로 전이 = 정상 종료
+            // 다른 상태 = 인터럽트
+            return nextState == PlayerCombatStateId.None ? AttackEndReason.Finished : AttackEndReason.Interrupted;
         }
-
-        private void OnHoldStarted()
-        {
-            _charged = true;
-        }
-
-        private void OnChargeCanceled()
-        {
-            _charged = false;
-            _activeWeapon?.Fsm_CancelAction();
-        }
+        #endregion 
     }
 }

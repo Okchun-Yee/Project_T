@@ -6,10 +6,16 @@ using ProjectT.Gameplay.Combat;
 using ProjectT.Systems.Camera;
 using ProjectT.Systems.UI;
 using ProjectT.Gameplay.Enemies;
+using ProjectT.Gameplay.Player.Controller;
 
 
 namespace ProjectT.Gameplay.Player
 {
+    /// <summary>
+    /// Player Health
+    /// - 피격/사망 시 PlayerController.ForceHit/ForceDead 호출 (Step 7)
+    /// - FSM 상태 변경은 PlayerController가 담당
+    /// </summary>
     public class PlayerHealth : Singleton<PlayerHealth>
     {
         public bool isDead { get; private set; }
@@ -24,6 +30,7 @@ namespace ProjectT.Gameplay.Player
         private bool canTakeDamage = true;
         private Knockback knockback;
         private Flash flash;
+        private PlayerController _playerController;
 
         const string TOWN_TEXT = "GameScene1";
         readonly int DEATH_HASH = Animator.StringToHash("Death");
@@ -37,6 +44,7 @@ namespace ProjectT.Gameplay.Player
         private void Start()
         {
             isDead = false;
+            _playerController = GetComponent<PlayerController>();
         }
         private void OnCollisionStay2D(Collision2D collision)
         {
@@ -75,7 +83,15 @@ namespace ProjectT.Gameplay.Player
             UIManager.Instance.UpdateHealthSlider();
             DamageRecoveryTime();
 
-            CheckIfPlayerDeath();
+            // Step 7: FSM 강제 전이는 PlayerController 단일 경로
+            if (currentHealth <= 0)
+            {
+                CheckIfPlayerDeath();
+            }
+            else
+            {
+                _playerController?.ForceHit();
+            }
         }
         public void DamageRecoveryTime()
         {
@@ -88,6 +104,10 @@ namespace ProjectT.Gameplay.Player
             if (currentHealth <= 0 && !isDead)
             {
                 isDead = true;
+                
+                // Step 7: FSM 강제 전이는 PlayerController 단일 경로
+                _playerController?.ForceDead();
+                
                 Destroy(ActiveWeapon.Instance.gameObject);
 
                 currentHealth = 0;

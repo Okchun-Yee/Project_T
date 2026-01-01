@@ -4,15 +4,20 @@ using UnityEngine;
 namespace ProjectT.Gameplay.Player.FSM.Combat.States
 {
     /// <summary>
-    /// Player combat attack state.
+    /// Combat Attack State
+    /// 타이머 기반 전이 (Attack → None)
+    /// 
+    /// Step 5: 타이머 기반 전이는 State 내부에서 처리
     /// </summary>
     public sealed class CombatAttackState : PlayerCombatStateBase
     {
         private float _timeLeft;
+        [SerializeField] private float _attackDuration = 0.5f;
+        public float AttackDuration => _attackDuration;
+
         public override void Enter(PlayerFsmContext ctx)
         {
-            ctx.Controller.ChargeTime = 0f;
-            ctx.Controller.NotifyAttackStarted();
+            _timeLeft = _attackDuration;
         }
         public override void Tick(PlayerFsmContext ctx)
         {
@@ -24,7 +29,7 @@ namespace ProjectT.Gameplay.Player.FSM.Combat.States
         }
         public override void Exit(PlayerFsmContext ctx)
         {
-            ctx.Controller.NotifyAttackEnded();
+            // 이벤트 발행은 Binder가 전이 감지로 처리
         }
     }
 } 

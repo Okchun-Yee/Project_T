@@ -1,30 +1,15 @@
-using UnityEngine;
-
 namespace ProjectT.Gameplay.Player.FSM.Combat.States
 {
     /// <summary>
     /// Player combat charging state.
+    /// Step 5: 전이 로직은 Composer에서 중앙 관리
     /// </summary>
     public sealed class CombatChargingState : PlayerCombatStateBase
     {
-        private bool _reachedMax;
-        public override void Enter(PlayerFsmContext ctx)
-        {
-            _reachedMax = false;
-            ctx.Controller.ChargeTime = 0f;
-            ctx.Controller.NotifyChargeStarted();
-        }
+        public override void Enter(PlayerFsmContext ctx) { }
         public override void Tick(PlayerFsmContext ctx)
         {
-            PlayerController pc = ctx.Controller;
-            if(!pc.AttackHeld)
-            {
-                // 취소 처리 X
-
-                // 공격 상태로 전환
-                pc.SetCombat(PlayerCombatStateId.Attack);
-                return;
-            }
+            // 전이 규칙은 Composer에서 Guard로 처리
         }
         public override void Exit(PlayerFsmContext ctx) { }
     }

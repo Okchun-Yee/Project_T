@@ -2,26 +2,14 @@ namespace ProjectT.Gameplay.Player.FSM.Combat.States
 {
     /// <summary>
     /// Player combat none state.
+    /// Step 5: 전이 로직은 Composer에서 중앙 관리
     /// </summary>
     public sealed class CombatNoneState : PlayerCombatStateBase
     {
-        public override void Enter(PlayerFsmContext ctx)
-        {
-            ctx.Controller.ChargeTime = 0f;
-            ctx.Controller.IsChargeMaxReached = false; // 최대 차징 도달 플래그 초기화
-        }
+        public override void Enter(PlayerFsmContext ctx) { }
         public override void Tick(PlayerFsmContext ctx)
         {
-            PlayerController pc = ctx.Controller;
-            if (pc.AttackPressed)
-            {
-                if (pc.CanChargeAttack)
-                    pc.SetCombat(PlayerCombatStateId.Charging);
-                else
-                    pc.SetCombat(PlayerCombatStateId.Attack);
-
-                return;
-            }
+            // 전이 규칙은 Composer에서 Guard로 처리
         }
         public override void Exit(PlayerFsmContext ctx) { }
     }
