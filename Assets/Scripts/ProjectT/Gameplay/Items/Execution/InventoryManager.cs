@@ -47,7 +47,7 @@ namespace ProjectT.Gameplay.Items.Execution
         }
         public void UpdateData(int itemIndex, Sprite itemImage, int itemQuantity)
         {
-            if(listOfItems.Count > itemIndex) //해당 항목이 목록에 있는지확인
+            if (listOfItems.Count > itemIndex) //해당 항목이 목록에 있는지확인
             {
                 listOfItems[itemIndex].SetData(itemImage, itemQuantity);
             }
@@ -75,6 +75,11 @@ namespace ProjectT.Gameplay.Items.Execution
             {
                 return;
             }
+            // 드래그 검사 방어 코드 추가
+            if (currentlyDraggedItemIndex == -1 || currentlyDraggedItemIndex == index)
+            {
+                return;
+            }
             OnSwapItem?.Invoke(currentlyDraggedItemIndex, index);
             HandleItemSelection(inventoryItemUI);
         }
@@ -93,9 +98,9 @@ namespace ProjectT.Gameplay.Items.Execution
             currentlyDraggedItemIndex = index;
             HandleItemSelection(inventoryItemUI); // 동일한 아이템이 존재할 경우 혼돈을 방지하기 위함
             OnStartDragging?.Invoke(index); // 인벤토리 자체가 아닌 드래그한 아이템을 생성할지 결정
-           
+
         }
-        
+
         public void CreateDraggedItem(Sprite sprite, int quantity)
         {
             mouseFollower.Toggle(true);
@@ -108,7 +113,7 @@ namespace ProjectT.Gameplay.Items.Execution
             if (index == -1) // 빈 슬롯 클릭시 동작하지 않음
                 return;
             OnDescriptionRequested?.Invoke(index);
-            
+
         }
 
         public void Show()
@@ -132,9 +137,9 @@ namespace ProjectT.Gameplay.Items.Execution
             actionPanel.transform.position = listOfItems[itemIndex].transform.position;
         }
 
-        private void DeselectAllItems() 
+        private void DeselectAllItems()
         {
-            foreach(InventoryItem item in listOfItems)
+            foreach (InventoryItem item in listOfItems)
             {
                 item.Deselect(); // 선택 취소
             }

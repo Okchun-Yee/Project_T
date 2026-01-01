@@ -30,7 +30,6 @@ namespace ProjectT.Gameplay.Items.Inventory
         }
         public void Toggle(bool val)
         {
-            Debug.Log($"Item Toggled {val}");
             gameObject.SetActive(val);
         }
     }
