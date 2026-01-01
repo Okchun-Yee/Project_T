@@ -58,7 +58,7 @@ namespace ProjectT.Gameplay.Player
         /// </summary>
         public void Fsm_AttackExecute(bool charged)
         {
-                if (currentWeapon == null) return;
+            if (currentWeapon == null) return;
 
             if (currentWeapon is not BaseWeapon bw)
             {
