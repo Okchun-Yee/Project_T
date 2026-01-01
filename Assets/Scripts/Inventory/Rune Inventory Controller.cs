@@ -6,12 +6,13 @@ using Inventory.UI;
 using UnityEngine;
 using UnityEngine.AI;
 
-
 namespace Inventory
 {
     public class RuneInventoryController : MonoBehaviour
     {
-         [SerializeField] private InventoryManager runeInventoryUI;
+        
+        [SerializeField] private InventorySO runeInventoryData;
+        [SerializeField] private RuneInventoryManager runeInventoryUI;
 
         private void OnEnable()
         {
@@ -19,6 +20,8 @@ namespace Inventory
             {
                 InputManager.Instance.OnRuneInventoryInput += RuneInventoryInput;
             }
+            PrepareRuneUI();            
+            PrepareRuneInventoryData();
         }
 
         private void OnDisable() 
@@ -27,6 +30,18 @@ namespace Inventory
             {
                 InputManager.Instance.OnRuneInventoryInput -= RuneInventoryInput;
             }
+        }
+        private void PrepareRuneUI()
+        {
+            runeInventoryUI.InitializeInventoryUI(runeInventoryData.Size);
+            // 룬 인벤도 드래그/설명 등 쓰려면 이벤트도 연결해야 함(필요 시)
+            // runeInventoryUI.OnDescriptionRequested += HandleRuneDescriptionRequest; ...
+        }
+
+        private void PrepareRuneInventoryData()
+        {
+            runeInventoryData.Initialize();
+            runeInventoryData.OnInventoryUpdated += UpdateRuneInventoryUI;
         }
         private void RuneInventoryInput() // 인벤토리 인풋
         {
@@ -42,6 +57,15 @@ namespace Inventory
             else
             {
                 runeInventoryUI.Hide();
+            }
+        }
+
+        private void UpdateRuneInventoryUI(Dictionary<int, InventoryItemObj> inventoryState) // 아이템의 위치(인덱스), 퀀티티 등 세부 정보 업데이트
+        {
+            runeInventoryUI.ResetAllItems();
+            foreach (var item in inventoryState)
+            {
+                runeInventoryUI.UpdateData(item.Key, item.Value.item.Itemimage);
             }
         }
     }
