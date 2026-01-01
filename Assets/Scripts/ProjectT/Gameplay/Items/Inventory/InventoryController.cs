@@ -45,6 +45,16 @@ namespace ProjectT.Gameplay.Items.Inventory
             {
                 inventoryData.OnInventoryUpdated -= UpdateInventoryUI;
             }
+            
+            // ✅ 추가: inventoryUI 이벤트 해제
+            if (inventoryUI != null)
+            {
+                inventoryUI.OnDescriptionRequested -= HandleDescriptionRequest;
+                inventoryUI.OnSwapItem -= HandleSwapItems;
+                inventoryUI.OnStartDragging -= HandleDragging;
+                inventoryUI.OnItemActionRequested -= HandleItemActionRequest;
+            }
+            
             UnbindInputEvents();
         }
         
