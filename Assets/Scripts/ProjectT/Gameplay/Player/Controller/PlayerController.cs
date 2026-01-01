@@ -18,7 +18,7 @@ namespace ProjectT.Gameplay.Player
     {
         None = 0,
         Hit = 3,
-        Pause = 2,
+        Pause = 2,  // [미사용] Pause는 SetPaused() 게이트로만 처리됨
         Dead = 1
     }
 
@@ -187,9 +187,10 @@ namespace ProjectT.Gameplay.Player
         #region Force State (Step 7)
         /// <summary>
         /// 강제 상태 전이 단일 진입점
-        /// - 우선순위 검사: 현재 상태보다 낮은 우선순위 요청은 무시
+        /// - 상태 기반 Gate 조건: Dead/Pause/Hit 상태에 따라 요청을 제한 (숫자 우선순위 비교 아님)
         /// - 동반 조치: Combat 취소, FSM 비활성화 등
         /// - 상태 전이: Locomotion FSM 전이
+        /// - Hit 진입은 ForceHit() 단일 경로로만 허용 (PreTick 정책 아님)
         /// </summary>
         private void ApplyForceState(ForceStateType type)
         {
@@ -219,7 +220,10 @@ namespace ProjectT.Gameplay.Player
         }
 
         /// <summary>
-        /// 강제 상태 적용 가능 여부 (우선순위 기반)
+        /// 강제 상태 적용 가능 여부 (상태 기반 Gate 조건)
+        /// - Dead면 모든 요청 무시
+        /// - Pause 중에는 Dead만 허용
+        /// - Hit 중 Hit 재요청 무시
         /// </summary>
         private bool CanApplyForceState(ForceStateType type)
         {
@@ -391,7 +395,7 @@ namespace ProjectT.Gameplay.Player
             // Charging/Holding 상태면 ChargingManager에 취소 사유 전달
             if (IsInCombatChargingOrHolding())
             {
-                // Step 8: Context를 통해 ChargingManager 접근 (또는 Singleton fallback)
+                // Step 8: ChargingManager Singleton 직접 접근 (DI 경계 미적용 상태)
                 var cm = ChargingManager.Instance;
                 cm?.EndCharging(reason);
             }
