@@ -128,8 +128,7 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
         // 무기 공격 매서드 (차징용)
         protected override void OnAttack_Charged()
         {
-            Debug.Log($"Sword OnAttack_Charged");
-            StartCoroutine(flash.FlashRoutine()); // 차징 완료 플래시 효과
+            Debug.Log($"[Sword]: OnAttack_Charged");
         }
 
         // Combo state and timing delegated to Combo component; local timer/index removed.
@@ -168,6 +167,7 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
             if (weaponColliders != null)
                 weaponColliders.gameObject.SetActive(false);
         }
+        #region Aimation Event Callbacks
 
         // 애니메이션 이벤트에서 호출
         // 애니메이션에서 콤보 허용/공격 프레임에 이 메서드로 콜라이더 활성화하세요.
@@ -225,6 +225,7 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
                 if (sr != null) sr.flipX = true;
             }
         }
+        #endregion
 
         // 차징 이벤트 콜백 매서드 모음 (실행 레이어 - VFX/피드백 전용)
         #region Charging Event Callbacks

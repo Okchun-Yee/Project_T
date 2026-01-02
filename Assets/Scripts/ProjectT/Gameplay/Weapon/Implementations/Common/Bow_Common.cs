@@ -57,7 +57,6 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
 
         protected override void OnAttack()
         {
-            Debug.Log($"[Bow]: OnAttack");
             anim.SetTrigger(HASH_ATTACK);
 
             SpawnArrow();
@@ -65,39 +64,31 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
 
         protected override void OnAttack_Charged()
         {
-            if (ActiveWeapon.Instance == null) return;
-
             Debug.Log($"[Bow]: OnAttack_Charged");
         }
+        #region Charging Event Callbacks
         // ICharging 인터페이스 구현
         // 차징 공격 관련 매서드
         public void OnChargingCanceled(ChargingType type)
         {
             if (ActiveWeapon.Instance == null) return;
-
-            Debug.Log($"[Bow]: OnChargingCanceled: {type}");
-            if (type == ChargingType.Attack)
-            {
-                _Attack();
-            }
+            if(type != ChargingType.Attack) return;
         }
 
         public void OnChargingCompleted(ChargingType type)
         {
             if (ActiveWeapon.Instance == null) return;
-
-            Debug.Log($"[Bow]: OnChargingCompleted");
-            if( type == ChargingType.Attack)
-            {
-                StartCoroutine(flash.FlashRoutine()); // 피격시 깜빡임 효과
-                _AttackCharged();
-            }
+            if(type != ChargingType.Attack) return;
+            StartCoroutine(flash.FlashRoutine()); // 차징 완료 플래시 효과
         }
 
         public void OnChargingProgress(ChargingType type, float elapsed, float duration)
         {
             if (ActiveWeapon.Instance == null) return;
+            if(type != ChargingType.Attack) return;
+            // [TODO] 차징 진행도에 따른 효과 구현
         }
+        #endregion
         private void SpawnArrow()
         {
             GameObject newArrow = Instantiate(arrowPrefab, arrowSpawnPoint.position, ActiveWeapon.Instance.transform.rotation);
@@ -105,7 +96,7 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
             newArrow.GetComponent<Projectile>().UpdateProjectileRange(weaponInfo.weaponRange);
             newArrow.GetComponent<Projectile>().Initialize(weaponInfo.weaponDamage); // Initialize로 데미지 설정
         }
-
+        #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             // weaponInfo == NULL인 경우 아직 무기 장착 이전이므로 PASS
@@ -116,5 +107,6 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
             Gizmos.color = new Color(1f, 0f, 0f, 0.2f);
             Gizmos.DrawWireSphere(pos, weaponInfo.weaponRange);
         }
+        #endif
     }
 }

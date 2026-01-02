@@ -162,7 +162,7 @@ namespace ProjectT.Gameplay.Player
             // ChargeCanceled: prev in {Charging, Holding} && next not in {Attack, prev}
             // 즉, Charging/Holding에서 Attack이 아닌 다른 상태로 전이 시
             if ((prev == PlayerCombatStateId.Charging || prev == PlayerCombatStateId.Holding) &&
-                next != PlayerCombatStateId.Attack && next != prev)
+                next != PlayerCombatStateId.Attack && next != prev && next != PlayerCombatStateId.Holding)
             {
                 EmitChargeCanceled(prev, next);
             }
