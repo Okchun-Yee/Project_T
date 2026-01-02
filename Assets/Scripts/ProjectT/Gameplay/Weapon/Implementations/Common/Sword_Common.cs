@@ -129,7 +129,6 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
         protected override void OnAttack_Charged()
         {
             Debug.Log($"Sword OnAttack_Charged");
-            StartCoroutine(flash.FlashRoutine()); // 차징 완료 플래시 효과
         }
 
         // Combo state and timing delegated to Combo component; local timer/index removed.

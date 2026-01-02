@@ -43,6 +43,7 @@ namespace ProjectT.Gameplay.Weapon
         public float ChargeNormalized => (_chargeDuration > 0f) 
             ? Mathf.Clamp01(_chargeElapsed / _chargeDuration) 
             : 0f;
+        // ============================================================
         // 실행 레이어 이벤트 (Binder가 구독하여 FSM 전이 요청에 사용)
         public event Action<ChargingType> OnChargingCompleted;              // 차징 완료 이벤트
         public event Action<ChargingType> OnChargingCanceled;               // 차징 취소 이벤트
@@ -85,7 +86,7 @@ namespace ProjectT.Gameplay.Weapon
             // 값 기반 파생: 완료 전에 취소된 경우에만 Canceled 이벤트
             bool wasComplete = (_chargeElapsed >= _chargeDuration);
             _chargeElapsed = 0f;
-            
+            Debug.Log($"[ChargingManager] type = {_chargingType} elapsed = {_chargeElapsed} duration = {_chargeDuration} wasComplete = {wasComplete} ended");
             if (!wasComplete)
                 OnChargingCanceled?.Invoke(_chargingType);
         }
@@ -104,7 +105,7 @@ namespace ProjectT.Gameplay.Weapon
             _chargingRoutine = null;
             // 값 기반: _chargeElapsed >= _chargeDuration 이면 완료
             // elapsed는 유지 (ChargeNormalized >= 1 로 파생 가능)
-            
+            Debug.Log($"[ChargingManager] type = {_chargingType} elapsed = {_chargeElapsed} duration = {_chargeDuration} completed");
             OnChargingCompleted?.Invoke(_chargingType);
         }
 
