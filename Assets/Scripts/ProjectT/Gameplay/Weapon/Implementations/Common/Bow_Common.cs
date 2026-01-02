@@ -5,7 +5,6 @@ using ProjectT.Gameplay.Player;
 using ProjectT.Gameplay.Weapon.Contracts;
 using ProjectT.Gameplay.Weapon.Projectiles;
 using ProjectT.Gameplay.Weapon.VFX;
-using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
