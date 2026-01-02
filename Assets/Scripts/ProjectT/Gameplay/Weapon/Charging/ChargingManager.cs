@@ -86,7 +86,6 @@ namespace ProjectT.Gameplay.Weapon
             // 값 기반 파생: 완료 전에 취소된 경우에만 Canceled 이벤트
             bool wasComplete = (_chargeElapsed >= _chargeDuration);
             _chargeElapsed = 0f;
-            Debug.Log($"[ChargingManager] type = {_chargingType} elapsed = {_chargeElapsed} duration = {_chargeDuration} wasComplete = {wasComplete} ended");
             if (!wasComplete)
                 OnChargingCanceled?.Invoke(_chargingType);
         }
@@ -105,7 +104,6 @@ namespace ProjectT.Gameplay.Weapon
             _chargingRoutine = null;
             // 값 기반: _chargeElapsed >= _chargeDuration 이면 완료
             // elapsed는 유지 (ChargeNormalized >= 1 로 파생 가능)
-            Debug.Log($"[ChargingManager] type = {_chargingType} elapsed = {_chargeElapsed} duration = {_chargeDuration} completed");
             OnChargingCompleted?.Invoke(_chargingType);
         }
 
