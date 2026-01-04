@@ -22,6 +22,8 @@ namespace ProjectT.Gameplay.Items.Execution
         public event Action<int, int> OnSwapItem; // 스왑할 두 개의 아이템 인덱스를 가져와 적용
         [SerializeField] private ItemActionPanel actionPanel;
 
+        private bool _isInitialized = false;  // InitializeInventoryUI 1회만 실행
+
         private void Awake()
         {
             if (gameObject.activeSelf)
@@ -33,6 +35,9 @@ namespace ProjectT.Gameplay.Items.Execution
         }
         public void InitializeInventoryUI(int inventorySize) //인벤토리 초기화
         {
+            if (_isInitialized) return;  // 중복 초기화 방지
+            
+            _isInitialized = true;
             for (int i = 0; i < inventorySize; i++) // 인벤토리 사이즈 만큼 복사
             {
                 InventoryItem inventoryItemUI = Instantiate(itemPrefab, Vector3.zero, Quaternion.identity);

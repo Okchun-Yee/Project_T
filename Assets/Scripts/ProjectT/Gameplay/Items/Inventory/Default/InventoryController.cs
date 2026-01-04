@@ -3,13 +3,19 @@ using System.Text;
 using ProjectT.Data.ScriptableObjects.Inventory;
 using UnityEngine;
 using ProjectT.Core;
-using ProjectT.Gameplay.Player.Input;
-using ProjectT.Gameplay.Player;  // PlayerController 참조
 using ProjectT.Data.ScriptableObjects.Items;
 using ProjectT.Gameplay.Items.Execution;
+using ProjectT.Gameplay.Items.Inventory.UI;
 
 namespace ProjectT.Gameplay.Items.Inventory
 {
+    /// <summary>
+    /// InventoryController (축소 버전)
+    /// 책임: 데이터 관리 + UI 업데이트 (활성 상태일 때만)
+    /// 
+    /// 입력(InputManager) 및 Pause 제어는 InventoryRootController로 분리됨
+    /// 생명주기 이벤트(Open/Close)는 Root에서 전달받음
+    /// </summary>
     public class InventoryController : Singleton<InventoryController>
     {
         [SerializeField] private InventoryManager inventoryUI;
@@ -17,38 +23,28 @@ namespace ProjectT.Gameplay.Items.Inventory
         public List<InventoryItemObj> initialItems = new List<InventoryItemObj>();
         [SerializeField] private AudioClip dropSound;
         [SerializeField] private AudioSource audioSource;
-        [SerializeField] private PlayerController playerController;  // 인벤토리 열릴 때 Pause 제어용
 
+        private bool _isVisible = false;  // 현재 인벤토리가 표시되는 상태인지 여부
 
         protected override void Awake()
         {
             base.Awake();
         }
+
         private void OnEnable()
         {
-            // InputManager Ready 이벤트 구독
-            InputManager.Ready += OnInputManagerReady;
-            
-            // 이미 InputManager가 준비된 경우 바로 바인딩
-            if (InputManager.Instance != null)
-            {
-                BindInputEvents();
-            }
             PrepareUI();
             PrepareInventoryData();
+            SubscribeToRootEvents();
         }
 
         private void OnDisable()
         {
-            // InputManager Ready 이벤트 구독 해제
-            InputManager.Ready -= OnInputManagerReady;
-            
             if (inventoryData != null)
             {
                 inventoryData.OnInventoryUpdated -= UpdateInventoryUI;
             }
-            
-            // ✅ 추가: inventoryUI 이벤트 해제
+
             if (inventoryUI != null)
             {
                 inventoryUI.OnDescriptionRequested -= HandleDescriptionRequest;
@@ -56,64 +52,45 @@ namespace ProjectT.Gameplay.Items.Inventory
                 inventoryUI.OnStartDragging -= HandleDragging;
                 inventoryUI.OnItemActionRequested -= HandleItemActionRequest;
             }
-            
-            UnbindInputEvents();
+
+            UnsubscribeFromRootEvents();
         }
-        
-        /// <summary>
-        /// InputManager 준비 완료 시 호출되는 콜백
-        /// </summary>
-        private void OnInputManagerReady()
+
+        private void SubscribeToRootEvents()
         {
-            BindInputEvents();
-        }
-        
-        /// <summary>
-        /// InputManager 입력 이벤트 바인딩
-        /// </summary>
-        private void BindInputEvents()
-        {
-            if (InputManager.Instance != null)
+            InventoryRootController root = GetComponentInParent<InventoryRootController>();
+            if (root != null)
             {
-                InputManager.Instance.OnInventoryInput += InventoryInput;
+                root.OnTabChanged += HandleTabChanged;
+                root.OnInventoryVisibilityChanged += HandleVisibilityChanged;
             }
         }
-        
-        /// <summary>
-        /// InputManager 입력 이벤트 바인딩 해제
-        /// </summary>
-        private void UnbindInputEvents()
+
+        private void UnsubscribeFromRootEvents()
         {
-            if (InputManager.Instance != null)
+            InventoryRootController root = GetComponentInParent<InventoryRootController>();
+            if (root != null)
             {
-                InputManager.Instance.OnInventoryInput -= InventoryInput;
+                root.OnTabChanged -= HandleTabChanged;
+                root.OnInventoryVisibilityChanged -= HandleVisibilityChanged;
             }
         }
-        private void InventoryInput()
+
+        private void HandleTabChanged(InventoryRootController.Tab tab)
         {
-            if (!inventoryUI.isActiveAndEnabled)
-            {
-                // 인벤토리 ON: UI 표시 + Pause 진입
-                inventoryUI.Show();
-                foreach (var item in inventoryData.GetCurrentInventoryState())
-                {
-                    inventoryUI.UpdateData(item.Key, item.Value.item.ItemImage, item.Value.quantity);
-                }
-                if (playerController != null)
-                {
-                    playerController.SetPaused(true);
-                }
-            }
+            Debug.Log($"[InventoryController] HandleTabChanged called with tab: {tab}");
+            if (tab == InventoryRootController.Tab.Default)
+                OnInventoryOpened();
             else
-            {
-                // 인벤토리 OFF: UI 숨김 + Pause 해제
-                inventoryUI.Hide();
-                if (playerController != null)
-                {
-                    playerController.SetPaused(false);
-                }
-            }
+                OnInventoryClosed();
         }
+
+        private void HandleVisibilityChanged(bool isOpen)
+        {
+            if (isOpen) OnInventoryOpened();
+            else OnInventoryClosed();
+        }
+
         private void PrepareInventoryData()
         {
             inventoryData.Initialize();
@@ -128,6 +105,9 @@ namespace ProjectT.Gameplay.Items.Inventory
 
         private void UpdateInventoryUI(Dictionary<int, InventoryItemObj> inventoryState)
         {
+            // 활성 상태일 때만 UI 갱신
+            if (!_isVisible) return;
+
             inventoryUI.ResetAllItems();
             foreach (var item in inventoryState)
             {
@@ -138,10 +118,40 @@ namespace ProjectT.Gameplay.Items.Inventory
         private void PrepareUI()
         {
             inventoryUI.InitializeInventoryUI(inventoryData.Size);
-            this.inventoryUI.OnDescriptionRequested += HandleDescriptionRequest;
-            this.inventoryUI.OnSwapItem += HandleSwapItems;
-            this.inventoryUI.OnStartDragging += HandleDragging;
-            this.inventoryUI.OnItemActionRequested += HandleItemActionRequest;
+            inventoryUI.OnDescriptionRequested += HandleDescriptionRequest;
+            inventoryUI.OnSwapItem += HandleSwapItems;
+            inventoryUI.OnStartDragging += HandleDragging;
+            inventoryUI.OnItemActionRequested += HandleItemActionRequest;
+        }
+
+        /// <summary>
+        /// Root에서 호출: UI가 표시될 때 상태 업데이트 및 갱신
+        /// </summary>
+        public void OnInventoryOpened()
+        {
+            _isVisible = true;
+            RefreshUI();
+        }
+
+        /// <summary>
+        /// Root에서 호출: UI가 숨겨질 때 상태 업데이트
+        /// </summary>
+        public void OnInventoryClosed()
+        {
+            _isVisible = false;
+        }
+
+        /// <summary>
+        /// UI를 현재 데이터 상태로 갱신 (Open 시에만 호출)
+        /// </summary>
+        private void RefreshUI()
+        {
+            var state = inventoryData.GetCurrentInventoryState();
+            inventoryUI.ResetAllItems();
+            foreach (var item in state)
+            {
+                inventoryUI.UpdateData(item.Key, item.Value.item.ItemImage, item.Value.quantity);
+            }
         }
 
         private void HandleItemActionRequest(int itemIndex)
@@ -156,6 +166,7 @@ namespace ProjectT.Gameplay.Items.Inventory
                 inventoryUI.ShowItemAction(itemIndex);
                 inventoryUI.AddAction(itemAction.ActionName, () => PerformAction(itemIndex));
             }
+
             IDestroyableItem destroyableItem = inventoryItem.item as IDestroyableItem;
             if (destroyableItem != null)
             {
@@ -175,7 +186,7 @@ namespace ProjectT.Gameplay.Items.Inventory
             InventoryItemObj inventoryItem = inventoryData.GetItemAt(itemIndex);
             if (inventoryItem.IsEmpty)
                 return;
-                
+
             IDestroyableItem destroyableItem = inventoryItem.item as IDestroyableItem;
             if (destroyableItem != null)
             {
@@ -187,7 +198,7 @@ namespace ProjectT.Gameplay.Items.Inventory
             {
                 itemAction.PerformAction(gameObject, inventoryItem.itemState);
                 audioSource.PlayOneShot(itemAction.actionSFX);
-                if(inventoryData.GetItemAt(itemIndex).IsEmpty)
+                if (inventoryData.GetItemAt(itemIndex).IsEmpty)
                 {
                     inventoryUI.ResetSelection();
                 }
@@ -210,28 +221,34 @@ namespace ProjectT.Gameplay.Items.Inventory
         private void HandleDescriptionRequest(int itemIndex)
         {
             InventoryItemObj inventoryItem = inventoryData.GetItemAt(itemIndex);
-            if (inventoryItem.IsEmpty) // 빈 슬롯 선택시 선택 초기화
+            if (inventoryItem.IsEmpty)
             {
                 inventoryUI.ResetSelection();
                 return;
             }
+
             ItemSO item = inventoryItem.item;
             string description = PrepareDescription(inventoryItem);
             inventoryUI.UpdateDecription(itemIndex, item.ItemImage, item.Name, description);
         }
+
         private string PrepareDescription(InventoryItemObj inventoryItem)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(inventoryItem.item.Description);
             sb.AppendLine();
-            for(int i = 0; i < inventoryItem.itemState.Count; ++i){
+
+            for (int i = 0; i < inventoryItem.itemState.Count; ++i)
+            {
                 sb.AppendLine($"{inventoryItem.itemState[i].itemParameter.parameterName} "
-                + $": {inventoryItem.itemState[i].value} / "
-                + $"{inventoryItem.item.DefaultParametersList[i].value}");
+                    + $": {inventoryItem.itemState[i].value} / "
+                    + $"{inventoryItem.item.DefaultParametersList[i].value}");
                 sb.AppendLine();
             }
+
             return sb.ToString();
         }
     }
 
 }
+
