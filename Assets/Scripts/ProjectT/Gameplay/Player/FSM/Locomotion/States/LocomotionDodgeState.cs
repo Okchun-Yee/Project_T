@@ -11,7 +11,7 @@ namespace ProjectT.Gameplay.Player.FSM.Locomotion.States
     public sealed class LocomotionDodgeState : PlayerLocomotionStateBase
     {
         private float _timeLeft;
-        [SerializeField] private float _dodgeDuration = 0.15f;
+        [SerializeField] private float _dodgeDuration = 0.2f;
         public float DodgeDuration => _dodgeDuration;
 
         public override void Enter(PlayerFsmContext ctx)

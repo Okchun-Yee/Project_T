@@ -34,15 +34,39 @@ namespace ProjectT.Gameplay.Player
 
         private void OnEnable()
         {
-            SubscribeFsmCallback();
+            // PlayerController의 FSM Ready 이벤트 구독
+            if (_decision != null)
+            {
+                _decision.OnFsmBuilt += OnPlayerControllerFsmReady;
+            }
+            
+            // 이미 PlayerController가 준비된 경우 즉시 구독
+            if (_decision != null && _decision.LocomotionFsm != null)
+            {
+                SubscribeFsmCallback();
+            }
         }
 
         private void OnDisable()
         {
+            // PlayerController의 FSM Ready 이벤트 구독 해제
+            if (_decision != null)
+            {
+                _decision.OnFsmBuilt -= OnPlayerControllerFsmReady;
+            }
+            
             UnsubscribeFsmCallback();
         }
 
         private void Start()
+        {
+            SubscribeFsmCallback();
+        }
+
+        /// <summary>
+        /// PlayerController의 FSM 준비 완료 시 호출되는 콜백
+        /// </summary>
+        private void OnPlayerControllerFsmReady()
         {
             SubscribeFsmCallback();
         }
@@ -119,6 +143,13 @@ namespace ProjectT.Gameplay.Player
         /// </summary>
         private bool ShouldStopOnExit(PlayerLocomotionStateId prev, PlayerLocomotionStateId next)
         {
+            // Move/Dodge → Dodge는 이동 가속이 필요하므로 Stop하지 않음
+            if ((prev == PlayerLocomotionStateId.Move || prev == PlayerLocomotionStateId.Dodge) 
+                && next == PlayerLocomotionStateId.Dodge)
+            {
+                return false;
+            }
+            
             // Move/Dodge에서 나갈 때 (단, 이미 Stop 상태로 가는 경우 제외)
             bool exitingMovement = (prev == PlayerLocomotionStateId.Move || prev == PlayerLocomotionStateId.Dodge);
             bool enteringStop = ShouldStopOnEnter(next);

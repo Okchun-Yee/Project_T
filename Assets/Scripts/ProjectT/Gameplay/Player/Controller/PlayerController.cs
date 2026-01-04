@@ -425,7 +425,7 @@ namespace ProjectT.Gameplay.Player
         private void LogStateIfChanged()
         {
             if (_prevL == LocomotionState && _prevC == CombatState) return;
-            Debug.Log($"[FSM] L:{LocomotionState} C:{CombatState}");
+            // Debug.Log($"[FSM] L:{LocomotionState} C:{CombatState}");  // 상태 전이 확인용 로그
             CachePrevStates();
         }
         #region  Action Handlers
