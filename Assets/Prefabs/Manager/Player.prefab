@@ -653,7 +653,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ghostTemplate: {fileID: 5369139554958457058}
-  ghostDelay: 0.05
+  ghostDelay: 0.02
   ghostLifetime: 0.5
   ghostAlpha: 0.3
 --- !u!114 &132610851674485309
