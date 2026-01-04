@@ -4,6 +4,7 @@ using ProjectT.Data.ScriptableObjects.Inventory;
 using UnityEngine;
 using ProjectT.Core;
 using ProjectT.Gameplay.Player.Input;
+using ProjectT.Gameplay.Player;  // PlayerController 참조
 using ProjectT.Data.ScriptableObjects.Items;
 using ProjectT.Gameplay.Items.Execution;
 
@@ -16,6 +17,7 @@ namespace ProjectT.Gameplay.Items.Inventory
         public List<InventoryItemObj> initialItems = new List<InventoryItemObj>();
         [SerializeField] private AudioClip dropSound;
         [SerializeField] private AudioSource audioSource;
+        [SerializeField] private PlayerController playerController;  // 인벤토리 열릴 때 Pause 제어용
 
 
         protected override void Awake()
@@ -91,16 +93,25 @@ namespace ProjectT.Gameplay.Items.Inventory
         {
             if (!inventoryUI.isActiveAndEnabled)
             {
+                // 인벤토리 ON: UI 표시 + Pause 진입
                 inventoryUI.Show();
-                foreach (var item in inventoryData.GetCurrentInventoryState()) // 
+                foreach (var item in inventoryData.GetCurrentInventoryState())
                 {
-                    inventoryUI.UpdateData(item.Key, item.Value.item.ItemImage, item.Value.quantity); // key는 인덱스
-
+                    inventoryUI.UpdateData(item.Key, item.Value.item.ItemImage, item.Value.quantity);
+                }
+                if (playerController != null)
+                {
+                    playerController.SetPaused(true);
                 }
             }
             else
             {
+                // 인벤토리 OFF: UI 숨김 + Pause 해제
                 inventoryUI.Hide();
+                if (playerController != null)
+                {
+                    playerController.SetPaused(false);
+                }
             }
         }
         private void PrepareInventoryData()
