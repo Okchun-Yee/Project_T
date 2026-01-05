@@ -20,6 +20,7 @@ namespace ProjectT.Gameplay.Items.Inventory
     {
         [SerializeField] private InventoryManager inventoryUI;
         [SerializeField] private InventorySO inventoryData;
+        [SerializeField] private GameObject playerCharacter;  // 장착/사용 시 대상 플레이어
         public List<InventoryItemObj> initialItems = new List<InventoryItemObj>();
         [SerializeField] private AudioClip dropSound;
         [SerializeField] private AudioSource audioSource;
@@ -200,23 +201,37 @@ namespace ProjectT.Gameplay.Items.Inventory
             if (inventoryItem.IsEmpty)
                 return;
 
+            IItemAction itemAction = inventoryItem.item as IItemAction;
+            if (itemAction != null)
+            {
+                // playerCharacter가 Inspector에서 할당되어 있어야 함
+                if (playerCharacter != null)
+                {
+                    bool actionSuccess = itemAction.PerformAction(playerCharacter, inventoryItem.itemState);
+                    
+                    if (actionSuccess && itemAction.actionSFX != null)
+                    {
+                        audioSource.PlayOneShot(itemAction.actionSFX);
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("[InventoryController] playerCharacter is not assigned in Inspector!");
+                }
+            }
+
             IDestroyableItem destroyableItem = inventoryItem.item as IDestroyableItem;
             if (destroyableItem != null)
             {
                 inventoryData.RemoveItem(itemIndex, 1);
             }
 
-            IItemAction itemAction = inventoryItem.item as IItemAction;
-            if (itemAction != null)
+            if (inventoryData.GetItemAt(itemIndex).IsEmpty)
             {
-                itemAction.PerformAction(gameObject, inventoryItem.itemState);
-                audioSource.PlayOneShot(itemAction.actionSFX);
-                if (inventoryData.GetItemAt(itemIndex).IsEmpty)
-                {
-                    inventoryUI.ResetSelection();
-                }
+                inventoryUI.ResetSelection();
             }
         }
+
 
         private void HandleDragging(int itemIndex)
         {
