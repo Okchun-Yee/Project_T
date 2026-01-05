@@ -244,7 +244,6 @@ GameObject:
   - component: {fileID: 8997236477992658678}
   - component: {fileID: 2596966346658294078}
   - component: {fileID: 4766824949432415399}
-  - component: {fileID: 6892220462087186669}
   - component: {fileID: 2264942319886809100}
   - component: {fileID: 4790934608925961414}
   - component: {fileID: 6459355145623970856}
@@ -590,26 +589,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _decision: {fileID: 911714171923386200}
   _activeWeapon: {fileID: 6882450491504140009}
---- !u!114 &6892220462087186669
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3969855821128286577}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c19d04e8d00fab49b0b8d562a8da13a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inventoryUI: {fileID: 0}
-  inventoryData: {fileID: 11400000, guid: 599806ef280ef5e49a3ab8741677cf1a, type: 2}
-  initialItems:
-  - quantity: 3
-    item: {fileID: 11400000, guid: e63e3e4263ab6ab44839643666c1200a, type: 2}
-    itemState: []
-  dropSound: {fileID: 0}
-  audioSource: {fileID: 0}
 --- !u!114 &2264942319886809100
 MonoBehaviour:
   m_ObjectHideFlags: 0

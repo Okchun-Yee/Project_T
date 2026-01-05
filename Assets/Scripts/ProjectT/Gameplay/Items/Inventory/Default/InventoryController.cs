@@ -25,26 +25,50 @@ namespace ProjectT.Gameplay.Items.Inventory
         [SerializeField] private AudioSource audioSource;
 
         private bool _isVisible = false;  // 현재 인벤토리가 표시되는 상태인지 여부
+        private bool _isUIInitialized = false;  // UI 슬롯 초기화 완료 여부
 
         protected override void Awake()
         {
             base.Awake();
+            // 데이터는 Awake에서 초기화 (GameObject 활성화 여부와 무관)
+            PrepareInventoryData();
+        }
+
+        private void Start()
+        {
+            // UI 초기화는 Start에서 (InventoryManager가 준비된 후)
+            EnsureUIInitialized();
         }
 
         private void OnEnable()
         {
-            PrepareUI();
-            PrepareInventoryData();
+            // GameObject가 비활성 상태였다가 처음 활성화되는 경우 UI 초기화
+            EnsureUIInitialized();
+            
+            // UI 이벤트 구독
+            SubscribeToUIEvents();
             SubscribeToRootEvents();
         }
 
         private void OnDisable()
         {
-            if (inventoryData != null)
-            {
-                inventoryData.OnInventoryUpdated -= UpdateInventoryUI;
-            }
+            UnsubscribeFromUIEvents();
+            UnsubscribeFromRootEvents();
+        }
 
+        private void SubscribeToUIEvents()
+        {
+            if (inventoryUI != null)
+            {
+                inventoryUI.OnDescriptionRequested += HandleDescriptionRequest;
+                inventoryUI.OnSwapItem += HandleSwapItems;
+                inventoryUI.OnStartDragging += HandleDragging;
+                inventoryUI.OnItemActionRequested += HandleItemActionRequest;
+            }
+        }
+
+        private void UnsubscribeFromUIEvents()
+        {
             if (inventoryUI != null)
             {
                 inventoryUI.OnDescriptionRequested -= HandleDescriptionRequest;
@@ -52,8 +76,6 @@ namespace ProjectT.Gameplay.Items.Inventory
                 inventoryUI.OnStartDragging -= HandleDragging;
                 inventoryUI.OnItemActionRequested -= HandleItemActionRequest;
             }
-
-            UnsubscribeFromRootEvents();
         }
 
         private void SubscribeToRootEvents()
@@ -76,30 +98,46 @@ namespace ProjectT.Gameplay.Items.Inventory
             }
         }
 
+        private void EnsureUIInitialized()
+        {
+            if (!_isUIInitialized && inventoryUI != null && inventoryData != null)
+            {
+                inventoryUI.InitializeInventoryUI(inventoryData.Size);
+                _isUIInitialized = true;
+            }
+        }
+
         private void HandleTabChanged(InventoryRootController.Tab tab)
         {
-            Debug.Log($"[InventoryController] HandleTabChanged called with tab: {tab}");
             if (tab == InventoryRootController.Tab.Default)
-                OnInventoryOpened();
+            {
+                _isVisible = true;
+                RefreshUI();
+            }
             else
-                OnInventoryClosed();
+            {
+                _isVisible = false;
+            }
         }
 
         private void HandleVisibilityChanged(bool isOpen)
         {
-            if (isOpen) OnInventoryOpened();
-            else OnInventoryClosed();
+            _isVisible = isOpen;
+            // UI 갱신은 HandleTabChanged에서만 수행 (중복 방지)
         }
 
         private void PrepareInventoryData()
         {
-            inventoryData.Initialize();
-            inventoryData.OnInventoryUpdated += UpdateInventoryUI;
-            foreach (InventoryItemObj item in initialItems)
+            if (inventoryData != null)
             {
-                if (item.IsEmpty)
-                    continue;
-                inventoryData.AddItem(item);
+                inventoryData.Initialize();
+                inventoryData.OnInventoryUpdated += UpdateInventoryUI;
+                foreach (InventoryItemObj item in initialItems)
+                {
+                    if (item.IsEmpty)
+                        continue;
+                    inventoryData.AddItem(item);
+                }
             }
         }
 
@@ -108,44 +146,19 @@ namespace ProjectT.Gameplay.Items.Inventory
             // 활성 상태일 때만 UI 갱신
             if (!_isVisible) return;
 
-            inventoryUI.ResetAllItems();
-            foreach (var item in inventoryState)
-            {
-                inventoryUI.UpdateData(item.Key, item.Value.item.ItemImage, item.Value.quantity);
-            }
-        }
-
-        private void PrepareUI()
-        {
-            inventoryUI.InitializeInventoryUI(inventoryData.Size);
-            inventoryUI.OnDescriptionRequested += HandleDescriptionRequest;
-            inventoryUI.OnSwapItem += HandleSwapItems;
-            inventoryUI.OnStartDragging += HandleDragging;
-            inventoryUI.OnItemActionRequested += HandleItemActionRequest;
-        }
-
-        /// <summary>
-        /// Root에서 호출: UI가 표시될 때 상태 업데이트 및 갱신
-        /// </summary>
-        public void OnInventoryOpened()
-        {
-            _isVisible = true;
             RefreshUI();
         }
 
         /// <summary>
-        /// Root에서 호출: UI가 숨겨질 때 상태 업데이트
-        /// </summary>
-        public void OnInventoryClosed()
-        {
-            _isVisible = false;
-        }
-
-        /// <summary>
-        /// UI를 현재 데이터 상태로 갱신 (Open 시에만 호출)
+        /// UI를 현재 데이터 상태로 갱신 (Open 시 또는 데이터 변경 시 호출)
         /// </summary>
         private void RefreshUI()
         {
+            if (inventoryUI == null || inventoryData == null) return;
+
+            // UI가 초기화되지 않았으면 먼저 초기화
+            EnsureUIInitialized();
+
             var state = inventoryData.GetCurrentInventoryState();
             inventoryUI.ResetAllItems();
             foreach (var item in state)

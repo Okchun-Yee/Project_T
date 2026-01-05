@@ -14,12 +14,31 @@ namespace ProjectT.Data.ScriptableObjects.Inventory
         [field: SerializeField] public int Size { get; private set; } = 10; // 인벤토리  사이즈
         public event Action<Dictionary<int, InventoryItemObj>> OnInventoryUpdated;
 
-        public void Initialize()
+        private void OnEnable()
         {
+            // 에디터에서 Play 모드 시작 시 인벤토리 초기화
+            #if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+                return;
+            #endif
+            
             inventoryItems = new List<InventoryItemObj>();
-            for (int i = 0; i < Size; i++) // 인벤토리 사이즈만큼 빈 항목 생성
+            for (int i = 0; i < Size; i++)
             {
                 inventoryItems.Add(InventoryItemObj.GetEmptyItem());
+            }
+        }
+
+        public void Initialize()
+        {
+            // 런타임 중 명시적 초기화 (OnEnable이 이미 실행되었으므로 null 체크만)
+            if (inventoryItems == null || inventoryItems.Count != Size)
+            {
+                inventoryItems = new List<InventoryItemObj>();
+                for (int i = 0; i < Size; i++)
+                {
+                    inventoryItems.Add(InventoryItemObj.GetEmptyItem());
+                }
             }
         }
 
@@ -35,22 +54,22 @@ namespace ProjectT.Data.ScriptableObjects.Inventory
             return returnValue;
         }
 
-        public InventoryItemObj GetItemAt(int itemIndex) 
+        public InventoryItemObj GetItemAt(int itemIndex)
         {
             return inventoryItems[itemIndex];
         }
         public void RemoveItem(int itemIndex, int amount)
         {
-            if(inventoryItems.Count > itemIndex)
+            if (inventoryItems.Count > itemIndex)
             {
-                if(inventoryItems[itemIndex].IsEmpty)
+                if (inventoryItems[itemIndex].IsEmpty)
                 {
                     Debug.LogWarning($"[InventorySO] Attempting to remove item at index {itemIndex}, but it's already empty.");
                     return;
                 }
                 int reminder = inventoryItems[itemIndex].quantity - amount;
-                
-                if(reminder <= 0)
+
+                if (reminder <= 0)
                 {
                     inventoryItems[itemIndex] = InventoryItemObj.GetEmptyItem();
                 }
@@ -66,7 +85,7 @@ namespace ProjectT.Data.ScriptableObjects.Inventory
             AddItem(item.item, item.quantity);
         }
         public int AddItem(ItemSO item, int quantity, List<ItemParameter> itemState = null)
-        { 
+        {
             if (item.IsStackable == false)
             {
                 while (quantity > 0 && !IsInventoryFull())
