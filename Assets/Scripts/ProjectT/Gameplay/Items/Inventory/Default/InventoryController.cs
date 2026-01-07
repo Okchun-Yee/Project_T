@@ -35,10 +35,9 @@ namespace ProjectT.Gameplay.Items.Inventory
 
         private void Start()
         {
-            // 데이터는 Start에서 초기화 (GameObject 활성화 여부와 무관하게 안전함)
-            PrepareInventoryData();
             // UI 초기화는 Start에서 (InventoryManager가 준비된 후)
-            EnsureUIInitialized();
+            PrepareInventoryData();
+            EnsureUIInitialized(); 
         }
 
         private void OnEnable()
