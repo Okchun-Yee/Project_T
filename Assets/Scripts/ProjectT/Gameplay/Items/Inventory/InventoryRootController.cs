@@ -63,7 +63,7 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
                 TryBindInput();
             }
 
-            BindNavBarButtons();
+            // BindNavBarButtons();     // 주석 처리: 네비게이션 바 버튼 사용 안 함
 
             if (!hideOnAwake)
             {
@@ -75,7 +75,7 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
         {
             InputManager.Ready -= TryBindInput;
             UnbindInputEvents();
-            UnbindNavBarButtons();
+            // UnbindNavBarButtons();   // 주석 처리: 네비게이션 바 버튼 사용 안 함
         }
 
         private void TryBindInput()
@@ -125,6 +125,7 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
             }
         }
 
+        #region  UI Nav btn handlers
         private void BindNavBarButtons()
         {
             if (defaultTabButton != null)
@@ -144,6 +145,7 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
             if (closeButton != null)
                 closeButton.onClick.RemoveListener(Close);
         }
+        #endregion
 
         /// <summary>
         /// 초기 숨김 (Pause 건드리지 않음)
