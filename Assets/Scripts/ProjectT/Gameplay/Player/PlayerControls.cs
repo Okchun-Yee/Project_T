@@ -280,7 +280,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""TempUI2"",
+                    ""name"": ""SwitchTab"",
                     ""type"": ""Button"",
                     ""id"": ""0859dab8-7d17-4a5f-8e94-842fbb300472"",
                     ""expectedControlType"": """",
@@ -330,7 +330,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""TempUI2"",
+                    ""action"": ""SwitchTab"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -370,7 +370,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_System_Pickup = m_System.FindAction("Pickup", throwIfNotFound: true);
         m_System_InventoryUI = m_System.FindAction("InventoryUI", throwIfNotFound: true);
         m_System_Interact = m_System.FindAction("Interact", throwIfNotFound: true);
-        m_System_TempUI2 = m_System.FindAction("TempUI2", throwIfNotFound: true);
+        m_System_SwitchTab = m_System.FindAction("SwitchTab", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -681,7 +681,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_System_Pickup;
     private readonly InputAction m_System_InventoryUI;
     private readonly InputAction m_System_Interact;
-    private readonly InputAction m_System_TempUI2;
+    private readonly InputAction m_System_SwitchTab;
     /// <summary>
     /// Provides access to input actions defined in input action map "System".
     /// </summary>
@@ -706,9 +706,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Interact => m_Wrapper.m_System_Interact;
         /// <summary>
-        /// Provides access to the underlying input action "System/TempUI2".
+        /// Provides access to the underlying input action "System/SwitchTab".
         /// </summary>
-        public InputAction @TempUI2 => m_Wrapper.m_System_TempUI2;
+        public InputAction @SwitchTab => m_Wrapper.m_System_SwitchTab;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -744,9 +744,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
-            @TempUI2.started += instance.OnTempUI2;
-            @TempUI2.performed += instance.OnTempUI2;
-            @TempUI2.canceled += instance.OnTempUI2;
+            @SwitchTab.started += instance.OnSwitchTab;
+            @SwitchTab.performed += instance.OnSwitchTab;
+            @SwitchTab.canceled += instance.OnSwitchTab;
         }
 
         /// <summary>
@@ -767,9 +767,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
-            @TempUI2.started -= instance.OnTempUI2;
-            @TempUI2.performed -= instance.OnTempUI2;
-            @TempUI2.canceled -= instance.OnTempUI2;
+            @SwitchTab.started -= instance.OnSwitchTab;
+            @SwitchTab.performed -= instance.OnSwitchTab;
+            @SwitchTab.canceled -= instance.OnSwitchTab;
         }
 
         /// <summary>
@@ -896,11 +896,11 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnInteract(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "TempUI2" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "SwitchTab" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnTempUI2(InputAction.CallbackContext context);
+        void OnSwitchTab(InputAction.CallbackContext context);
     }
 }

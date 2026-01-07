@@ -20,6 +20,7 @@ namespace ProjectT.Gameplay.Player.Input
         public event Action OnLootingInput;                  // 아이템 획득 입력 이벤트
         public event Action OnInventoryInput;               // 인벤토리 UI 입력 이벤트
         public event Action OnInteractInput;                // 상호작용 입력 이벤트
+        public event Action OnSwitchTabInput;               // 임시 UI 2 입력 이벤트
         private PlayerControls playerControls;
 
         public static event Action Ready;                   // InputManager 준비 완료 이벤트
@@ -53,7 +54,7 @@ namespace ProjectT.Gameplay.Player.Input
             // 플레이어 상호작용 이벤트 구독
             playerControls.System.Interact.performed += HandleInteract;                   // 상호작용 입력 감지
             // 플레이어 임시 UI 2 이벤트 구독
-            playerControls.System.TempUI2.performed += HandleTempUI2;                   // 임시 UI 2 입력 감지
+            playerControls.System.SwitchTab.performed += HandleSwitchTab;                   // 임시 UI 2 입력 감지
 
             Ready?.Invoke();    // InputManager 준비 완료 알림
         }
@@ -83,7 +84,7 @@ namespace ProjectT.Gameplay.Player.Input
                 playerControls.System.InventoryUI.performed -= HandleInventoryUI;
                 // 플레이어 상호작용 이벤트 구독 해제
                 playerControls.System.Interact.performed -= HandleInteract;
-                playerControls.System.TempUI2.performed -= HandleTempUI2;
+                playerControls.System.SwitchTab.performed -= HandleSwitchTab;
 
                 playerControls.Disable();
             }
@@ -150,10 +151,10 @@ namespace ProjectT.Gameplay.Player.Input
         {
             OnInteractInput?.Invoke();
         }
-        // 플레이어 임시 UI 2 이벤트 매서드
-        private void HandleTempUI2(InputAction.CallbackContext context)
+        // 플레이어 인벤토리 전환 이벤트 메서드
+        private void HandleSwitchTab(InputAction.CallbackContext context)
         {
-            // 임시 UI 2 토글 시 필요한 로직 추가
+            OnSwitchTabInput?.Invoke();
         }
     }
 }

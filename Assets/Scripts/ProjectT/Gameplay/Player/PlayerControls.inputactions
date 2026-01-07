@@ -194,7 +194,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "TempUI2",
+                    "name": "SwitchTab",
                     "type": "Button",
                     "id": "0859dab8-7d17-4a5f-8e94-842fbb300472",
                     "expectedControlType": "",
@@ -244,7 +244,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "TempUI2",
+                    "action": "SwitchTab",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
