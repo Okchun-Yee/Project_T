@@ -55,15 +55,12 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
 
         private void OnEnable()
         {
-            Debug.Log("[InventoryRootController] OnEnable");
             InputManager.Ready += TryBindInput;
-            
             if (InputManager.Instance != null)
             {
                 TryBindInput();
             }
-
-            BindNavBarButtons();
+            // BindNavBarButtons();     // 주석 처리: 네비게이션 바 버튼 사용 안 함
 
             if (!hideOnAwake)
             {
@@ -75,7 +72,7 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
         {
             InputManager.Ready -= TryBindInput;
             UnbindInputEvents();
-            UnbindNavBarButtons();
+            // UnbindNavBarButtons();   // 주석 처리: 네비게이션 바 버튼 사용 안 함
         }
 
         private void TryBindInput()
@@ -94,8 +91,9 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
         {
             if (InputManager.Instance != null)
             {
-                Debug.Log("[InventoryRootController] Binding OnInventoryInput");
+                // Debug.Log("[InventoryRootController] Binding OnInventoryInput");
                 InputManager.Instance.OnInventoryInput += OnInventoryInput;
+                InputManager.Instance.OnSwitchTabInput += OnSwitchTabInput;
                 _isBound = true;
             }
         }
@@ -105,6 +103,7 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
             if (InputManager.Instance != null)
             {
                 InputManager.Instance.OnInventoryInput -= OnInventoryInput;
+                InputManager.Instance.OnSwitchTabInput -= OnSwitchTabInput;
                 _isBound = false;
             }
         }
@@ -114,17 +113,25 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
         /// </summary>
         private void OnInventoryInput()
         {
-            Debug.Log("[InventoryRootController] OnInventoryInput called");
             if (!IsOpen)
             {
                 Open(startupTab);
             }
-            else
+            else 
             {
-                ToggleTab();  // 이미 열려있으면 탭 전환
+                Close();
             }
         }
+        /// <summary>
+        /// 'X' 입력 시 탭 전환 (인벤토리가 열려 있을 때)
+        /// </summary>
+        private void OnSwitchTabInput()
+        {
+            if (!IsOpen) return;    // 인벤토리가 열려있지 않으면 무시
+            ToggleTab();            // 이미 열려있으면 탭 전환
+        }
 
+        #region  UI Nav btn handlers
         private void BindNavBarButtons()
         {
             if (defaultTabButton != null)
@@ -144,6 +151,7 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
             if (closeButton != null)
                 closeButton.onClick.RemoveListener(Close);
         }
+        #endregion
 
         /// <summary>
         /// 초기 숨김 (Pause 건드리지 않음)
@@ -197,12 +205,6 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
             }
 
             OnInventoryVisibilityChanged?.Invoke(false);
-        }
-
-        public void Toggle()
-        {
-            if (IsOpen) Close();
-            else Open(startupTab);
         }
 
         public void ToggleTab()

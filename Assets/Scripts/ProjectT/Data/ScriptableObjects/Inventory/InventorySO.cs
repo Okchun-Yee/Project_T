@@ -12,6 +12,7 @@ namespace ProjectT.Data.ScriptableObjects.Inventory
     {
         [SerializeField] private List<InventoryItemObj> inventoryItems;     // 인벤토리 컨트롤러가 이 리스트를 액세스하여 새 값을 수정할 수 있음
         [field: SerializeField] public int Size { get; private set; } = 10; // 인벤토리  사이즈
+                
         public event Action<Dictionary<int, InventoryItemObj>> OnInventoryUpdated;
 
         private void OnEnable()
@@ -31,7 +32,7 @@ namespace ProjectT.Data.ScriptableObjects.Inventory
 
         public void Initialize()
         {
-            // 런타임 중 명시적 초기화 (OnEnable이 이미 실행되었으므로 null 체크만)
+            // 런타임 중 명시적 초기화 (OnEnable이 이미 실행되었거나 아직 실행 안 될 수도 있으므로 항상 체크)
             if (inventoryItems == null || inventoryItems.Count != Size)
             {
                 inventoryItems = new List<InventoryItemObj>();
