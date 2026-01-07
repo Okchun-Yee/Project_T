@@ -207,12 +207,6 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
             OnInventoryVisibilityChanged?.Invoke(false);
         }
 
-        public void Toggle()
-        {
-            if (IsOpen) Close();
-            else Open(startupTab);
-        }
-
         public void ToggleTab()
         {
             var next = (CurrentTab == Tab.Default) ? Tab.New : Tab.Default;

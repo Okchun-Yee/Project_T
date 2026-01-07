@@ -31,22 +31,19 @@ namespace ProjectT.Gameplay.Items.Inventory
         protected override void Awake()
         {
             base.Awake();
-            // 데이터는 Awake에서 초기화 (GameObject 활성화 여부와 무관)
-            PrepareInventoryData();
         }
 
         private void Start()
         {
+            // 데이터는 Start에서 초기화 (GameObject 활성화 여부와 무관하게 안전함)
+            PrepareInventoryData();
             // UI 초기화는 Start에서 (InventoryManager가 준비된 후)
             EnsureUIInitialized();
         }
 
         private void OnEnable()
         {
-            // GameObject가 비활성 상태였다가 처음 활성화되는 경우 UI 초기화
             EnsureUIInitialized();
-            
-            // UI 이벤트 구독
             SubscribeToUIEvents();
             SubscribeToRootEvents();
         }
@@ -136,7 +133,9 @@ namespace ProjectT.Gameplay.Items.Inventory
                 foreach (InventoryItemObj item in initialItems)
                 {
                     if (item.IsEmpty)
+                    {
                         continue;
+                    }
                     inventoryData.AddItem(item);
                 }
             }
@@ -155,9 +154,11 @@ namespace ProjectT.Gameplay.Items.Inventory
         /// </summary>
         private void RefreshUI()
         {
-            if (inventoryUI == null || inventoryData == null) return;
+            if (inventoryUI == null || inventoryData == null) 
+            {
+                return;
+            }
 
-            // UI가 초기화되지 않았으면 먼저 초기화
             EnsureUIInitialized();
 
             var state = inventoryData.GetCurrentInventoryState();
