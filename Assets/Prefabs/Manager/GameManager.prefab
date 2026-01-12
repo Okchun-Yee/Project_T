@@ -981,6 +981,8 @@ GameObject:
   - component: {fileID: 6051706774332475123}
   - component: {fileID: 8049789744011594819}
   - component: {fileID: 3189196508170386063}
+  - component: {fileID: 3663411391457192441}
+  - component: {fileID: 9041907372937360196}
   m_Layer: 5
   m_Name: Rune-Page
   m_TagString: Untagged
@@ -1073,6 +1075,39 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &3663411391457192441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1607133268607411965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25c6bfc44b2c9124e8c0279a1f647b1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slots:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+--- !u!114 &9041907372937360196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1607133268607411965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a4b00bcbaddc044f90c859d6375bf70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  runeInventory: {fileID: 11400000, guid: c49bc3a6355b308419be11aa8751e4f3, type: 2}
+  ui: {fileID: 3663411391457192441}
+  root: {fileID: 5430024527474122720}
+  enableDebugEquipFlow: 1
+  debugRunes: []
 --- !u!1 &1736885745378645477
 GameObject:
   m_ObjectHideFlags: 0
@@ -3817,7 +3852,7 @@ GameObject:
   - component: {fileID: 5543877234238237272}
   - component: {fileID: 3977188556615556431}
   - component: {fileID: 7248762834978798688}
-  - component: {fileID: 2889804204797540187}
+  - component: {fileID: 8492958717340586135}
   m_Layer: 5
   m_Name: RuneSlot
   m_TagString: Untagged
@@ -3883,7 +3918,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2889804204797540187
+--- !u!114 &8492958717340586135
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3892,12 +3927,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 7613911986403090989}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6c1e98305c5da245b3b34cb366ebe2d, type: 3}
+  m_Script: {fileID: 11500000, guid: 464ea5a2080e287498ee1b755d83c844, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemImage: {fileID: 6307860821912287339}
-  quantityTxt: {fileID: 0}
+  iconImage: {fileID: 6307860821912287339}
   borderImage: {fileID: 4408361198619576189}
+  quantityText: {fileID: 0}
 --- !u!1 &7715254965999777912
 GameObject:
   m_ObjectHideFlags: 0

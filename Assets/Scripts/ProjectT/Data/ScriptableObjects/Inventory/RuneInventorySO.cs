@@ -48,7 +48,7 @@ namespace ProjectT.Data.ScriptableObjects.Inventory.Rune
         /// <summary>
         /// 런타임 안전 초기화: 슬롯 3개를 보장하고, 비어있으면 null로 채움
         /// </summary>
-        private void Initialize()
+        public void Initialize()
         {
             if (equippedRunes == null) equippedRunes = new List<RuneSO>(MAX_SLOTS);
             if (equippedRunes.Count != MAX_SLOTS)

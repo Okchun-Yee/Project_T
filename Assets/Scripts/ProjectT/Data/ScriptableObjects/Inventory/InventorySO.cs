@@ -12,7 +12,7 @@ namespace ProjectT.Data.ScriptableObjects.Inventory
     {
         [SerializeField] private List<InventoryItemObj> inventoryItems;     // 인벤토리 컨트롤러가 이 리스트를 액세스하여 새 값을 수정할 수 있음
         [field: SerializeField] public int Size { get; private set; } = 10; // 인벤토리  사이즈
-                
+                    
         public event Action<Dictionary<int, InventoryItemObj>> OnInventoryUpdated;
 
         private void OnEnable()
