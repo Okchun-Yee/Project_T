@@ -137,6 +137,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9096985913030178786, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
   m_PrefabInstance: {fileID: 993358136}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &434158819 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7194488125509309688, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
+  m_PrefabInstance: {fileID: 5630605823636633405}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &619553755 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 9122197827033532758, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
@@ -695,6 +706,28 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 678cdf61056e5b7468526cd03793bcc9, type: 3}
+--- !u!114 &2147120948 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9041907372937360196, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
+  m_PrefabInstance: {fileID: 5630605823636633405}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a4b00bcbaddc044f90c859d6375bf70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2147120949 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3663411391457192441, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
+  m_PrefabInstance: {fileID: 5630605823636633405}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25c6bfc44b2c9124e8c0279a1f647b1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5630605823636633405
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -795,6 +828,18 @@ PrefabInstance:
       propertyPath: playerCharacter
       value: 
       objectReference: {fileID: 97808305}
+    - target: {fileID: 1776865397443134198, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
+      propertyPath: initialItems.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1776865397443134198, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
+      propertyPath: initialItems.Array.data[0].item
+      value: 
+      objectReference: {fileID: 11400000, guid: e63e3e4263ab6ab44839643666c1200a, type: 2}
+    - target: {fileID: 1776865397443134198, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
+      propertyPath: initialItems.Array.data[0].quantity
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1779465464001118429, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -996,9 +1041,21 @@ PrefabInstance:
       value: -369.99997
       objectReference: {fileID: 0}
     - target: {fileID: 5430024527474122720, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
+      propertyPath: pc
+      value: 
+      objectReference: {fileID: 1387977226}
+    - target: {fileID: 5430024527474122720, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
       propertyPath: playerController
       value: 
       objectReference: {fileID: 1387977226}
+    - target: {fileID: 5430024527474122720, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
+      propertyPath: runeInventoryManager
+      value: 
+      objectReference: {fileID: 2147120949}
+    - target: {fileID: 5430024527474122720, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
+      propertyPath: runeInventoryController
+      value: 
+      objectReference: {fileID: 2147120948}
     - target: {fileID: 5543877234238237272, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 525
@@ -1107,6 +1164,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7350688373252357158, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
+      propertyPath: quantityText
+      value: 
+      objectReference: {fileID: 434158819}
     - target: {fileID: 7507848833247632520, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
       propertyPath: playerTransform
       value: 
@@ -1147,6 +1208,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8492958717340586135, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
+      propertyPath: quantityText
+      value: 
+      objectReference: {fileID: 434158819}
     - target: {fileID: 8698429272380118221, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1225,20 +1290,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9041907372937360196, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
       propertyPath: debugRunes.Array.size
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9041907372937360196, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
       propertyPath: debugRunes.Array.data[0]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 11400000, guid: 6d95b986e0230ac4d9e9b1bb6014bf92, type: 2}
     - target: {fileID: 9041907372937360196, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
       propertyPath: debugRunes.Array.data[1]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 11400000, guid: f10314058be6282498b79be4157900d4, type: 2}
     - target: {fileID: 9041907372937360196, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
       propertyPath: debugRunes.Array.data[2]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 11400000, guid: f4741df62abe1104bb540de2d7d39a96, type: 2}
     - target: {fileID: 9066562151842862602, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -1263,6 +1328,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -390
       objectReference: {fileID: 0}
+    - target: {fileID: 9122197827033532758, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
+      propertyPath: quantityText
+      value: 
+      objectReference: {fileID: 434158819}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using ProjectT.Gameplay.Player;
 using ProjectT.Gameplay.Player.Input;
 using ProjectT.Gameplay.Items.Execution;
+using ProjectT.Gameplay.Items.Inventory.Rune;
 
 namespace ProjectT.Gameplay.Items.Inventory.UI
 {
@@ -19,9 +20,11 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
         [SerializeField] private GameObject newInventoryPanel;
 
         [Header("Controllers")]
-        [SerializeField] private InventoryController defaultInventoryController;
+        // [SerializeField] private InventoryController defaultInventoryController;
+        [SerializeField] private RuneInventoryController runeInventoryController;
         [SerializeField] private InventoryManager defaultInventoryManager;
-        [SerializeField] private PlayerController playerController;
+        [SerializeField] private RuneInventoryManager runeInventoryManager;
+        [SerializeField] private PlayerController pc;
 
         [Header("NavBar Buttons")]
         [SerializeField] private Button defaultTabButton;
@@ -176,9 +179,9 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
 
             SwitchTo(tab);
 
-            if (playerController != null)
+            if (pc != null)
             {
-                playerController.SetPaused(true);
+                pc.SetPaused(true);
             }
 
             OnInventoryVisibilityChanged?.Invoke(true);
@@ -199,9 +202,9 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
             SetViewActive(defaultInventoryPanel, false);
             SetViewActive(newInventoryPanel, false);
 
-            if (playerController != null)
+            if (pc != null)
             {
-                playerController.SetPaused(false);
+                pc.SetPaused(false);
             }
 
             OnInventoryVisibilityChanged?.Invoke(false);
@@ -242,6 +245,11 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
             if (tab == Tab.Default && defaultInventoryManager != null)
             {
                 defaultInventoryManager.ResetSelection();
+            }
+             // ← New 탭 (실제로는 Rune) UI 갱신
+            if (tab == Tab.New && runeInventoryController != null)
+            {
+                runeInventoryController.RefreshUI();
             }
 
             OnTabChanged?.Invoke(tab);

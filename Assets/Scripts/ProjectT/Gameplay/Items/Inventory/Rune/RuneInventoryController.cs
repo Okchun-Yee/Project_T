@@ -110,7 +110,7 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
             RefreshUI();
         }
 
-        private void RefreshUI()
+        public void RefreshUI()
         {
             if (ui == null || runeInventory == null) return;
 
@@ -141,7 +141,7 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
             var ok = runeInventory.TryEquip(slotIndex, rune, out var reason);
             if (!ok)
             {
-                Debug.Log($"[RuneInventoryController] Equip failed: slot={slotIndex}, rune={rune?.name}, reason={reason}");
+                Debug.LogWarning($"[RuneInventoryController] Equip failed: slot={slotIndex}, rune={rune?.name}, reason={reason}");
             }
         }
 
