@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f449abc772ea6a49a6e3fd7f883a0e0, type: 3}
   m_Name: RuneInventory
   m_EditorClassIdentifier: 
-  equippedRunes: []
+  equippedRunes:
+  - {fileID: 11400000, guid: 6d95b986e0230ac4d9e9b1bb6014bf92, type: 2}
+  - {fileID: 11400000, guid: f10314058be6282498b79be4157900d4, type: 2}
+  - {fileID: 11400000, guid: f4741df62abe1104bb540de2d7d39a96, type: 2}

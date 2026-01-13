@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2ee8c350b28cd34abfc44055f282840, type: 3}
+  m_Name: New Rune SO 2
+  m_EditorClassIdentifier: 
+  <ID>k__BackingField: 2
+  runeName: test02
+  description: test0202
+  icon: {fileID: 21300000, guid: 54b90e40c9d1cc84aaefe42c1edff273, type: 3}
+  modifiers:
+  - modifier: {fileID: 11400000, guid: ad82ff2b8914ea742924fe225fb8edae, type: 2}
+    value: 1
