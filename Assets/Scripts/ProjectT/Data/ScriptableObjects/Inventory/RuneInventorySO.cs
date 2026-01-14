@@ -29,22 +29,43 @@ namespace ProjectT.Data.ScriptableObjects.Inventory.Rune
         [SerializeField] private List<RuneSO> equippedRunes = new List<RuneSO>(MAX_SLOTS); // 슬롯 3개 고정
         public event Action OnEquippedChanged;  // 룬 장착 상태가 변경되었을 때 통지. UI가 필요하면 구독.
 
+#if UNITY_EDITOR
+        private static bool _playModeInitialized = false;
+#endif
+
         private void OnEnable()
         {
-            // 에디터에서 Play 모드 시작 시 인벤토리 초기화
+            // 에디터에서 Play 모드 시작 시 인벤토리 초기화 (한 번만)
 #if UNITY_EDITOR
             if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
                 return;
-#endif
 
-            Initialize();
-#if UNITY_EDITOR
-            for (int i = 0; i < MAX_SLOTS; ++i)
+            // 실제로 플레이 모드에 진입하는 순간에만 초기화
+            if (!_playModeInitialized && !UnityEditor.EditorApplication.isPlaying)
             {
-                equippedRunes[i] = null;
+                Initialize();
+                for (int i = 0; i < MAX_SLOTS; ++i)
+                {
+                    equippedRunes[i] = null;
+                }
+                _playModeInitialized = true;
             }
+#else
+            // 런타임(빌드)에서는 그냥 Initialize만
+            Initialize();
 #endif
         }
+
+#if UNITY_EDITOR
+        private void OnDisable()
+        {
+            // 플레이 모드 종료 시 플래그 리셋 (다음 플레이를 위해)
+            if (!UnityEditor.EditorApplication.isPlaying)
+            {
+                _playModeInitialized = false;
+            }
+        }
+#endif
         /// <summary>
         /// 런타임 안전 초기화: 슬롯 3개를 보장하고, 비어있으면 null로 채움
         /// </summary>
