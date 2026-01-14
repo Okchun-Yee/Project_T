@@ -131,7 +131,36 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
                 ui.SetSlot(i, rune.Icon);
             }
         }
+        /// <summary>
+        /// Rune 장착 진입점
+        /// - 장착 실패 시 로그 출력
+        /// </summary>
+        public void TryEquip(int slotIndex, RuneSO rune)
+        {
+            if (runeInventory == null) return;
 
+            var ok = runeInventory.TryEquip(slotIndex, rune, out var reason);
+            if (!ok)
+            {
+                Debug.LogWarning($"[Rune] Equip failed: {reason}");
+            }
+        }
+        public void TryEquipAuto(RuneSO rune)
+        {
+            if (runeInventory == null) return;
+
+            for(int i=0;i<RuneInventorySO.MAX_SLOTS;++i)
+            {
+                if(runeInventory.GetRuneAt(i) == null)
+                {
+                    runeInventory.TryEquip(i, rune, out _);
+                    return;
+                }
+            }
+            Debug.LogWarning("[Rune] All slots are full!");
+        }
+
+        #region Event Handlers
         private void HandleSlotClicked(int slotIndex)
         {
             if (ui != null) ui.SelectSlot(slotIndex);
@@ -160,5 +189,6 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         {
             // TODO: 툴팁 숨김
         }
+        #endregion
     }
 }
