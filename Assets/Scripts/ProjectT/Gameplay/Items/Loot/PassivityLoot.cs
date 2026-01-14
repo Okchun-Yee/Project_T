@@ -9,7 +9,7 @@ namespace ProjectT.Gameplay.Items.Loot
     public class PassivityLoot : BaseLoot
     {
         [Header("Item Data")]
-        [SerializeField] private ItemSO inventoryData;          // Item 데이터
+        [SerializeField] private ItemSO itemData;          // Item 데이터
         [SerializeField] private int quantity = 1;              // 아이템 개수
         [SerializeField] private InventorySO targetInventory;   // 아이템을 추가할 대상 인벤토리
 
@@ -26,16 +26,16 @@ namespace ProjectT.Gameplay.Items.Loot
         private void Start()
         {
             // 아이템 스프라이트 설정
-            if (inventoryData != null && spriteRenderer != null && inventoryData.ItemImage != null)
+            if (itemData != null && spriteRenderer != null && itemData.ItemImage != null)
             {
-                spriteRenderer.sprite = inventoryData.ItemImage;
+                spriteRenderer.sprite = itemData.ItemImage;
             }
         }
         public override bool CanPickup()
         {
             // 인벤토리가 존재하고, 아이템 데이터가 유효하며, 인벤토리에 아이템을 추가할 수 있는지 확인
             return canLoot 
-                && inventoryData != null
+                && itemData != null
                 && quantity > 0
                 && targetInventory != null;
         }
@@ -44,7 +44,7 @@ namespace ProjectT.Gameplay.Items.Loot
             if(!CanPickup()) return;
 
             // 1) 인벤토리에 아이템 추가
-            int remainder = targetInventory.AddItem(inventoryData, quantity);
+            int remainder = targetInventory.AddItem(itemData, quantity);
             // 2) 획득 사운드 재생
             if(lootSound != null)
             {
@@ -63,7 +63,7 @@ namespace ProjectT.Gameplay.Items.Loot
         // UI/디버그용 이름
         public override string GetItemType()
         {
-            return inventoryData != null ? inventoryData.name : base.GetItemType();
+            return itemData != null ? itemData.name : base.GetItemType();
         }
         private void OnDrawGizmos()
         {

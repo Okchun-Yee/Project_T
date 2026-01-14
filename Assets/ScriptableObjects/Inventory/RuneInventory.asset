@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f449abc772ea6a49a6e3fd7f883a0e0, type: 3}
+  m_Name: RuneInventory
+  m_EditorClassIdentifier: 
+  equippedRunes:
+  - {fileID: 11400000, guid: 6d95b986e0230ac4d9e9b1bb6014bf92, type: 2}
+  - {fileID: 11400000, guid: f10314058be6282498b79be4157900d4, type: 2}
+  - {fileID: 11400000, guid: f4741df62abe1104bb540de2d7d39a96, type: 2}

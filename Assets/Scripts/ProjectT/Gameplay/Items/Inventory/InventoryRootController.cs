@@ -4,12 +4,13 @@ using UnityEngine.UI;
 using ProjectT.Gameplay.Player;
 using ProjectT.Gameplay.Player.Input;
 using ProjectT.Gameplay.Items.Execution;
+using ProjectT.Gameplay.Items.Inventory.Rune;
 
 namespace ProjectT.Gameplay.Items.Inventory.UI
 {
     public sealed class InventoryRootController : MonoBehaviour
     {
-        public enum Tab { Default = 0, New = 1 }
+        public enum Tab { Default = 0, Rune = 1 }
 
         [Header("Root")]
         [SerializeField] private GameObject rootPanel;
@@ -20,8 +21,10 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
 
         [Header("Controllers")]
         [SerializeField] private InventoryController defaultInventoryController;
+        [SerializeField] private RuneInventoryController runeInventoryController;
         [SerializeField] private InventoryManager defaultInventoryManager;
-        [SerializeField] private PlayerController playerController;
+        [SerializeField] private RuneInventoryManager runeInventoryManager;
+        [SerializeField] private PlayerController pc;
 
         [Header("NavBar Buttons")]
         [SerializeField] private Button defaultTabButton;
@@ -176,9 +179,9 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
 
             SwitchTo(tab);
 
-            if (playerController != null)
+            if (pc != null)
             {
-                playerController.SetPaused(true);
+                pc.SetPaused(true);
             }
 
             OnInventoryVisibilityChanged?.Invoke(true);
@@ -199,9 +202,9 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
             SetViewActive(defaultInventoryPanel, false);
             SetViewActive(newInventoryPanel, false);
 
-            if (playerController != null)
+            if (pc != null)
             {
-                playerController.SetPaused(false);
+                pc.SetPaused(false);
             }
 
             OnInventoryVisibilityChanged?.Invoke(false);
@@ -209,7 +212,7 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
 
         public void ToggleTab()
         {
-            var next = (CurrentTab == Tab.Default) ? Tab.New : Tab.Default;
+            var next = (CurrentTab == Tab.Default) ? Tab.Rune : Tab.Default;
             SwitchTo(next);
         }
 
@@ -220,7 +223,7 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
 
         public void ShowNewTab()
         {
-            SwitchTo(Tab.New);
+            SwitchTo(Tab.Rune);
         }
 
         /// <summary>
@@ -237,11 +240,16 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
             CurrentTab = tab;
 
             SetViewActive(defaultInventoryPanel, tab == Tab.Default);
-            SetViewActive(newInventoryPanel, tab == Tab.New);
+            SetViewActive(newInventoryPanel, tab == Tab.Rune);
 
             if (tab == Tab.Default && defaultInventoryManager != null)
             {
                 defaultInventoryManager.ResetSelection();
+            }
+             // ← Rune 탭 (실제로는 newInventoryPanel) UI 갱신
+            if (tab == Tab.Rune && runeInventoryManager != null)
+            {
+                runeInventoryManager.ResetSelection();
             }
 
             OnTabChanged?.Invoke(tab);
