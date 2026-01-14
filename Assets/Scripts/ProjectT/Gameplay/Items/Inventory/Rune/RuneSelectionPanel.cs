@@ -22,6 +22,8 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
             foreach (var rune in runes)
             {
                 var btn = Instantiate(buttonPrefab, buttonContainer);
+                btn.gameObject.SetActive(true);  // ← 생성된 버튼 활성화
+                
                 btn.GetComponentInChildren<Text>().text = rune.name;
                 btn.onClick.AddListener(() => OnRuneSelected(rune));
                 spawnedButtons.Add(btn);
