@@ -93,15 +93,21 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         // Root 통합 시: "룬 탭"을 enum에 추가했다는 전제로 처리해야 함
         private void HandleTabChanged(InventoryRootController.Tab tab)
         {
-            // TODO: Root의 Tab에 Rune가 추가되면 아래 조건을 tab == Tab.Rune으로 변경
-            // 지금은 A안 스켈레톤이므로, 네 프로젝트에서 Rune 탭 enum 확정 후 수정
+            if (tab == InventoryRootController.Tab.Rune)
+            {
+                _isVisible = true;
+                RefreshUI();
+            }
+            else
+            {
+                _isVisible = false;
+            }
         }
 
         private void HandleVisibilityChanged(bool isOpen)
         {
             _isVisible = isOpen;
-            if (_isVisible)
-                RefreshUI();
+            // UI 갱신은 HandleTabChanged에서만 수행 (중복 방지)
         }
 
         private void HandleEquippedChanged()

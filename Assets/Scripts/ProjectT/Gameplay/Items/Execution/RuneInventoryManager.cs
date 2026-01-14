@@ -65,6 +65,20 @@ namespace ProjectT.Gameplay.Items.Execution
             }
         }
 
+        public void ResetSelection()
+        {
+            DeselectAllSlots();
+        }
+
+        private void DeselectAllSlots()
+        {
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (slots[i] == null) continue;
+                slots[i].Deselect();
+            }
+        }
+
         public void SetSlot(int index, Sprite icon)
         {
             if (!IsValid(index)) return;
