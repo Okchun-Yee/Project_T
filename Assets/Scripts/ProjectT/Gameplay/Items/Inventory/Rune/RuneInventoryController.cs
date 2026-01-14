@@ -4,6 +4,7 @@ using ProjectT.Data.ScriptableObjects.Items.Runes;
 using ProjectT.Gameplay.Items.Inventory.UI;
 using ProjectT.Data.ScriptableObjects.Inventory.Rune;
 using ProjectT.Gameplay.Items.Execution;
+using System.Collections.Generic;
 
 namespace ProjectT.Gameplay.Items.Inventory.Rune
 {
@@ -26,6 +27,10 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         [Header("Debug")]
         [SerializeField] private bool enableDebugEquipFlow = true;
         [SerializeField] private RuneSO[] debugRunes; // 인스펙터에 2~3개 넣고 클릭으로 순환 장착
+#if UNITY_EDITOR
+        [SerializeField] private List<RuneSO> debugRuneChoices;
+        [SerializeField] private RuneSelectionPanel runeSelectionPanel;
+#endif
 
         private bool _isVisible = false;
         private int _debugIndex = 0;
@@ -190,5 +195,20 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
             // TODO: 툴팁 숨김
         }
         #endregion
+
+#if UNITY_EDITOR
+        [ContextMenu("Test: Show Rune Selection")]
+        private void DebugShowRuneSelection()
+        {
+            if (runeSelectionPanel != null && debugRuneChoices.Count > 0)
+            {
+                runeSelectionPanel.Open(debugRuneChoices);
+            }
+            else
+            {
+                Debug.LogError("[Rune] Selection Panel or Rune Choices not assigned!");
+            }
+        }
+#endif
     }
 }
