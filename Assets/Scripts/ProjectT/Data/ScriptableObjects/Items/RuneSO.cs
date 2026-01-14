@@ -22,7 +22,7 @@ namespace ProjectT.Data.ScriptableObjects.Items.Runes
         [field: SerializeField, TextArea] private string description;   // 설명
         [field: SerializeField] private Sprite icon;
         [Header("Rune Effects")]
-        [field: SerializeField] List<RuneModifierEntry> modifiers = new();  // 룬이 제공하는 파라미터들
+        [field: SerializeField] private List<RuneModifierEntry> modifiers = new();  // 룬이 제공하는 파라미터들
 
         //Parameters
         public string RuneName => runeName;
