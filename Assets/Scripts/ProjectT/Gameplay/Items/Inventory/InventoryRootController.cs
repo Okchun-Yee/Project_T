@@ -20,7 +20,7 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
         [SerializeField] private GameObject newInventoryPanel;
 
         [Header("Controllers")]
-        // [SerializeField] private InventoryController defaultInventoryController;
+        [SerializeField] private InventoryController defaultInventoryController;
         [SerializeField] private RuneInventoryController runeInventoryController;
         [SerializeField] private InventoryManager defaultInventoryManager;
         [SerializeField] private RuneInventoryManager runeInventoryManager;
