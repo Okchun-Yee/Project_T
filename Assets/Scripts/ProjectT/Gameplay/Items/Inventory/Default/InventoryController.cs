@@ -19,8 +19,9 @@ namespace ProjectT.Gameplay.Items.Inventory
     public class InventoryController : Singleton<InventoryController>
     {
         [SerializeField] private InventoryManager inventoryUI;
+        [SerializeField] private InventoryRootController root;
         [SerializeField] private InventorySO inventoryData;
-        [SerializeField] private GameObject playerCharacter;  // 장착/사용 시 대상 플레이어
+        [SerializeField] private GameObject pc;  // 장착/사용 시 대상 플레이어
         public List<InventoryItemObj> initialItems = new List<InventoryItemObj>();
         [SerializeField] private AudioClip dropSound;
         [SerializeField] private AudioSource audioSource;
@@ -77,7 +78,6 @@ namespace ProjectT.Gameplay.Items.Inventory
 
         private void SubscribeToRootEvents()
         {
-            InventoryRootController root = GetComponentInParent<InventoryRootController>();
             if (root != null)
             {
                 root.OnTabChanged += HandleTabChanged;
@@ -87,7 +87,6 @@ namespace ProjectT.Gameplay.Items.Inventory
 
         private void UnsubscribeFromRootEvents()
         {
-            InventoryRootController root = GetComponentInParent<InventoryRootController>();
             if (root != null)
             {
                 root.OnTabChanged -= HandleTabChanged;
@@ -205,9 +204,9 @@ namespace ProjectT.Gameplay.Items.Inventory
             if (itemAction != null)
             {
                 // playerCharacter가 Inspector에서 할당되어 있어야 함
-                if (playerCharacter != null)
+                if (pc != null)
                 {
-                    bool actionSuccess = itemAction.PerformAction(playerCharacter, inventoryItem.itemState);
+                    bool actionSuccess = itemAction.PerformAction(pc, inventoryItem.itemState);
                     
                     if (actionSuccess && itemAction.actionSFX != null)
                     {

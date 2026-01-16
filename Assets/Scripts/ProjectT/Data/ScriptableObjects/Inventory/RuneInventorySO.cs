@@ -147,7 +147,6 @@ namespace ProjectT.Data.ScriptableObjects.Inventory.Rune
 
             // 교체 허용: 기존 룬이 있으면 덮어쓰기(= 제거 후 장착과 동일)
             equippedRunes[slotIndex] = rune;
-            Debug.Log($"[RuneInventorySO] TryEquip SUCCESS: slot={slotIndex}, rune={rune?.name}");
 
             reason = EquipFailReason.None;
             OnEquippedChanged?.Invoke();

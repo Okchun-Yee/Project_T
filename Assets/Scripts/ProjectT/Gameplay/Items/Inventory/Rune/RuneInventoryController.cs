@@ -4,6 +4,7 @@ using ProjectT.Data.ScriptableObjects.Items.Runes;
 using ProjectT.Gameplay.Items.Inventory.UI;
 using ProjectT.Data.ScriptableObjects.Inventory.Rune;
 using ProjectT.Gameplay.Items.Execution;
+using System.Collections.Generic;
 
 namespace ProjectT.Gameplay.Items.Inventory.Rune
 {
@@ -26,6 +27,10 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         [Header("Debug")]
         [SerializeField] private bool enableDebugEquipFlow = true;
         [SerializeField] private RuneSO[] debugRunes; // 인스펙터에 2~3개 넣고 클릭으로 순환 장착
+#if UNITY_EDITOR
+        [SerializeField] private List<RuneSO> debugRuneChoices;
+        [SerializeField] private RuneSelectionPanel runeSelectionPanel;
+#endif
 
         private bool _isVisible = false;
         private int _debugIndex = 0;
@@ -131,7 +136,40 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
                 ui.SetSlot(i, rune.Icon);
             }
         }
+        /// <summary>
+        /// Rune 장착 진입점
+        /// - 장착 실패 시 로그 출력
+        /// </summary>
+        public void TryEquip(int slotIndex, RuneSO rune)
+        {
+            if (runeInventory == null) return;
 
+            bool ok = runeInventory.TryEquip(slotIndex, rune, out var reason);
+            if (!ok)
+            {
+                Debug.LogWarning($"[Rune] Equip failed: {reason}");
+            }
+        }
+        public void TryEquipAuto(RuneSO rune)
+        {
+            if (runeInventory == null) return;
+
+            for (int i = 0; i < RuneInventorySO.MAX_SLOTS; ++i)
+            {
+                if (runeInventory.GetRuneAt(i) == null)
+                {
+                    bool ok = runeInventory.TryEquip(i, rune, out var reason);
+                    if (!ok)
+                    {
+                        Debug.LogWarning($"[Rune] Equip failed: {reason}");
+                    }
+                    return;
+                }
+            }
+            Debug.LogWarning("[Rune] All slots are full!");
+        }
+
+        #region Event Handlers
         private void HandleSlotClicked(int slotIndex)
         {
             if (ui != null) ui.SelectSlot(slotIndex);
@@ -160,5 +198,21 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         {
             // TODO: 툴팁 숨김
         }
+        #endregion
+
+#if UNITY_EDITOR
+        [ContextMenu("Test: Show Rune Selection")]
+        private void DebugShowRuneSelection()
+        {
+            if (runeSelectionPanel != null && debugRuneChoices.Count > 0)
+            {
+                runeSelectionPanel.Open(debugRuneChoices);
+            }
+            else
+            {
+                Debug.LogError("[Rune] Selection Panel or Rune Choices not assigned!");
+            }
+        }
+#endif
     }
 }
