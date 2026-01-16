@@ -144,7 +144,7 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         {
             if (runeInventory == null) return;
 
-            var ok = runeInventory.TryEquip(slotIndex, rune, out var reason);
+            bool ok = runeInventory.TryEquip(slotIndex, rune, out var reason);
             if (!ok)
             {
                 Debug.LogWarning($"[Rune] Equip failed: {reason}");
@@ -154,11 +154,15 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         {
             if (runeInventory == null) return;
 
-            for(int i=0;i<RuneInventorySO.MAX_SLOTS;++i)
+            for (int i = 0; i < RuneInventorySO.MAX_SLOTS; ++i)
             {
-                if(runeInventory.GetRuneAt(i) == null)
+                if (runeInventory.GetRuneAt(i) == null)
                 {
-                    runeInventory.TryEquip(i, rune, out _);
+                    bool ok = runeInventory.TryEquip(i, rune, out var reason);
+                    if (!ok)
+                    {
+                        Debug.LogWarning($"[Rune] Equip failed: {reason}");
+                    }
                     return;
                 }
             }

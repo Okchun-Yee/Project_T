@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,7 +23,16 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
                 var btn = Instantiate(buttonPrefab, buttonContainer);
                 btn.gameObject.SetActive(true);  // ← 생성된 버튼 활성화
                 
-                btn.GetComponentInChildren<Text>().text = rune.name;
+                var textComponent = btn.GetComponentInChildren<Text>();
+                if (textComponent != null)
+                {
+                    textComponent.text = rune.name;
+                }
+                else
+                {
+                    Debug.LogWarning($"[RuneSelectionPanel] Button prefab doesn't have a Text component: {rune.name}");
+                }
+
                 btn.onClick.AddListener(() => OnRuneSelected(rune));
                 spawnedButtons.Add(btn);
             }
@@ -32,6 +40,10 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
 
         private void OnRuneSelected(RuneSO rune)
         {
+            if (controller != null)
+            {
+                Debug.LogWarning($"[RuneSelectionPanel] Null controller: {rune.name}");
+            }
             controller.TryEquipAuto(rune);
             Close();
         }
