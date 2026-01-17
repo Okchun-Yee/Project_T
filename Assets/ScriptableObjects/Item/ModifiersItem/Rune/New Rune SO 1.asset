@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: New Rune SO 1
   m_EditorClassIdentifier: 
   <ID>k__BackingField: 1
-  runeName: test01
-  description: test01-01
+  runeName: test-01
+  description: 01 test
   icon: {fileID: 21300000, guid: 04ee21730ac25804899dc96d7ecc980b, type: 3}
   modifiers:
   - modifier: {fileID: 11400000, guid: ad82ff2b8914ea742924fe225fb8edae, type: 2}
-    value: 20
+    value: 1

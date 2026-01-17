@@ -12,8 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2ee8c350b28cd34abfc44055f282840, type: 3}
   m_Name: New Rune SO 4
   m_EditorClassIdentifier: 
-  <ID>k__BackingField: 0
-  runeName: 
-  description: 
-  icon: {fileID: 0}
-  modifiers: []
+  <ID>k__BackingField: 4
+  runeName: test-04
+  description: '04 test
+
+'
+  icon: {fileID: 21300000, guid: ab4d2309a858a3d40a36b81ee0cf0359, type: 3}
+  modifiers:
+  - modifier: {fileID: 11400000, guid: ad82ff2b8914ea742924fe225fb8edae, type: 2}
+    value: 4

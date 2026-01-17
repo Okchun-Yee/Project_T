@@ -13,7 +13,11 @@ MonoBehaviour:
   m_Name: New Rune SO 5
   m_EditorClassIdentifier: 
   <ID>k__BackingField: 0
-  runeName: 
-  description: 
-  icon: {fileID: 0}
-  modifiers: []
+  runeName: test-05
+  description: '05 test
+
+'
+  icon: {fileID: 21300000, guid: 01f0685222cd42a44b41a4c410838b7b, type: 3}
+  modifiers:
+  - modifier: {fileID: 11400000, guid: ad82ff2b8914ea742924fe225fb8edae, type: 2}
+    value: 5
