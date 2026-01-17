@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2ee8c350b28cd34abfc44055f282840, type: 3}
   m_Name: New Rune SO 5
   m_EditorClassIdentifier: 
-  <ID>k__BackingField: 0
+  <ID>k__BackingField: 5
   runeName: test-05
   description: '05 test
 

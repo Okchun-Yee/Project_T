@@ -332,7 +332,9 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
                 if (rune != null)
                 {
                     bool equipped = runeInventory.IsEquipped(rune.ID);
-                    Debug.Log($"  - {rune.name} (ID: {rune.ID}) | Equipped: {equipped}");
+                    int appearCount = recentAppearCount.TryGetValue(rune.ID, out var c) ? c : 0;
+                    float weight = GetWeight(rune);
+                    Debug.Log($"  - {rune.name} (ID: {rune.ID}) | Equipped: {equipped} | Appear: {appearCount} | Weight: {weight:F3}");
                 }
             }
         }
