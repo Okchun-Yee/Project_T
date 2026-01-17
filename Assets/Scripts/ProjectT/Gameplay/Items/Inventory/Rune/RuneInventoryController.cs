@@ -24,6 +24,9 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         [SerializeField] private RuneInventoryManager ui;
         [SerializeField] private InventoryRootController root; // 현재 Root와 통합되어 있으면 연결
 
+        [Header("Rune Pool")]
+        [SerializeField] private List<RuneSO> allRunes; // 전체 룬 풀 (에디터에서 할당)
+
         [Header("Debug")]
         [SerializeField] private bool enableDebugEquipFlow = true;
         [SerializeField] private RuneSO[] debugRunes; // 인스펙터에 2~3개 넣고 클릭으로 순환 장착
