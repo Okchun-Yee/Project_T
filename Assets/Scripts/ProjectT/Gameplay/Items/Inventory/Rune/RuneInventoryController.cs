@@ -31,7 +31,6 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         [Header("UI - Selection")]
         [SerializeField] private RuneSelectionPanel runeSelectionPanel;
 
-        [Header("Rune Selection State")]
         private Dictionary<int, int> recentAppearCount = new();
 
         private bool _isVisible = false;
