@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Linq; 
+using System.Linq;
 using ProjectT.Core;
 using ProjectT.Data.ScriptableObjects.Items.Runes;
 using ProjectT.Gameplay.Items.Inventory.UI;
@@ -39,7 +39,8 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         protected override void Awake()
         {
             base.Awake();
-            ResetRuneStats();
+            ResetRuneStats();   // 룬 상태 초기화
+            ValidateRunePool(); // 룬 풀 중복 검사
         }
 
         private void ResetRuneStats()
@@ -102,32 +103,6 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
             root.OnInventoryVisibilityChanged -= HandleVisibilityChanged;
         }
 
-        // Root 통합 시: "룬 탭"을 enum에 추가했다는 전제로 처리해야 함
-        private void HandleTabChanged(InventoryRootController.Tab tab)
-        {
-            if (tab == InventoryRootController.Tab.Rune)
-            {
-                _isVisible = true;
-                RefreshUI();
-            }
-            else
-            {
-                _isVisible = false;
-            }
-        }
-
-        private void HandleVisibilityChanged(bool isOpen)
-        {
-            _isVisible = isOpen;
-            // UI 갱신은 HandleTabChanged에서만 수행 (중복 방지)
-        }
-
-        private void HandleEquippedChanged()
-        {
-            if (!_isVisible) return;
-            RefreshUI();
-        }
-
         public void RefreshUI()
         {
             if (ui == null || runeInventory == null) return;
@@ -177,6 +152,31 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         }
 
         #region Event Handlers
+        // Root 통합 시: "룬 탭"을 enum에 추가했다는 전제로 처리해야 함
+        private void HandleTabChanged(InventoryRootController.Tab tab)
+        {
+            if (tab == InventoryRootController.Tab.Rune)
+            {
+                _isVisible = true;
+                RefreshUI();
+            }
+            else
+            {
+                _isVisible = false;
+            }
+        }
+
+        private void HandleVisibilityChanged(bool isOpen)
+        {
+            _isVisible = isOpen;
+            // UI 갱신은 HandleTabChanged에서만 수행 (중복 방지)
+        }
+
+        private void HandleEquippedChanged()
+        {
+            if (!_isVisible) return;
+            RefreshUI();
+        }
         private void HandleSlotClicked(int slotIndex)
         {
             if (ui != null) ui.SelectSlot(slotIndex);
@@ -197,7 +197,7 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         private float GetWeight(RuneSO rune)
         {
             if (rune == null) return 0f;
-            
+
             int count = recentAppearCount.TryGetValue(rune.ID, out var c) ? c : 0;
             return 1f / (1 + count); // 등장할수록 확률 감소
         }
@@ -206,15 +206,15 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         {
             var result = new List<RuneSO>();
             var pool = new List<RuneSO>(candidates);
-            
+
             for (int i = 0; i < count && pool.Count > 0; i++)
             {
                 float totalWeight = pool.Sum(r => GetWeight(r));
                 if (totalWeight <= 0) break;
-                
+
                 float pick = Random.value * totalWeight;
                 float accumulated = 0f;
-                
+
                 RuneSO selected = null;
                 foreach (var rune in pool)
                 {
@@ -225,19 +225,41 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
                         break;
                     }
                 }
-                
+
                 if (selected != null)
                 {
                     result.Add(selected);
                     pool.Remove(selected);
-                    
+
                     // 선택된 룬의 카운트 증가
-                    recentAppearCount[selected.ID] = 
+                    recentAppearCount[selected.ID] =
                         (recentAppearCount.TryGetValue(selected.ID, out var c) ? c : 0) + 1;
                 }
             }
-            
+
             return result;
+        }
+        /// <summary>
+        /// 룬 풀의 중복 ID 검사 및 경고 출력 (초가화 시점에 호출)
+        /// </summary>
+        private void ValidateRunePool()
+        {
+            if (allRunes == null) return;
+            var duplicates = allRunes
+                .Where(r => r != null)
+                .GroupBy(r => r.ID)
+                .Where(g => g.Count() > 1)
+                .Select(g => g.Key)
+                .ToList();
+
+            if (duplicates.Count > 0)
+            {
+                Debug.LogWarning(
+            $"[Rune] Duplicate Rune IDs detected in allRunes: " +
+            $"{string.Join(", ", duplicates)}\n" +
+            "Rune IDs must be unique. This may cause unexpected selection behavior."
+        );
+            }
         }
 
         private List<RuneSO> GenerateRuneChoices()
@@ -248,34 +270,34 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
                 Debug.LogError("[Rune] RuneInventorySO not assigned!");
                 return new List<RuneSO>();
             }
-            
+
             if (allRunes == null || allRunes.Count == 0)
             {
                 Debug.LogError("[Rune] allRunes not initialized or empty!");
                 return new List<RuneSO>();
             }
-            
+
             // 1. 현재 장착된 룬 ID 수집
             var equipped = runeInventory.GetEquippedSnapshot();
             var equippedIds = new HashSet<int>(
                 equipped.Where(r => r != null).Select(r => r.ID)
             );
-            
+
             // 2. 선택 가능한 후보 필터링
             var candidates = allRunes
                 .Where(r => r != null && !equippedIds.Contains(r.ID))
                 .ToList();
-            
+
             if (candidates.Count == 0)
             {
                 Debug.LogWarning("[Rune] No available rune candidates " +
                     "(all slots equipped or no runes)");
                 return new List<RuneSO>();
             }
-            
+
             // 3. 가중치 기반 랜덤 선택 (최대 3개)
             var choices = SelectWithWeight(candidates, 3);
-            
+
             Debug.Log($"[Rune] Generated {choices.Count} choices from {candidates.Count} candidates");
             return choices;
         }
@@ -287,15 +309,15 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
                 Debug.LogError("[Rune] RuneSelectionPanel not assigned!");
                 return;
             }
-            
+
             List<RuneSO> choices = GenerateRuneChoices();
-            
+
             if (choices.Count == 0)
             {
                 Debug.LogWarning("[Rune] No choices available to show");
                 return;
             }
-            
+
             runeSelectionPanel.Open(choices);
         }
         #endregion
@@ -325,7 +347,7 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
                 Debug.LogWarning("[Rune] No runes in pool");
                 return;
             }
-            
+
             Debug.Log($"[Rune] Total runes in pool: {allRunes.Count}");
             foreach (var rune in allRunes)
             {
