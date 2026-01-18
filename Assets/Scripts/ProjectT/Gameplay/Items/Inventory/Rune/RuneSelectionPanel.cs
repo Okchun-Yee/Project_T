@@ -40,9 +40,10 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
 
         private void OnRuneSelected(RuneSO rune)
         {
-            if (controller != null)
+            if (controller == null)
             {
                 Debug.LogWarning($"[RuneSelectionPanel] Null controller: {rune.name}");
+                return;
             }
             controller.TryEquipAuto(rune);
             Close();
