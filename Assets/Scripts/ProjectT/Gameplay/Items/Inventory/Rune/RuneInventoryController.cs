@@ -3,6 +3,7 @@ using System.Linq;
 using ProjectT.Core;
 using ProjectT.Data.ScriptableObjects.Items.Runes;
 using ProjectT.Gameplay.Items.Inventory.UI;
+using ProjectT.Gameplay.Items.Inventory;
 using ProjectT.Data.ScriptableObjects.Inventory.Rune;
 using ProjectT.Gameplay.Items.Execution;
 using System.Collections.Generic;
@@ -18,21 +19,13 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
     /// </summary>
     public sealed class RuneInventoryController : Singleton<RuneInventoryController>
     {
-        [Header("Data")]
-        [SerializeField] private RuneInventorySO runeInventory;
-
-        [Header("UI")]
         [SerializeField] private RuneInventoryManager ui;
-        [SerializeField] private InventoryRootController root; // 현재 Root와 통합되어 있으면 연결
-
-        [Header("Rune Pool")]
+        [SerializeField] private InventoryRootController root;
+        [SerializeField] private RuneInventorySO runeInventory;
         [SerializeField] private List<RuneSO> allRunes; // 전체 룬 풀 (에디터에서 할당)
-
-        [Header("UI - Selection")]
         [SerializeField] private RuneSelectionPanel runeSelectionPanel;
 
         private Dictionary<int, int> recentAppearCount = new();
-
         private bool _isVisible = false;
 
         protected override void Awake()
@@ -179,6 +172,23 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         private void HandleSlotClicked(int slotIndex)
         {
             if (ui != null) ui.SelectSlot(slotIndex);
+
+            // 선택된 룬 정보 표시
+            var rune = runeInventory.GetRuneAt(slotIndex);
+            
+            if (rune == null)
+            {
+                if (ui != null)
+                    ui.ResetRuneDescription();
+            }
+            else
+            {
+                if (ui != null)
+                {
+                    string effectsText = FormatRuneEffects(rune);
+                    ui.SetRuneDescription(rune.Icon, rune.RuneName, rune.Description, effectsText);
+                }
+            }
         }
 
         private void HandleSlotHoverEnter(int slotIndex)
@@ -301,6 +311,23 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
             return choices;
         }
 
+        private string FormatRuneEffects(RuneSO rune)
+        {
+            if (rune.Modifiers == null || rune.Modifiers.Count == 0)
+                return "";
+            
+            var lines = new List<string>();
+            foreach (var entry in rune.Modifiers)
+            {
+                if (entry.modifier != null)
+                {
+                    lines.Add($"{entry.modifier.name} +{entry.value}");
+                }
+            }
+            
+            return string.Join("\n", lines);
+        }
+
         public void ShowRuneSelection()
         {
             if (runeSelectionPanel == null)
@@ -318,6 +345,12 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
             }
 
             runeSelectionPanel.Open(choices);
+        }
+
+        public void ResetRuneDescription()
+        {
+            if (ui != null)
+                ui.ResetRuneDescription();
         }
         #endregion
 

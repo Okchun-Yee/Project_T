@@ -1,6 +1,8 @@
 using System;
 using ProjectT.Data.ScriptableObjects.Inventory.Rune;
+using ProjectT.Gameplay.Items.Inventory;
 using ProjectT.Gameplay.Items.Inventory.Rune;
+using ProjectT.Gameplay.Items.Inventory.UI;
 using UnityEngine;
 
 namespace ProjectT.Gameplay.Items.Execution
@@ -13,6 +15,8 @@ namespace ProjectT.Gameplay.Items.Execution
     public sealed class RuneInventoryManager : MonoBehaviour
     {
         [SerializeField] private RuneInventoryItem[] slots = new RuneInventoryItem[3];
+        [SerializeField] private InventoryDescription runeDescriptionView;
+        [SerializeField] private RuneInventoryController runeInventoryController;
 
         public event Action<int> OnSlotClicked;
         public event Action<int> OnSlotHoverEnter;
@@ -68,6 +72,22 @@ namespace ProjectT.Gameplay.Items.Execution
         public void ResetSelection()
         {
             DeselectAllSlots();
+            
+            // Default InventoryUI 패턴과 동일: ResetSelection에서 description도 초기화
+            if (runeDescriptionView != null)
+                runeDescriptionView.ResetDescription();
+        }
+
+        public void SetRuneDescription(Sprite icon, string runeName, string description, string effectsText = null)
+        {
+            if (runeDescriptionView != null)
+                runeDescriptionView.SetDescription(icon, runeName, description, effectsText);
+        }
+
+        public void ResetRuneDescription()
+        {
+            if (runeDescriptionView != null)
+                runeDescriptionView.ResetDescription();
         }
 
         private void DeselectAllSlots()
