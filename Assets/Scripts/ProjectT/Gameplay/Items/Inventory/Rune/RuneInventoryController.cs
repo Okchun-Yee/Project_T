@@ -6,6 +6,7 @@ using ProjectT.Gameplay.Items.Inventory.UI;
 using ProjectT.Gameplay.Items.Inventory;
 using ProjectT.Data.ScriptableObjects.Inventory.Rune;
 using ProjectT.Gameplay.Items.Execution;
+using ProjectT.Systems.UI;
 using System.Collections.Generic;
 
 namespace ProjectT.Gameplay.Items.Inventory.Rune
@@ -155,6 +156,9 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
             else
             {
                 _isVisible = false;
+                // 탭 전환 시 툴팁 숨김
+                if (ui != null)
+                    ui.HideTooltip();
             }
         }
 
@@ -162,6 +166,10 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         {
             _isVisible = isOpen;
             // UI 갱신은 HandleTabChanged에서만 수행 (중복 방지)
+            
+            // 인벤토리가 닫힐 때 툴팁 숨김
+            if (!isOpen && ui != null)
+                ui.HideTooltip();
         }
 
         private void HandleEquippedChanged()
@@ -191,14 +199,33 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
             }
         }
 
-        private void HandleSlotHoverEnter(int slotIndex)
+        private void HandleSlotHoverEnter(int slotIndex, Vector2 screenPos)
         {
-            // TODO: 툴팁 연결 시 여기서 rune 정보 표시
+            // SSOT 접근: 현재 슬롯의 룬 확인
+            var rune = runeInventory.GetRuneAt(slotIndex);
+
+            if (rune == null)
+            {
+                // 빈 슬롯 → 툴팁 숨김
+                if (ui != null)
+                    ui.HideTooltip();
+            }
+            else
+            {
+                // Decision: RuneSO → TooltipData 변환
+                var tooltipData = RuneTooltipBuilder.Build(rune);
+                
+                // Execution: Manager가 UI 표시
+                if (ui != null)
+                    ui.ShowTooltip(tooltipData, screenPos);
+            }
         }
 
         private void HandleSlotHoverExit(int slotIndex)
         {
-            // TODO: 툴팁 숨김
+            // 슬롯을 떠나면 툴팁 숨김
+            if (ui != null)
+                ui.HideTooltip();
         }
         #endregion
 
