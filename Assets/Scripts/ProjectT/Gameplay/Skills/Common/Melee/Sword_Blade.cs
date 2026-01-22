@@ -1,3 +1,4 @@
+using ProjectT.Data.ScriptableObjects.Skills;
 using UnityEngine;
 
 namespace ProjectT.Gameplay.Skills.Common.Melee
@@ -5,17 +6,13 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
     public class Sword_Blade : BaseSkill
     {
         private float damage;
-        private void Start()
+
+        public override void Skill_Initialize(SkillSO info)
         {
-            if (skillInfo != null)
-            {
-                damage = GetSkillDamage();
-            }
-            else
-            {
-                Debug.LogError("[Sword_Blade] SkillInfo is not set.");
-            }
+            base.Skill_Initialize(info);
+            damage = GetSkillDamage();
         }
+
         protected override void OnSkillActivated()
         {
             Debug.Log($"[Sword]: Blade Skill Activated, Damage {damage} ");

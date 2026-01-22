@@ -1,3 +1,4 @@
+using ProjectT.Data.ScriptableObjects.Skills;
 using UnityEngine;
 
 namespace ProjectT.Gameplay.Skills.Common.Range
@@ -5,17 +6,13 @@ namespace ProjectT.Gameplay.Skills.Common.Range
     public class Bow_Landing : BaseSkill
     {
         private float damage;
-        private void Start()
+
+        public override void Skill_Initialize(SkillSO info)
         {
-            if (skillInfo != null)
-            {
-                damage = GetSkillDamage();
-            }
-            else
-            {
-                Debug.LogError("[Bow_Landing] SkillInfo is not set.");
-            }
+            base.Skill_Initialize(info);
+            damage = GetSkillDamage();
         }
+
         protected override void OnSkillActivated()
         {
             // Implement the skill activation logic here
