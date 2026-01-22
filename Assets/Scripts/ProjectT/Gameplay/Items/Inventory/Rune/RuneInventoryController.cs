@@ -166,7 +166,7 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         {
             _isVisible = isOpen;
             // UI 갱신은 HandleTabChanged에서만 수행 (중복 방지)
-            
+
             // 인벤토리가 닫힐 때 툴팁 숨김
             if (!isOpen && ui != null)
                 ui.HideTooltip();
@@ -183,7 +183,7 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
 
             // 선택된 룬 정보 표시
             var rune = runeInventory.GetRuneAt(slotIndex);
-            
+
             if (rune == null)
             {
                 if (ui != null)
@@ -199,7 +199,15 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
                 }
             }
         }
-
+        /// <summary>
+        /// Rune 슬롯에 Hover Enter 시 호출된다.
+        /// </summary>
+        /// <param name="slotIndex">Hover된 슬롯 인덱스</param>
+        /// <param name="screenPos">
+        /// 포인터의 스크린 좌표.
+        /// TooltipUI 위치 계산에 사용되며,
+        /// View 계층에서 전달된 실행 데이터이다.
+        /// </param>
         private void HandleSlotHoverEnter(int slotIndex, Vector2 screenPos)
         {
             // SSOT 접근: 현재 슬롯의 룬 확인
@@ -215,7 +223,7 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
             {
                 // Decision: RuneSO → TooltipData 변환
                 var tooltipData = RuneTooltipBuilder.Build(rune);
-                
+
                 // Execution: Manager가 UI 표시
                 if (ui != null)
                     ui.ShowTooltip(tooltipData, screenPos);
