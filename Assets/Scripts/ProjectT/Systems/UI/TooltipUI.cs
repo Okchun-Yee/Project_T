@@ -99,6 +99,7 @@ namespace ProjectT.Systems.UI
             if (tooltipRect == null || _rootCanvas == null)
                 return;
 
+            //[TODO] 툴팁 업데이트 빈도를 줄이기(스로틀링)하거나, 레이아웃 계산을 더 효율적인 방식으로 처리하는 접근을 고려
             LayoutRebuilder.MarkLayoutForRebuild(tooltipRect);
 
             Vector3[] corners = new Vector3[4];
