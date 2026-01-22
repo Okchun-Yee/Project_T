@@ -125,8 +125,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slashAnimPrefab:
-  - {fileID: 6462850459302737587, guid: 3fc0bbb8038de8142a5a00485ad7ed9e, type: 3}
-  - {fileID: 6462850459302737587, guid: 815e2489dcdac4c40ba99b1fccb65cb7, type: 3}
+  - {fileID: 6462850459302737587, guid: 976c1fcf89a4c11419c92a61b19fd25f, type: 3}
+  - {fileID: 6462850459302737587, guid: 9cdf123694db4da49a71f0d35fe559ce, type: 3}
   comboController: {fileID: 667304997567885545}
 --- !u!114 &8349803799137369422
 MonoBehaviour:
@@ -194,4 +194,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   comboLength: 2
-  comboDelay: 0.4
+  comboDelay: 1.2
