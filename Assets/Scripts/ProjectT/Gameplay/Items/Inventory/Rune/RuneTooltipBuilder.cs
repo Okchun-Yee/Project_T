@@ -23,7 +23,7 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
             if (rune == null)
                 return TooltipData.Empty;
 
-            string additionalInfo = FormatModifiers(rune);
+            string additionalInfo = FormatModifiers(rune, maxCount: 2, showEllipsis: true);
 
             return new TooltipData(
                 rune.Icon,
@@ -34,19 +34,24 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         }
 
         /// <summary>
-        /// 룬의 수정자(Modifier)를 문자열로 포맷팅
-        /// - 상위 2개 수정자만 표시 (툴팁의 공간 제약)
+        /// 룬의 수정자(Modifier)를 문자열로 포맷팅 (공용 메서드)
         /// - 형식: "수정자이름 +값" (줄바꿈으로 구분)
         /// </summary>
-        private static string FormatModifiers(RuneSO rune)
+        /// <param name="rune">룬 데이터</param>
+        /// <param name="maxCount">최대 표시 개수 (0 이하면 전체 표시)</param>
+        /// <param name="showEllipsis">maxCount 초과 시 "... 외 N개" 표시 여부</param>
+        /// <returns>포맷된 문자열</returns>
+        public static string FormatModifiers(RuneSO rune, int maxCount = 0, bool showEllipsis = false)
         {
-            if (rune.Modifiers == null || rune.Modifiers.Count == 0)
+            if (rune == null || rune.Modifiers == null || rune.Modifiers.Count == 0)
                 return "";
 
             var lines = new List<string>();
 
-            // 상위 2개만 표시 (그 이상은 Description 패널에서 확인)
-            int displayCount = Mathf.Min(2, rune.Modifiers.Count);
+            // maxCount가 0 이하면 전체 표시
+            int displayCount = (maxCount > 0) 
+                ? Mathf.Min(maxCount, rune.Modifiers.Count) 
+                : rune.Modifiers.Count;
 
             for (int i = 0; i < displayCount; i++)
             {
@@ -57,10 +62,10 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
                 }
             }
 
-            // 3개 이상이면 "등"으로 표시
-            if (rune.Modifiers.Count > 2)
+            // maxCount 초과 시 ellipsis 표시
+            if (showEllipsis && maxCount > 0 && rune.Modifiers.Count > maxCount)
             {
-                lines.Add($"... 외 {rune.Modifiers.Count - 2}개");
+                lines.Add($"... 외 {rune.Modifiers.Count - maxCount}개");
             }
 
             return string.Join("\n", lines);

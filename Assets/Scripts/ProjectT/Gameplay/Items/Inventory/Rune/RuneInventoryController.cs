@@ -193,7 +193,8 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
             {
                 if (ui != null)
                 {
-                    string effectsText = FormatRuneEffects(rune);
+                    // RuneTooltipBuilder 공용 메서드 사용 (전체 Modifier 표시)
+                    string effectsText = RuneTooltipBuilder.FormatModifiers(rune);
                     ui.SetRuneDescription(rune.Icon, rune.RuneName, rune.Description, effectsText);
                 }
             }
@@ -336,23 +337,6 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
 
             Debug.Log($"[Rune] Generated {choices.Count} choices from {candidates.Count} candidates");
             return choices;
-        }
-
-        private string FormatRuneEffects(RuneSO rune)
-        {
-            if (rune.Modifiers == null || rune.Modifiers.Count == 0)
-                return "";
-            
-            var lines = new List<string>();
-            foreach (var entry in rune.Modifiers)
-            {
-                if (entry.modifier != null)
-                {
-                    lines.Add($"{entry.modifier.name} +{entry.value}");
-                }
-            }
-            
-            return string.Join("\n", lines);
         }
 
         public void ShowRuneSelection()
