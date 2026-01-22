@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using ProjectT.Data.ScriptableObjects.Items;
 using ProjectT.Data.ScriptableObjects.Skills;
 using ProjectT.Gameplay.Combat.Damage;
 using ProjectT.Gameplay.Player;
@@ -11,19 +12,21 @@ namespace ProjectT.Gameplay.Skills
 {
     public abstract class BaseSkill : MonoBehaviour, ISkill
     {
-        private bool isOnCooldown = false;              // 스킬 쿨타임 상태
-        public SkillSO skillInfo { get; private set; }  // 스킬 정보
+        private bool isOnCooldown = false;
+        public SkillSO skillInfo { get; private set; }
+        private EquippableItemSO weaponInfo;
 
-        [HideInInspector] public int skillIndex;        // 스킬 인덱스 (무기에서 자동 설정)
+        [HideInInspector] public int skillIndex;
 
-        public virtual void Skill_Initialize(SkillSO info)
+        public virtual void Skill_Initialize(SkillSO info, EquippableItemSO weapon)
         {
-            if (info == null)
+            if (info == null || weapon == null)
             {
-                Debug.LogError($"[BaseSkill] SkillInfo is null on {name}");
+                Debug.LogError($"[BaseSkill] SkillInfo or WeaponInfo is null on {name}");
                 return;
             }
-            this.skillInfo = info; // 스킬 정보 주입
+            this.skillInfo = info;
+            this.weaponInfo = weapon;
         }
         public virtual void ActivateSkill(int index = -1)
         {
@@ -81,18 +84,16 @@ namespace ProjectT.Gameplay.Skills
             // 각 스킬 타입별로 오버라이드에서 구현
         }
 
-        // 무기 기본 공격력 가져오기
         public float GetWeaponDamage()
         {
-            // ActiveWeapon에서 현재 무기의 WeaponInfo 접근
-            // weaponDamage 반환
-            float weaponDamage = 0f;
-            weaponDamage = ActiveWeapon.Instance.currentWeapon.GetWeaponInfo().weaponDamage;
-
-            return weaponDamage;
+            if (weaponInfo == null)
+            {
+                Debug.LogWarning($"[BaseSkill] WeaponInfo is null on {name}");
+                return 0f;
+            }
+            return weaponInfo.weaponDamage;
         }
 
-        // 스킬 데미지 계산 (무기 공격력 × 스킬 계수)
         public float GetSkillDamage()
         {
             float weaponDamage = GetWeaponDamage();

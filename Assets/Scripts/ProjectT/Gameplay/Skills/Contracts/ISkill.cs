@@ -1,10 +1,11 @@
+using ProjectT.Data.ScriptableObjects.Items;
 using ProjectT.Data.ScriptableObjects.Skills;
 
 namespace ProjectT.Gameplay.Skills.Contracts
 {
     public interface ISkill
     {
-        public void Skill_Initialize(SkillSO skillInfo);   // 스킬 초기화 매서드
+        public void Skill_Initialize(SkillSO skillInfo, EquippableItemSO weaponInfo);
         public void ActivateSkill(int index = -1);          // 스킬 활성화 매서드
         public void SubscribeSkillEvents();                 // 스킬 이벤트 구독
         public void UnsubscribeSkillEvents();               // 스킬 이벤트 구독 해제

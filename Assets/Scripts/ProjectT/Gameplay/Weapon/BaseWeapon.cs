@@ -94,7 +94,7 @@ namespace ProjectT.Gameplay.Weapon
                     continue;
                 }
                 
-                skillComponent.Skill_Initialize(skillSO);
+                skillComponent.Skill_Initialize(skillSO, info);
                 
                 skillsBySlot[slot] = skillComponent;
                 
