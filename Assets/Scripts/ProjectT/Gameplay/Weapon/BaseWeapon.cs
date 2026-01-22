@@ -8,6 +8,7 @@ using ProjectT.Data.ScriptableObjects.Items;
 using ProjectT.Gameplay.Skills.Contracts;
 using ProjectT.Gameplay.Combat.Damage;
 using ProjectT.Gameplay.Skills;
+using ProjectT.Data.ScriptableObjects.Skills;
 
 namespace ProjectT.Gameplay.Weapon
 {
@@ -16,16 +17,14 @@ namespace ProjectT.Gameplay.Weapon
         // SSOT: "공격 중" 여부는 FSM 상태(CombatState == Attack)로 판단
         // isAttacking 플래그 제거됨
         
-        public EquippableItemSO weaponInfo { get; private set; }    // 무기 정보
+        public EquippableItemSO weaponInfo { get; private set; }
 
-        private Coroutine CooldownCoroutine;                    //무기 공격 쿨다운 코루틴
-        protected ISkill[] skills;                              // 무기에 적용된 스킬들
+        private Coroutine CooldownCoroutine;
+        private ISkill[] skillsBySlot;
 
-        // SO 에서 주입받는 무기 값 목록
-        private float weaponCooldown;                           // SO에서 주입받는 쿨다운 시간
-        private bool isCooldown = false;                        //무기 쿨타임 검사 (공격 속도)
-        private float[] skillCastingTime;                       // 스킬 시전 시간
-        private DamageSource ds;                                // 데미지 소스 컴포넌트
+        private float weaponCooldown;
+        private bool isCooldown = false;
+        private DamageSource ds;
 
         /// <summary>
         /// 초기화 진입점 매서드 (weaponSO & skillSO 주입)
@@ -61,30 +60,53 @@ namespace ProjectT.Gameplay.Weapon
             }
             isCooldown = false;
         }
-        // 스킬 초기화 매서드
         private void SkillInitialization(EquippableItemSO info)
         {
-            // 1) 스킬 배열 초기화
-            skills = GetComponents<ISkill>();               // ISkill 인터페이스를 구현한 모든 컴포넌트 가져오기
-            skillCastingTime = new float[skills.Length];    // 스킬 시전 시간 배열 초기화
-            // 스킬 개수 검증
-            if (skills.Length != info.skillInfos.Length)
-                Debug.LogWarning($"[BaseWeapon] SkillInfo length ({info.skillInfos.Length}) != ISkill components ({skills.Length}) on {name}");
-
-            // 2) 각 스킬에 정보 주입 및 시전 시간 저장
-            for (int i = 0; i < skills.Length; i++)
-            {
-                skills[i].Skill_Initialize(info.skillInfos[i]);             // 스킬 초기화
-                skillCastingTime[i] = info.skillInfos[i].chargingTime;      // 캐스팅 시간 설정
-
-                // 스킬 인덱스 자동 설정
-                if (skills[i] is BaseSkill baseSkill)
-                {
-                    baseSkill.skillIndex = i;
+            skillsBySlot = new ISkill[2];
+            
+            ISkill[] skillComponents = GetComponents<ISkill>();
+            
+            if (skillComponents.Length < 2) {
+                Debug.LogError($"[BaseWeapon] Weapon initialization FAILED. Expected 2 skill components, found {skillComponents.Length} on {name}");
+                System.Array.Fill(skillsBySlot, null);
+                return;
+            }
+            
+            if (info.skillInfos.Length < 2) {
+                Debug.LogError($"[BaseWeapon] Weapon initialization FAILED. Expected 2 skillInfos in SO, found {info.skillInfos.Length} on {name}");
+                System.Array.Fill(skillsBySlot, null);
+                return;
+            }
+            
+            for (int slot = 0; slot < 2; slot++) {
+                ISkill skillComponent = skillComponents[slot];
+                SkillSO skillSO = info.skillInfos[slot];
+                
+                if (skillComponent == null) {
+                    Debug.LogError($"[BaseWeapon] Skill component at slot {slot} is null on {name}");
+                    skillsBySlot[slot] = null;
+                    continue;
+                }
+                
+                if (skillSO == null) {
+                    Debug.LogWarning($"[BaseWeapon] SkillSO at slot {slot} is null on {name}. Slot will be inactive.");
+                    skillsBySlot[slot] = null;
+                    continue;
+                }
+                
+                skillComponent.Skill_Initialize(skillSO);
+                
+                skillsBySlot[slot] = skillComponent;
+                
+                if (skillComponent is BaseSkill baseSkill) {
+                    baseSkill.skillIndex = slot;
                 }
             }
-            // 3) UI 매니저에 스킬 정보 전달
-            //SkillUIManager.Instance.Initialized(info.Skills);
+            
+            if (skillComponents.Length > 2) {
+                Debug.LogWarning($"[BaseWeapon] Found {skillComponents.Length} skill components on {name}. " +
+                    $"Using first 2. Check if extra components are attached unintentionally.");
+            }
         }
 
         // 공격 진입점 매서드
@@ -134,21 +156,23 @@ namespace ProjectT.Gameplay.Weapon
             if (CooldownCoroutine != null)
                 StopCoroutine(CooldownCoroutine);
         }
-        // 스킬 진입점 매서드
         public void Skill(int skillIndex)
         {
-            // 1) 유효한 스킬 인덱스 검사
-            if (skillIndex < 0 || skillIndex >= skills.Length)
-            {
-                Debug.LogError($"[BaseWeapon] Invalid skill index {skillIndex} on {name}");
+            if (skillIndex < 0 || skillIndex >= 2) {
+                Debug.LogError($"[BaseWeapon] Invalid skill slot {skillIndex}, must be 0 or 1 on {name}");
                 return;
             }
-            // 2) 스킬 시전 매서드 호출
-            skills[skillIndex].ActivateSkill();
+            
+            ISkill skill = skillsBySlot[skillIndex];
+            if (skill == null) {
+                Debug.LogWarning($"[BaseWeapon] Skill slot {skillIndex} is empty on {name}");
+                return;
+            }
+            
+            skill.ActivateSkill();
         }
-        // 무기의 스킬 정보 반환 매서드
-        public ISkill[] GetSkills() => skills;
-        public EquippableItemSO GetWeaponInfo() => weaponInfo;    // 무기 정보 반환 메서드
+        public ISkill[] GetSkills() => skillsBySlot;
+        public EquippableItemSO GetWeaponInfo() => weaponInfo;
 
         // 추상 매서드
         // 파생 무기 클래스에서 구현할 공격 매서드
