@@ -1,10 +1,11 @@
 using System;
+using UnityEngine;
 using ProjectT.Data.ScriptableObjects.Inventory.Rune;
 using ProjectT.Gameplay.Items.Inventory;
 using ProjectT.Gameplay.Items.Inventory.Rune;
 using ProjectT.Gameplay.Items.Inventory.UI;
 using ProjectT.Systems.UI;
-using UnityEngine;
+
 
 namespace ProjectT.Gameplay.Items.Execution
 {
@@ -18,7 +19,6 @@ namespace ProjectT.Gameplay.Items.Execution
         [SerializeField] private RuneInventoryItem[] slots = new RuneInventoryItem[3];
         [SerializeField] private InventoryDescription runeDescriptionView;
         [SerializeField] private TooltipUI tooltipUI;
-        [SerializeField] private RuneInventoryController runeInventoryController;
 
         public event Action<int> OnSlotClicked;
         public event Action<int, Vector2> OnSlotHoverEnter;
