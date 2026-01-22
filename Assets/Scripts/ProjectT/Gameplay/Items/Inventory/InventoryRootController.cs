@@ -199,6 +199,9 @@ namespace ProjectT.Gameplay.Items.Inventory.UI
             if (defaultInventoryManager != null)
                 defaultInventoryManager.ResetSelection();
 
+            if (runeInventoryManager != null)
+                runeInventoryManager.ResetSelection();
+
             SetViewActive(defaultInventoryPanel, false);
             SetViewActive(newInventoryPanel, false);
 

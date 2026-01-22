@@ -3,8 +3,10 @@ using System.Linq;
 using ProjectT.Core;
 using ProjectT.Data.ScriptableObjects.Items.Runes;
 using ProjectT.Gameplay.Items.Inventory.UI;
+using ProjectT.Gameplay.Items.Inventory;
 using ProjectT.Data.ScriptableObjects.Inventory.Rune;
 using ProjectT.Gameplay.Items.Execution;
+using ProjectT.Systems.UI;
 using System.Collections.Generic;
 
 namespace ProjectT.Gameplay.Items.Inventory.Rune
@@ -18,21 +20,13 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
     /// </summary>
     public sealed class RuneInventoryController : Singleton<RuneInventoryController>
     {
-        [Header("Data")]
-        [SerializeField] private RuneInventorySO runeInventory;
-
-        [Header("UI")]
         [SerializeField] private RuneInventoryManager ui;
-        [SerializeField] private InventoryRootController root; // 현재 Root와 통합되어 있으면 연결
-
-        [Header("Rune Pool")]
+        [SerializeField] private InventoryRootController root;
+        [SerializeField] private RuneInventorySO runeInventory;
         [SerializeField] private List<RuneSO> allRunes; // 전체 룬 풀 (에디터에서 할당)
-
-        [Header("UI - Selection")]
         [SerializeField] private RuneSelectionPanel runeSelectionPanel;
 
         private Dictionary<int, int> recentAppearCount = new();
-
         private bool _isVisible = false;
 
         protected override void Awake()
@@ -162,6 +156,9 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
             else
             {
                 _isVisible = false;
+                // 탭 전환 시 툴팁 숨김
+                if (ui != null)
+                    ui.HideTooltip();
             }
         }
 
@@ -169,6 +166,10 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         {
             _isVisible = isOpen;
             // UI 갱신은 HandleTabChanged에서만 수행 (중복 방지)
+
+            // 인벤토리가 닫힐 때 툴팁 숨김
+            if (!isOpen && ui != null)
+                ui.HideTooltip();
         }
 
         private void HandleEquippedChanged()
@@ -179,16 +180,61 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         private void HandleSlotClicked(int slotIndex)
         {
             if (ui != null) ui.SelectSlot(slotIndex);
-        }
 
-        private void HandleSlotHoverEnter(int slotIndex)
+            // 선택된 룬 정보 표시
+            var rune = runeInventory.GetRuneAt(slotIndex);
+
+            if (rune == null)
+            {
+                if (ui != null)
+                    ui.ResetRuneDescription();
+            }
+            else
+            {
+                if (ui != null)
+                {
+                    // RuneTooltipBuilder 공용 메서드 사용 (전체 Modifier 표시)
+                    string effectsText = RuneTooltipBuilder.FormatModifiers(rune);
+                    ui.SetRuneDescription(rune.Icon, rune.RuneName, rune.Description, effectsText);
+                }
+            }
+        }
+        /// <summary>
+        /// Rune 슬롯에 Hover Enter 시 호출된다.
+        /// </summary>
+        /// <param name="slotIndex">Hover된 슬롯 인덱스</param>
+        /// <param name="screenPos">
+        /// 포인터의 스크린 좌표.
+        /// TooltipUI 위치 계산에 사용되며,
+        /// View 계층에서 전달된 실행 데이터이다.
+        /// </param>
+        private void HandleSlotHoverEnter(int slotIndex, Vector2 screenPos)
         {
-            // TODO: 툴팁 연결 시 여기서 rune 정보 표시
+            // SSOT 접근: 현재 슬롯의 룬 확인
+            var rune = runeInventory.GetRuneAt(slotIndex);
+
+            if (rune == null)
+            {
+                // 빈 슬롯 → 툴팁 숨김
+                if (ui != null)
+                    ui.HideTooltip();
+            }
+            else
+            {
+                // Decision: RuneSO → TooltipData 변환
+                var tooltipData = RuneTooltipBuilder.Build(rune);
+
+                // Execution: Manager가 UI 표시
+                if (ui != null)
+                    ui.ShowTooltip(tooltipData, screenPos);
+            }
         }
 
         private void HandleSlotHoverExit(int slotIndex)
         {
-            // TODO: 툴팁 숨김
+            // 슬롯을 떠나면 툴팁 숨김
+            if (ui != null)
+                ui.HideTooltip();
         }
         #endregion
 
@@ -318,6 +364,12 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
             }
 
             runeSelectionPanel.Open(choices);
+        }
+
+        public void ResetRuneDescription()
+        {
+            if (ui != null)
+                ui.ResetRuneDescription();
         }
         #endregion
 

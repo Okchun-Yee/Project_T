@@ -1,7 +1,11 @@
 using System;
-using ProjectT.Data.ScriptableObjects.Inventory.Rune;
-using ProjectT.Gameplay.Items.Inventory.Rune;
 using UnityEngine;
+using ProjectT.Data.ScriptableObjects.Inventory.Rune;
+using ProjectT.Gameplay.Items.Inventory;
+using ProjectT.Gameplay.Items.Inventory.Rune;
+using ProjectT.Gameplay.Items.Inventory.UI;
+using ProjectT.Systems.UI;
+
 
 namespace ProjectT.Gameplay.Items.Execution
 {
@@ -10,12 +14,14 @@ namespace ProjectT.Gameplay.Items.Execution
     /// - 슬롯 배열을 가지고 SetSlot / ClearSlot 제공
     /// - 슬롯 클릭/호버 이벤트를 외부로 전달
     /// </summary>
-    public sealed class RuneInventoryManager : MonoBehaviour
+    public sealed class RuneInventoryManager : MonoBehaviour 
     {
         [SerializeField] private RuneInventoryItem[] slots = new RuneInventoryItem[3];
+        [SerializeField] private InventoryDescription runeDescriptionView;
+        [SerializeField] private TooltipUI tooltipUI;
 
         public event Action<int> OnSlotClicked;
-        public event Action<int> OnSlotHoverEnter;
+        public event Action<int, Vector2> OnSlotHoverEnter;
         public event Action<int> OnSlotHoverExit;
 
         private void Awake()
@@ -37,7 +43,11 @@ namespace ProjectT.Gameplay.Items.Execution
                 if (slots[index] == null) continue;
 
                 slots[index].OnItemClicked += _ => OnSlotClicked?.Invoke(index);
-                slots[index].OnItemPointerEnter += _ => OnSlotHoverEnter?.Invoke(index);
+                slots[index].OnItemPointerEnter += item => 
+                {
+                    // screenPos는 마우스 위치 (Input.mousePosition 사용)
+                    OnSlotHoverEnter?.Invoke(index, Input.mousePosition);
+                };
                 slots[index].OnItemPointerExit += _ => OnSlotHoverExit?.Invoke(index);
             }
         }
@@ -68,6 +78,25 @@ namespace ProjectT.Gameplay.Items.Execution
         public void ResetSelection()
         {
             DeselectAllSlots();
+
+            // Default InventoryUI 패턴과 동일: ResetSelection에서 description도 초기화
+            if (runeDescriptionView != null)
+                runeDescriptionView.ResetDescription();
+            
+            // 선택 초기화 시 툴팁도 숨김 (UI 상태 묶음)
+            HideTooltip();
+        }
+
+        public void SetRuneDescription(Sprite icon, string runeName, string description, string effectsText = null)
+        {
+            if (runeDescriptionView != null)
+                runeDescriptionView.SetDescription(icon, runeName, description, effectsText);
+        }
+
+        public void ResetRuneDescription()
+        {
+            if (runeDescriptionView != null)
+                runeDescriptionView.ResetDescription();
         }
 
         private void DeselectAllSlots()
@@ -103,5 +132,23 @@ namespace ProjectT.Gameplay.Items.Execution
 
         private bool IsValid(int index)
             => index >= 0 && index < slots.Length && slots[index] != null;
+
+        /// <summary>
+        /// 툴팁 표시 (Tooltip UI Manager가 아닌 여기서 관리)
+        /// </summary>
+        public void ShowTooltip(TooltipData data, Vector2 screenPos)
+        {
+            if (tooltipUI != null)
+                tooltipUI.Show(data, screenPos);
+        }
+
+        /// <summary>
+        /// 툴팁 숨김
+        /// </summary>
+        public void HideTooltip()
+        {
+            if (tooltipUI != null)
+                tooltipUI.Hide();
+        }
     }
 }
