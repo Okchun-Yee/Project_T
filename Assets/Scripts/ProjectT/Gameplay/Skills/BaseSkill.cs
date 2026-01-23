@@ -14,7 +14,7 @@ namespace ProjectT.Gameplay.Skills
     {
         private bool isOnCooldown = false;
         public SkillSO skillInfo { get; private set; }
-        private EquippableItemSO weaponInfo;
+        private EquippableItemSO weaponData;
 
         [HideInInspector] public int skillIndex;
 
@@ -26,7 +26,7 @@ namespace ProjectT.Gameplay.Skills
                 return;
             }
             this.skillInfo = info;
-            this.weaponInfo = weapon;
+            this.weaponData = weapon;
         }
         public virtual void ActivateSkill(int index = -1)
         {
@@ -86,12 +86,12 @@ namespace ProjectT.Gameplay.Skills
 
         public float GetWeaponDamage()
         {
-            if (weaponInfo == null)
+            if (weaponData == null)
             {
                 Debug.LogWarning($"[BaseSkill] WeaponInfo is null on {name}");
                 return 0f;
             }
-            return weaponInfo.weaponDamage;
+            return weaponData.weaponDamage;
         }
 
         public float GetSkillDamage()
