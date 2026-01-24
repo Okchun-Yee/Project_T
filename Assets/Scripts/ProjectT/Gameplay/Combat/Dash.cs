@@ -4,7 +4,7 @@ using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 namespace ProjectT.Gameplay.Combat
 {
-    public class Dash : MonoBehaviour
+    public class DashMove : MonoBehaviour
     {
         private Rigidbody2D rb;
         private bool isDashing = false; // 대시 상태 추가
@@ -14,7 +14,7 @@ namespace ProjectT.Gameplay.Combat
         {
             rb = GetComponent<Rigidbody2D>();
         }
-        public void Dash_(Vector2 direction, float force, float duration)
+        public void DashMove_(Vector2 direction, float force, float duration)
         {
             if (isDashing) return; // 중복 대시 방지
             StartCoroutine(DashRoutine(direction, force, duration));

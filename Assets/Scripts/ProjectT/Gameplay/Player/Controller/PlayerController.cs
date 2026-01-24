@@ -214,8 +214,8 @@ namespace ProjectT.Gameplay.Player
             
             RequestDash(Controller.DashContext.CreateForDodge(
                 direction: execution.GetDirection(),
-                force: execution.DefaultDashForce,
-                duration: execution.DefaultDashDuration
+                force: execution.DodgeForce,
+                duration: execution.DodgeDuration
             ));
         }
         #endregion

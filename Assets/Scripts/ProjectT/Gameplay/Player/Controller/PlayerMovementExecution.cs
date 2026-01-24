@@ -16,7 +16,8 @@ namespace ProjectT.Gameplay.Player.Controller
         public Vector2 direction;
         public float force;
         public float duration;
-        public bool useGhostEffect;
+        public bool useGhostEffect; // Ghost 효과 사용 여부
+        public bool useDashTrail;  // Trail 효과 사용 여부
         public int requestedFrame;  // Time.frameCount (오발동 방지용)
         public bool lockMovementDuringDash;  // 대시 지속시간 동안 입력 잠금 여부
 
@@ -31,6 +32,7 @@ namespace ProjectT.Gameplay.Player.Controller
                 force = force,
                 duration = duration,
                 useGhostEffect = true,
+                useDashTrail = false,
                 requestedFrame = Time.frameCount,
                 lockMovementDuringDash = false  // Dodge는 입력 잠금 없음
             };
@@ -47,6 +49,7 @@ namespace ProjectT.Gameplay.Player.Controller
                 force = force,
                 duration = duration,
                 useGhostEffect = false,
+                useDashTrail = true,
                 requestedFrame = Time.frameCount,
                 lockMovementDuringDash = true  // 스킬은 duration 동안 입력 잠금
             };
@@ -64,13 +67,14 @@ namespace ProjectT.Gameplay.Player.Controller
         [SerializeField] private SpriteRenderer _sprite;
 
         [Header("Executors")]
-        [SerializeField] private Dash _dash;  // Dash 컴포넌트 참조 추가
-        [SerializeField] private Ghost _ghostEffect; // Ghost 컴포넌트 참조 추가
-        [SerializeField] private Knockback _knockback; // Knockback 컴포넌트 참조 추가
-
-        [Header("Dash Settings")]
-        [SerializeField] private float dashForce = 15f;    // 대시 힘
-        [SerializeField] private float dashDuration = 0.2f; // 대시 지속시간
+        [SerializeField] private DashMove _dash;            // Dash 컴포넌트 참조 추가
+        [SerializeField] private Ghost _ghostEffect;    // Ghost 컴포넌트 참조 추가
+        [SerializeField] private Knockback _knockback;  // Knockback 컴포넌트 참조 추가
+        [SerializeField] private DashTrail _dashTrail;  // DashTrail 컴포넌트 참조 추가
+        
+        [Header("Dodge Settings")]
+        [SerializeField] private float dodgeForce = 15f;    // 대시 힘
+        [SerializeField] private float dodgeDuration = 0.2f; // 대시 지속시간
 
         [Header("Movement")]
         [SerializeField] private float moveSpeed = 4f;  // 플레이어 이동 속도
@@ -92,8 +96,8 @@ namespace ProjectT.Gameplay.Player.Controller
         public Vector2 LastMovement => lastMovement;    // 마지막 이동 방향 벡터
 
         // 외부에서 접근 가능한 설정값
-        public float DefaultDashForce => dashForce;
-        public float DefaultDashDuration => dashDuration;
+        public float DodgeForce => dodgeForce;
+        public float DodgeDuration => dodgeDuration;
         protected override void Awake()
         {
             base.Awake();
@@ -101,7 +105,7 @@ namespace ProjectT.Gameplay.Player.Controller
             _rb = GetComponent<Rigidbody2D>();
             _anim = GetComponent<Animator>();
             _sprite = GetComponent<SpriteRenderer>();
-            _dash = GetComponent<Dash>();                            // Dash 컴포넌트 참조
+            _dash = GetComponent<DashMove>();                            // Dash 컴포넌트 참조
             _ghostEffect = GetComponent<Ghost>();                    // Ghost 컴포넌트 참조
             _knockback = GetComponent<Knockback>();                  // Knockback 컴포넌트 참조
         }
@@ -258,8 +262,14 @@ namespace ProjectT.Gameplay.Player.Controller
                 _ghostEffect.StartGhostEffect(ctx.duration);
             }
             
+            // 6-1. Trail 효과 (조건부)
+            if (ctx.useDashTrail && _dashTrail != null)
+            {
+                _dashTrail.StartTrailEffect(ctx.duration);
+            }
+            
             // 7. 실제 대시 실행
-            _dash.Dash_(ctx.direction, ctx.force, ctx.duration);
+            _dash.DashMove_(ctx.direction, ctx.force, ctx.duration);
             
             // 8. Context 소비
             _pendingDashContext = null;

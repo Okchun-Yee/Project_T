@@ -180,7 +180,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skillIndex: 0
-  dashForce: 10
+  dashForce: 22
+  dashDuration: 0.2
 --- !u!114 &667304997567885545
 MonoBehaviour:
   m_ObjectHideFlags: 0
