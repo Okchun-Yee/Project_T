@@ -18,6 +18,7 @@ namespace ProjectT.Gameplay.Player.Controller
         public float duration;
         public bool useGhostEffect;
         public int requestedFrame;  // Time.frameCount (오발동 방지용)
+        public int lockMovementFrames;  // 대시 후 입력 잠금 프레임 수
 
         /// <summary>
         /// Dodge용 DashContext 생성 (Ghost 효과 포함)
@@ -30,14 +31,15 @@ namespace ProjectT.Gameplay.Player.Controller
                 force = force,
                 duration = duration,
                 useGhostEffect = true,
-                requestedFrame = Time.frameCount
+                requestedFrame = Time.frameCount,
+                lockMovementFrames = 0  // Dodge는 잠금 없음
             };
         }
 
         /// <summary>
         /// 스킬용 DashContext 생성 (Ghost 효과 없음)
         /// </summary>
-        public static DashContext CreateForSkill(Vector2 direction, float force, float duration)
+        public static DashContext CreateForSkill(Vector2 direction, float force, float duration, int lockFrames = 3)
         {
             return new DashContext
             {
@@ -45,7 +47,8 @@ namespace ProjectT.Gameplay.Player.Controller
                 force = force,
                 duration = duration,
                 useGhostEffect = false,
-                requestedFrame = Time.frameCount
+                requestedFrame = Time.frameCount,
+                lockMovementFrames = lockFrames  // 스킬은 기본 3프레임 잠금
             };
         }
     }
@@ -82,6 +85,7 @@ namespace ProjectT.Gameplay.Player.Controller
         [SerializeField] private bool _isDead;     // 사망 상태 프로퍼티 (상태 방어막)
 
         private DashContext? _pendingDashContext = null;
+        private int _movementLockFrames = 0;  // 이동 입력 잠금 남은 프레임
 
         // 무기 애니메이션 방향 결정 프로터피
         public Vector2 CurrentMovement => movement;     // 현재 이동 방향 벡터
@@ -108,7 +112,17 @@ namespace ProjectT.Gameplay.Player.Controller
         }
 
         public void SetMoveInput(Vector2 moveInput) // Input Manager 키보드 이벤트 구독용 메서드
-        {
+        {// 이동 입력 잠금 체크
+            if (_movementLockFrames > 0)
+            {
+                _movementLockFrames--;
+                movement = Vector2.zero;
+                _anim.SetFloat("moveX", 0f);
+                _anim.SetFloat("moveY", 0f);
+                return;
+            }
+            
+            
             movement = moveInput.normalized; // 정규화하여 저장
             // 플레이어 이동 애니메이션 및 방향 설정
             if (movement.magnitude > 0.1f)
@@ -232,6 +246,11 @@ namespace ProjectT.Gameplay.Player.Controller
                 Debug.LogWarning("[PlayerMovementExecution] Dash direction is zero, using fallback");
                 ctx.direction = _facingLeft ? Vector2.left : Vector2.right;
             }
+            // 이동 입력 잠금 설정
+            if (ctx.lockMovementFrames > 0)
+            {
+                _movementLockFrames = ctx.lockMovementFrames;
+            }
             
             // 6. Ghost 효과 (조건부)
             if (ctx.useGhostEffect && _ghostEffect != null)
@@ -245,7 +264,5 @@ namespace ProjectT.Gameplay.Player.Controller
             // 8. Context 소비
             _pendingDashContext = null;
         }
-        
-        
     }
 }
