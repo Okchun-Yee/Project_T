@@ -116,7 +116,8 @@ namespace ProjectT.Gameplay.Player.Controller
         }
 
         public void SetMoveInput(Vector2 moveInput) // Input Manager 키보드 이벤트 구독용 메서드
-        {// 이동 입력 잠금 체크
+        {
+            // 이동 입력 잠금 체크
             if (_movementLockTime > 0f)
             {
                 _movementLockTime -= Time.deltaTime;
