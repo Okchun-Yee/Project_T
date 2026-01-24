@@ -140,6 +140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee48816112ecd59448103aebac367003, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
 --- !u!114 &7175670619446454581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,4 +196,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   comboLength: 2
-  comboDelay: 1.2
+  comboDelay: 0.8
