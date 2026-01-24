@@ -107,9 +107,9 @@ namespace ProjectT.Gameplay.Enemies
             currentMoveTarget = roamPosition;
 
             // 플레이어 존재 확인
-            if (PlayerLegacyController.Instance != null)
+            if (PlayerMovementExecution.Instance != null)
             {
-                float dist = Vector2.Distance(transform.position, PlayerLegacyController.Instance.transform.position);
+                float dist = Vector2.Distance(transform.position, PlayerMovementExecution.Instance.transform.position);
                 if (dist < trackingRange) SetState(State.Tracking);
             }
 
@@ -124,13 +124,13 @@ namespace ProjectT.Gameplay.Enemies
         private void Attacking()
         {
             // 플레이어 존재 확인
-            if (PlayerLegacyController.Instance == null)
+            if (PlayerMovementExecution.Instance == null)
             {
                 SetState(State.Roaming);
                 return;
             }
 
-            float dist = Vector2.Distance(transform.position, PlayerLegacyController.Instance.transform.position);
+            float dist = Vector2.Distance(transform.position, PlayerMovementExecution.Instance.transform.position);
             // 공격에서 이탈 기준에 히스테리시스 적용
             float attackExit = attackRange + trackingHysteresis;
             if (attackRange > 0f && dist > attackExit)
@@ -154,13 +154,13 @@ namespace ProjectT.Gameplay.Enemies
         private void Tracking()
         {
             // 플레이어 존재 확인
-            if (PlayerLegacyController.Instance == null)
+            if (PlayerMovementExecution.Instance == null)
             {
                 SetState(State.Roaming);
                 return;
             }
 
-            float dist = Vector2.Distance(transform.position, PlayerLegacyController.Instance.transform.position);
+            float dist = Vector2.Distance(transform.position, PlayerMovementExecution.Instance.transform.position);
 
             // 추적 탈출(히스테리시스 적용)
             float trackingExit = trackingRange + trackingHysteresis;
@@ -178,7 +178,7 @@ namespace ProjectT.Gameplay.Enemies
             }
 
             // 플레이어를 따라 이동
-            currentMoveTarget = PlayerLegacyController.Instance.transform.position;
+            currentMoveTarget = PlayerMovementExecution.Instance.transform.position;
             shouldStopMoving = false;
         }
 

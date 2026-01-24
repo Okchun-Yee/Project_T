@@ -6,6 +6,8 @@ using ProjectT.Gameplay.Player.FSM.Locomotion;
 using ProjectT.Gameplay.Player.FSM.Combat;
 using ProjectT.Gameplay.Player.Input;
 using ProjectT.Gameplay.Weapon;
+using ProjectT.Gameplay.Player.Controller;
+using ProjectT.Core;
 
 namespace ProjectT.Gameplay.Player
 {
@@ -34,18 +36,17 @@ namespace ProjectT.Gameplay.Player
     /// 
     /// 강제 상태 우선순위: Dead > Pause > Hit > Dodge
     /// </summary>
-    public sealed class PlayerController : MonoBehaviour
+    public sealed class PlayerController : Singleton<PlayerController>
     {
         // Fired when FSMs have been built and initialized (CombatFsm/LocomotionFsm ready)
         public event Action OnFsmBuilt;
 
-        #region PAUSE 상위 게이트
+        #region Gate
         [Header("Gate")]
         [SerializeField] private bool _isPaused;    // 일시정지 상태
         public bool IsPaused => _isPaused;          // 일시정지 상태 프로퍼티   
-        #endregion
-
         public bool IsDead { get; private set; }    // 사망 상태
+        #endregion
         // public bool IsHit { get; private set; }     // 피격 상태 (추후 사용 예정)
 
         [Header("Debug")]
@@ -86,11 +87,6 @@ namespace ProjectT.Gameplay.Player
         private PlayerCombatStateId _prevC;
 
         private bool _isBound = false;
-
-        private void Awake()
-        {
-            // BuildFsm moved to Start for safe DI initialization order
-        }
 
         private void Start()
         {
@@ -184,7 +180,42 @@ namespace ProjectT.Gameplay.Player
         public void ForceDead() => ApplyForceState(ForceStateType.Dead);
         #endregion
 
-        #region Force State (Step 7)
+        #region Dash Request
+        /// <summary>
+        /// 대시 요청 단일 진입점 (외부 스킬/시스템용)
+        /// Execution에 Context를 위임하고 FSM 전이 요청
+        /// </summary>
+        public void RequestDash(Controller.DashContext context)
+        {
+            // 1. Execution에 pending 설정
+            PlayerMovementExecution execution = GetComponent<PlayerMovementExecution>();
+            if (execution != null)
+            {
+                execution.SetPendingDash(context);
+            }
+            
+            // 2. FSM 전이 요청
+            SetLocomotion(PlayerLocomotionStateId.Dodge);
+        }
+
+        /// <summary>
+        /// 키보드 입력용 Dodge (내부 전용)
+        /// Binder에서 호출될 수 있도록 유지
+        /// </summary>
+        public void RequestKeyboardDodge()
+        {
+            PlayerMovementExecution execution = GetComponent<PlayerMovementExecution>();
+            if (execution == null) return;
+            
+            RequestDash(Controller.DashContext.CreateForDodge(
+                direction: execution.GetDirection(),
+                force: execution.DodgeForce,
+                duration: execution.DodgeDuration
+            ));
+        }
+        #endregion
+
+        #region Force State
         /// <summary>
         /// 강제 상태 전이 단일 진입점
         /// - 상태 기반 Gate 조건: Dead/Pause/Hit 상태에 따라 요청을 제한 (숫자 우선순위 비교 아님)
@@ -448,6 +479,7 @@ namespace ProjectT.Gameplay.Player
         private void OnDodgeInput()
         {
             DodgePressed = true;    // 1프레임 트리거
+            RequestKeyboardDodge(); // Context 설정
         }
         #endregion
     }

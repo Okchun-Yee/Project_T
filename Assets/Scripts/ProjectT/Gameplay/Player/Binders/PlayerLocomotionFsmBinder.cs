@@ -19,7 +19,7 @@ namespace ProjectT.Gameplay.Player
     {
         [Header("References")]
         [SerializeField] private PlayerController _decision;
-        [SerializeField] private PlayerLegacyController _execution;
+        [SerializeField] private PlayerMovementExecution _execution;
         [SerializeField] private Rigidbody2D _rb;
 
         [Header("Options")]
@@ -115,10 +115,10 @@ namespace ProjectT.Gameplay.Player
             var prev = args.PrevStateId;
             var next = args.NextStateId;
 
-            // Dodge 진입 시 TryDodge 실행
+            // Dodge 진입 시 대기 중인 Dash 실행
             if (next == PlayerLocomotionStateId.Dodge)
             {
-                _execution?.TryDodge();
+                _execution?.ExecutePendingDash();
             }
 
             // Stop 정책: 이동을 멈춰야 하는 상태로 전이 시 velocity=0
