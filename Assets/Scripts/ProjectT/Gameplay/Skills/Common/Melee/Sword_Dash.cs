@@ -11,29 +11,36 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
     public class Sword_Dash : BaseSkill
     {
         [SerializeField] private float dashForce = 10f;
+        [SerializeField] private float dashDuration = 0.2f;
 
-        private PlayerMovementExecution pc;
-        private Rigidbody2D rb;
-        private Dash dash;
+        private PlayerController _controller;
 
         private void Awake()
         {
-            pc = GetComponentInParent<PlayerMovementExecution>();
-
-            if(pc != null)
+            _controller = GetComponentInParent<PlayerController>();
+            
+            if (_controller == null)
             {
-                rb = pc.GetComponent<Rigidbody2D>();
-                dash = pc.GetComponent<Dash>();
+                Debug.LogError("[Sword_Dash] PlayerController not found in parent!");
             }
         }
 
         protected override void OnSkillActivated()
         {
-            if(pc == null) return;
-            pc._Dash(dashForce, 0.2f);
-
+            if (_controller == null) return;
+            
+            // 마우스 방향 계산 (Execution 헬퍼 사용)
+            Vector2 mouseDirection = PlayerMovementExecution.Instance.GetMouseDirection();
+            
+            // DashContext 생성 및 요청
+            _controller.RequestDash(DashContext.CreateForSkill(
+                direction: mouseDirection,
+                force: dashForce,
+                duration: dashDuration
+            ));
+            
             float damage = GetSkillDamage();
             Debug.Log($"[Sword_Dash]: Dash Skill Activated, Damage {damage}");
         }
     }
-} 
+}

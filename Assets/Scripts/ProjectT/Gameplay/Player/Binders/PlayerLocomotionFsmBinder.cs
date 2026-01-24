@@ -115,10 +115,10 @@ namespace ProjectT.Gameplay.Player
             var prev = args.PrevStateId;
             var next = args.NextStateId;
 
-            // Dodge 진입 시 TryDodge 실행
+            // Dodge 진입 시 대기 중인 Dash 실행
             if (next == PlayerLocomotionStateId.Dodge)
             {
-                _execution?._Dodge();
+                _execution?.ExecutePendingDash();
             }
 
             // Stop 정책: 이동을 멈춰야 하는 상태로 전이 시 velocity=0
