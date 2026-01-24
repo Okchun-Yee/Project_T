@@ -484,6 +484,7 @@ namespace ProjectT.Gameplay.Player
         private void OnDodgeInput()
         {
             DodgePressed = true;    // 1프레임 트리거
+            RequestKeyboardDodge(); // Context 설정
         }
         #endregion
     }
