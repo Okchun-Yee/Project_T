@@ -36,8 +36,7 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
             _controller.RequestDash(DashContext.CreateForSkill(
                 direction: mouseDirection,
                 force: dashForce,
-                duration: dashDuration,
-                lockFrames : 12
+                duration: dashDuration
             ));
             
             float damage = GetSkillDamage();
