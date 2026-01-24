@@ -91,7 +91,7 @@ namespace ProjectT.Gameplay.Player.Controller
         private DashContext? _pendingDashContext = null;
         private float _movementLockTime = 0f;  // 이동 입력 잠금 남은 시간(초)
 
-        // 무기 애니메이션 방향 결정 프로터피
+        // 무기 애니메이션 방향 결정 프로퍼티
         public Vector2 CurrentMovement => movement;     // 현재 이동 방향 벡터
         public Vector2 LastMovement => lastMovement;    // 마지막 이동 방향 벡터
 
