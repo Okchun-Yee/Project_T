@@ -7,6 +7,49 @@ using UnityEngine.InputSystem;
 
 namespace ProjectT.Gameplay.Player.Controller
 {
+    #region _Dash
+    /// <summary>
+    /// 대시 실행에 필요한 모든 파라미터를 담는 컨텍스트
+    /// </summary>
+    public struct DashContext
+    {
+        public Vector2 direction;
+        public float force;
+        public float duration;
+        public bool useGhostEffect;
+        public int requestedFrame;  // Time.frameCount (오발동 방지용)
+        
+        /// <summary>
+        /// Dodge용 DashContext 생성 (Ghost 효과 포함)
+        /// </summary>
+        public static DashContext CreateForDodge(Vector2 direction, float force, float duration)
+        {
+            return new DashContext
+            {
+                direction = direction,
+                force = force,
+                duration = duration,
+                useGhostEffect = true,
+                requestedFrame = Time.frameCount
+            };
+        }
+        
+        /// <summary>
+        /// 스킬용 DashContext 생성 (Ghost 효과 없음)
+        /// </summary>
+        public static DashContext CreateForSkill(Vector2 direction, float force, float duration)
+        {
+            return new DashContext
+            {
+                direction = direction,
+                force = force,
+                duration = duration,
+                useGhostEffect = false,
+                requestedFrame = Time.frameCount
+            };
+        }
+    }
+    # endregion
     public class PlayerMovementExecution : Singleton<PlayerMovementExecution>
     {
         public bool FacingLeft { get { return _facingLeft; } }
@@ -144,10 +187,17 @@ namespace ProjectT.Gameplay.Player.Controller
             {
                 Vector2 dashDirection = GetMouseDirection();
 
+                // Dodge 상태로 전이 (FSM 연동)
+                PlayerController pc = GetComponent<PlayerController>();
+                if (pc != null)
+                {
+                    pc.SetLocomotion(Player.FSM.Locomotion.PlayerLocomotionStateId.Dodge);
+                }
+
                 _dash.Dash_(dashDirection, force, duration);
             }
         }
-        # region Helpers    
+        #region Helpers    
         private Vector2 GetMouseDirection()
         {
             Vector3 mousePos = UnityEngine.Input.mousePosition;
