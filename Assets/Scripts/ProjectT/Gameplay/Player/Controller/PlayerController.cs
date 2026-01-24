@@ -6,6 +6,7 @@ using ProjectT.Gameplay.Player.FSM.Locomotion;
 using ProjectT.Gameplay.Player.FSM.Combat;
 using ProjectT.Gameplay.Player.Input;
 using ProjectT.Gameplay.Weapon;
+using ProjectT.Gameplay.Player.Controller;
 
 namespace ProjectT.Gameplay.Player
 {
@@ -182,6 +183,41 @@ namespace ProjectT.Gameplay.Player
         /// 강제 Dead 전이 (외부 API)
         /// </summary>
         public void ForceDead() => ApplyForceState(ForceStateType.Dead);
+        #endregion
+
+        #region Dash Request
+        /// <summary>
+        /// 대시 요청 단일 진입점 (외부 스킬/시스템용)
+        /// Execution에 Context를 위임하고 FSM 전이 요청
+        /// </summary>
+        public void RequestDash(Controller.DashContext context)
+        {
+            // 1. Execution에 pending 설정
+            PlayerMovementExecution execution = GetComponent<PlayerMovementExecution>();
+            if (execution != null)
+            {
+                execution.SetPendingDash(context);
+            }
+            
+            // 2. FSM 전이 요청
+            SetLocomotion(PlayerLocomotionStateId.Dodge);
+        }
+
+        /// <summary>
+        /// 키보드 입력용 Dodge (내부 전용)
+        /// Binder에서 호출될 수 있도록 유지
+        /// </summary>
+        public void RequestKeyboardDodge()
+        {
+            PlayerMovementExecution execution = GetComponent<PlayerMovementExecution>();
+            if (execution == null) return;
+            
+            RequestDash(Controller.DashContext.CreateForDodge(
+                direction: execution.GetDirection(),
+                force: execution.DefaultDashForce,
+                duration: execution.DefaultDashDuration
+            ));
+        }
         #endregion
 
         #region Force State
