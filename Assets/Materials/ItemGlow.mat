@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-4020831852041842333
+--- !u!114 &-634574670924508639
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TrailRenderer
+  m_Name: ItemGlow
   m_Shader: {fileID: -6465566751694194690, guid: bb173278142f9fa4e9fb623a98443b0c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -55,5 +55,5 @@ Material:
     m_Ints: []
     m_Floats: []
     m_Colors:
-    - _Color: {r: 0.08127581, g: 0.08127581, b: 0.08127581, a: 0}
+    - _Color: {r: 1.7207954, g: 1.7207954, b: 1.7207954, a: 0.49019608}
   m_BuildTextureStacks: []
