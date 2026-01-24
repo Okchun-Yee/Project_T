@@ -18,7 +18,7 @@ namespace ProjectT.Gameplay.Player.Controller
         public float duration;
         public bool useGhostEffect;
         public int requestedFrame;  // Time.frameCount (오발동 방지용)
-        
+
         /// <summary>
         /// Dodge용 DashContext 생성 (Ghost 효과 포함)
         /// </summary>
@@ -33,7 +33,7 @@ namespace ProjectT.Gameplay.Player.Controller
                 requestedFrame = Time.frameCount
             };
         }
-        
+
         /// <summary>
         /// 스킬용 DashContext 생성 (Ghost 효과 없음)
         /// </summary>
@@ -49,7 +49,7 @@ namespace ProjectT.Gameplay.Player.Controller
             };
         }
     }
-    # endregion
+    #endregion
     public class PlayerMovementExecution : Singleton<PlayerMovementExecution>
     {
         public bool FacingLeft { get { return _facingLeft; } }
@@ -81,9 +81,15 @@ namespace ProjectT.Gameplay.Player.Controller
         [Header("Runtime Guards")]
         [SerializeField] private bool _isDead;     // 사망 상태 프로퍼티 (상태 방어막)
 
+        private DashContext? _pendingDashContext = null;
+
         // 무기 애니메이션 방향 결정 프로터피
         public Vector2 CurrentMovement => movement;     // 현재 이동 방향 벡터
         public Vector2 LastMovement => lastMovement;    // 마지막 이동 방향 벡터
+
+        // 외부에서 접근 가능한 설정값
+        public float DefaultDashForce => dashForce;
+        public float DefaultDashDuration => dashDuration;
         protected override void Awake()
         {
             base.Awake();
@@ -150,65 +156,26 @@ namespace ProjectT.Gameplay.Player.Controller
             if (_isDead) return; // 또는 PlayerHealth.Instance.isDead
             _rb.MovePosition(_rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
         }
-        public void _Dodge() // Input Manager 키보드 이벤트 구독용 메서드
-        {
-            // (스킬 시전 중, 공격 중, 죽음 중) 대시 불가 상태 관리
-            if (_dash.IsDashing ||
-            _knockback.isKnockback ||
-            PlayerHealth.Instance.isDead)
-            {
-                return;
-            }
 
-            if (!_dash.IsDashing)  // Dash 컴포넌트의 대시 상태 확인
-            {
-                Vector2 dashDirection = GetDirection();
-
-                // 잔상 효과 시작 (대시 지속시간 동안)
-                if (_ghostEffect != null)
-                {
-                    _ghostEffect.StartGhostEffect(dashDuration);
-                }
-
-                _dash.Dash_(dashDirection, dashForce, dashDuration);
-            }
-        }
-        public void _Dash(float force, float duration)
-        {
-            // (스킬 시전 중, 공격 중, 죽음 중) 대시 불가 상태 관리
-            if (_dash.IsDashing ||
-            _knockback.isKnockback ||
-            PlayerHealth.Instance.isDead)
-            {
-                return;
-            }
-
-            if (!_dash.IsDashing)  // Dash 컴포넌트의 대시 상태 확인
-            {
-                Vector2 dashDirection = GetMouseDirection();
-
-                // Dodge 상태로 전이 (FSM 연동)
-                PlayerController pc = GetComponent<PlayerController>();
-                if (pc != null)
-                {
-                    pc.SetLocomotion(Player.FSM.Locomotion.PlayerLocomotionStateId.Dodge);
-                }
-
-                _dash.Dash_(dashDirection, force, duration);
-            }
-        }
-        #region Helpers    
-        private Vector2 GetMouseDirection()
+        #region Helpers
+        /// <summary>
+        /// 마우스 방향 계산 (스킬에서도 사용 가능하도록 public)
+        /// </summary>
+        public Vector2 GetMouseDirection()
         {
             Vector3 mousePos = UnityEngine.Input.mousePosition;
             Vector3 playerWorldPos = transform.position;
-            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane));
-            
+            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(
+                new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane));
+
             Vector2 direction = (mouseWorldPos - playerWorldPos).normalized;
             return direction;
         }
 
-        private Vector2 GetDirection()
+        /// <summary>
+        /// 이동 방향 계산 (키보드 입력 기반)
+        /// </summary>
+        public Vector2 GetDirection()
         {
             if (movement.magnitude > 0.1f)
                 return movement;
@@ -218,5 +185,67 @@ namespace ProjectT.Gameplay.Player.Controller
                 return _facingLeft ? Vector2.left : Vector2.right;
         }
         #endregion
+        
+        /// <summary>
+        /// PlayerController에서만 호출되는 내부 메서드
+        /// Pending 상태 설정
+        /// </summary>
+        public void SetPendingDash(DashContext context)
+        {
+            _pendingDashContext = context;
+        }
+        
+        /// <summary>
+        /// PlayerLocomotionFsmBinder에서만 호출되는 실제 대시 실행 메서드
+        /// Frame 검증으로 오발동 방지
+        /// </summary>
+        public void ExecutePendingDash()
+        {
+            // 1. Pending Context 없으면 조용히 리턴
+            if (!_pendingDashContext.HasValue)
+            {
+                return;
+            }
+            
+            // 2. Context 꺼내기
+            DashContext ctx = _pendingDashContext.Value;
+            
+            // 3. Frame 검증 (3프레임 이상 지났으면 폐기)
+            if (Time.frameCount - ctx.requestedFrame > 3)
+            {
+                Debug.LogWarning($"[PlayerMovementExecution] Stale dash context discarded " +
+                    $"(requested: {ctx.requestedFrame}, current: {Time.frameCount})");
+                _pendingDashContext = null;
+                return;
+            }
+            
+            // 4. 실행 불가 조건 체크
+            if (_dash.IsDashing || _knockback.isKnockback || PlayerHealth.Instance.isDead)
+            {
+                _pendingDashContext = null;
+                return;
+            }
+            
+            // 5. 방향 0벡터 방어
+            if (ctx.direction == Vector2.zero)
+            {
+                Debug.LogWarning("[PlayerMovementExecution] Dash direction is zero, using fallback");
+                ctx.direction = _facingLeft ? Vector2.left : Vector2.right;
+            }
+            
+            // 6. Ghost 효과 (조건부)
+            if (ctx.useGhostEffect && _ghostEffect != null)
+            {
+                _ghostEffect.StartGhostEffect(ctx.duration);
+            }
+            
+            // 7. 실제 대시 실행
+            _dash.Dash_(ctx.direction, ctx.force, ctx.duration);
+            
+            // 8. Context 소비
+            _pendingDashContext = null;
+        }
+        
+        
     }
 }
