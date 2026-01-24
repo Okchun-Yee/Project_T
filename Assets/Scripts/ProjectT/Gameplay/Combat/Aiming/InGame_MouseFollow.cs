@@ -17,6 +17,7 @@ namespace ProjectT.Gameplay.Combat.Aiming
 {
     public class InGame_MouseFollow : MonoBehaviour
     {
+        [Header("Target Object")]
         [SerializeField] private GameObject target;
         private void Update()
         {
@@ -43,7 +44,7 @@ namespace ProjectT.Gameplay.Combat.Aiming
         private void MouseFollow()
         {
             if(PlayerController.Instance.LocomotionState == PlayerLocomotionStateId.Dodge) return;
-            
+
             Vector3 mousePos = Input.mousePosition;
             Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(PlayerMovementExecution.Instance.transform.position);
             float angle = Mathf.Atan2(mousePos.y - playerScreenPoint.y, mousePos.x - playerScreenPoint.x) * Mathf.Rad2Deg;

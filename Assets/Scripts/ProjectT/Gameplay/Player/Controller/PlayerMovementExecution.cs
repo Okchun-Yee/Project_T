@@ -107,6 +107,15 @@ namespace ProjectT.Gameplay.Player.Controller
             _sprite = GetComponent<SpriteRenderer>();
             _dash = GetComponent<DashMove>();                        // Dash 컴포넌트 참조
         }
+        private void Update()
+        {
+            // 이동 잠금 타이머 감소 (입력 여부와 무관하게 매 프레임 실행)
+            if (_movementLockTime > 0f)
+            {
+                _movementLockTime -= Time.deltaTime;
+            }
+        }
+        
         private void FixedUpdate()
         {
             PlayerMovement();           // 물리 프레임 당 플레이어 이동 계산
@@ -115,10 +124,9 @@ namespace ProjectT.Gameplay.Player.Controller
 
         public void SetMoveInput(Vector2 moveInput) // Input Manager 키보드 이벤트 구독용 메서드
         {
-            // 이동 입력 잠금 체크
+            // 이동 입력 잠금 체크 (타이머는 Update에서 감소)
             if (_movementLockTime > 0f)
             {
-                _movementLockTime -= Time.deltaTime;
                 movement = Vector2.zero;
                 _anim.SetFloat("moveX", 0f);
                 _anim.SetFloat("moveY", 0f);
@@ -243,32 +251,34 @@ namespace ProjectT.Gameplay.Player.Controller
                 return;
             }
             
-            // 5. 방향 0벡터 방어
-            if (ctx.direction == Vector2.zero)
+            // 5. 방향 0벡터 방어 (fallback)
+            Vector2 dashDirection = ctx.direction;
+            if (dashDirection == Vector2.zero)
             {
                 Debug.LogWarning("[PlayerMovementExecution] Dash direction is zero, using fallback");
-                ctx.direction = _facingLeft ? Vector2.left : Vector2.right;
+                dashDirection = _facingLeft ? Vector2.left : Vector2.right;
             }
-            // 이동 입력 잠금 설정 (duration과 동기화)
+            
+            // 6. 이동 입력 잠금 설정 (duration과 동기화)
             if (ctx.lockMovementDuringDash)
             {
                 _movementLockTime = ctx.duration + 0.1f;
             }
             
-            // 6. Ghost 효과 (조건부)
+            // 7. Ghost 효과 (조건부)
             if (ctx.useGhostEffect && _ghostEffect != null)
             {
                 _ghostEffect.StartGhostEffect(ctx.duration);
             }
             
-            // 6-1. Trail 효과 (조건부)
+            // 8. Trail 효과 (조건부)
             if (ctx.useDashTrail && _dashTrail != null)
             {
                 _dashTrail.StartTrailEffect(ctx.duration);
             }
             
-            // 7. 실제 대시 실행
-            _dash.DashMove_(ctx.direction, ctx.force, ctx.duration);
+            // 9. 실제 대시 실행
+            _dash.DashMove_(dashDirection, ctx.force, ctx.duration);
             
             // 8. Context 소비
             _pendingDashContext = null;
