@@ -7,6 +7,7 @@ using ProjectT.Gameplay.Player.FSM.Combat;
 using ProjectT.Gameplay.Player.Input;
 using ProjectT.Gameplay.Weapon;
 using ProjectT.Gameplay.Player.Controller;
+using ProjectT.Core;
 
 namespace ProjectT.Gameplay.Player
 {
@@ -35,18 +36,17 @@ namespace ProjectT.Gameplay.Player
     /// 
     /// 강제 상태 우선순위: Dead > Pause > Hit > Dodge
     /// </summary>
-    public sealed class PlayerController : MonoBehaviour
+    public sealed class PlayerController : Singleton<PlayerController>
     {
         // Fired when FSMs have been built and initialized (CombatFsm/LocomotionFsm ready)
         public event Action OnFsmBuilt;
 
-        #region PAUSE 상위 게이트
+        #region Gate
         [Header("Gate")]
         [SerializeField] private bool _isPaused;    // 일시정지 상태
         public bool IsPaused => _isPaused;          // 일시정지 상태 프로퍼티   
-        #endregion
-
         public bool IsDead { get; private set; }    // 사망 상태
+        #endregion
         // public bool IsHit { get; private set; }     // 피격 상태 (추후 사용 예정)
 
         [Header("Debug")]
@@ -87,11 +87,6 @@ namespace ProjectT.Gameplay.Player
         private PlayerCombatStateId _prevC;
 
         private bool _isBound = false;
-
-        private void Awake()
-        {
-            // BuildFsm moved to Start for safe DI initialization order
-        }
 
         private void Start()
         {

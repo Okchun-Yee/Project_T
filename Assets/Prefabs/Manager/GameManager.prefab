@@ -1451,7 +1451,6 @@ MonoBehaviour:
   - {fileID: 9122197827033532758}
   runeDescriptionView: {fileID: 1944153467382448759}
   tooltipUI: {fileID: 6439476262198780313}
-  runeInventoryController: {fileID: 9041907372937360196}
 --- !u!114 &9041907372937360196
 MonoBehaviour:
   m_ObjectHideFlags: 0
