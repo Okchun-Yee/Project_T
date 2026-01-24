@@ -2,11 +2,12 @@ using UnityEngine;
 
 using ProjectT.Core;
 using ProjectT.Gameplay.Combat;
+using UnityEngine.InputSystem;
 
 
 namespace ProjectT.Gameplay.Player.Controller
 {
-    public class PlayerLegacyController : Singleton<PlayerLegacyController>
+    public class PlayerMovementExecution : Singleton<PlayerMovementExecution>
     {
         public bool FacingLeft { get { return _facingLeft; } }
         public bool FacingBack { get { return _facingBack; } }
@@ -50,14 +51,6 @@ namespace ProjectT.Gameplay.Player.Controller
             _dash = GetComponent<Dash>();                            // Dash 컴포넌트 참조
             _ghostEffect = GetComponent<Ghost>();                    // Ghost 컴포넌트 참조
             _knockback = GetComponent<Knockback>();                  // Knockback 컴포넌트 참조
-        }
-        private void Start()
-        {
-
-        }
-        private void Update()
-        {
-
         }
         private void FixedUpdate()
         {
@@ -106,7 +99,15 @@ namespace ProjectT.Gameplay.Player.Controller
             _facingBack = mousePos.y > playerScreenPoint.y;
             _anim?.SetBool("isBack", _facingBack);
         }
-        public void TryDodge() // Input Manager 키보드 이벤트 구독용 메서드
+        private void PlayerMovement()
+        {
+            // Execution 안전장치 (최소)
+            if (_dash != null && _dash.IsDashing) return;
+            if (_knockback != null && _knockback.isKnockback) return;
+            if (_isDead) return; // 또는 PlayerHealth.Instance.isDead
+            _rb.MovePosition(_rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
+        }
+        public void _Dodge() // Input Manager 키보드 이벤트 구독용 메서드
         {
             // (스킬 시전 중, 공격 중, 죽음 중) 대시 불가 상태 관리
             if (_dash.IsDashing ||
@@ -118,7 +119,7 @@ namespace ProjectT.Gameplay.Player.Controller
 
             if (!_dash.IsDashing)  // Dash 컴포넌트의 대시 상태 확인
             {
-                Vector2 dashDirection = GetDashDirection();
+                Vector2 dashDirection = GetDirection();
 
                 // 잔상 효과 시작 (대시 지속시간 동안)
                 if (_ghostEffect != null)
@@ -129,7 +130,35 @@ namespace ProjectT.Gameplay.Player.Controller
                 _dash.Dash_(dashDirection, dashForce, dashDuration);
             }
         }
-        private Vector2 GetDashDirection()
+        public void _Dash(float force, float duration)
+        {
+            // (스킬 시전 중, 공격 중, 죽음 중) 대시 불가 상태 관리
+            if (_dash.IsDashing ||
+            _knockback.isKnockback ||
+            PlayerHealth.Instance.isDead)
+            {
+                return;
+            }
+
+            if (!_dash.IsDashing)  // Dash 컴포넌트의 대시 상태 확인
+            {
+                Vector2 dashDirection = GetMouseDirection();
+
+                _dash.Dash_(dashDirection, force, duration);
+            }
+        }
+        # region Helpers    
+        private Vector2 GetMouseDirection()
+        {
+            Vector3 mousePos = UnityEngine.Input.mousePosition;
+            Vector3 playerWorldPos = transform.position;
+            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane));
+            
+            Vector2 direction = (mouseWorldPos - playerWorldPos).normalized;
+            return direction;
+        }
+
+        private Vector2 GetDirection()
         {
             if (movement.magnitude > 0.1f)
                 return movement;
@@ -138,14 +167,6 @@ namespace ProjectT.Gameplay.Player.Controller
             else
                 return _facingLeft ? Vector2.left : Vector2.right;
         }
-
-        private void PlayerMovement()
-        {
-            // Execution 안전장치 (최소)
-            if (_dash != null && _dash.IsDashing) return;
-            if (_knockback != null && _knockback.isKnockback) return;
-            if (_isDead) return; // 또는 PlayerHealth.Instance.isDead
-            _rb.MovePosition(_rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
-        }
+        #endregion
     }
 }

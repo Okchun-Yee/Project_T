@@ -18,7 +18,7 @@ namespace ProjectT.Systems.Camera
         public void SetPlayerCameraFollow()
         {
             cinemachineVirtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
-            cinemachineVirtualCamera.Follow = PlayerLegacyController.Instance.transform;
+            cinemachineVirtualCamera.Follow = PlayerMovementExecution.Instance.transform;
         }
     }
 }

@@ -139,9 +139,9 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
 
             weaponColliders.gameObject.SetActive(index >= 0);
             // PlayerController의 FacingLeft를 읽어 콜라이더 좌우 반전 적용 (로컬 스케일 사용)
-            bool facingLeft = PlayerLegacyController.Instance != null && PlayerLegacyController.Instance.FacingLeft;
+            bool facingLeft = PlayerMovementExecution.Instance != null && PlayerMovementExecution.Instance.FacingLeft;
             // 추가: 앞/뒤 판별
-            bool facingBack = PlayerLegacyController.Instance != null && PlayerLegacyController.Instance.FacingBack;
+            bool facingBack = PlayerMovementExecution.Instance != null && PlayerMovementExecution.Instance.FacingBack;
 
             if (facingLeft)
                 weaponColliders.transform.rotation = Quaternion.Euler(0, 180, 0);
@@ -209,7 +209,7 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
         {
             if (slashAnim == null) return;
             slashAnim.transform.rotation = Quaternion.Euler(-180, 0, 0);
-            if (PlayerLegacyController.Instance.FacingLeft)
+            if (PlayerMovementExecution.Instance.FacingLeft)
             {
                 SpriteRenderer sr = slashAnim.GetComponent<SpriteRenderer>();
                 if (sr != null) sr.flipX = true;
@@ -219,7 +219,7 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
         {
             if (slashAnim == null) return;
             slashAnim.transform.rotation = Quaternion.Euler(0, 0, 0);
-            if (PlayerLegacyController.Instance.FacingLeft)
+            if (PlayerMovementExecution.Instance.FacingLeft)
             {
                 SpriteRenderer sr = slashAnim.GetComponent<SpriteRenderer>();
                 if (sr != null) sr.flipX = true;

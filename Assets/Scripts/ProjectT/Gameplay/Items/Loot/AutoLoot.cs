@@ -38,7 +38,7 @@ namespace ProjectT.Gameplay.Items.Loot
         }
         private void Update()
         {
-            Vector3 playerPos = PlayerLegacyController.Instance.transform.position;
+            Vector3 playerPos = PlayerMovementExecution.Instance.transform.position;
             if (Vector3.Distance(transform.position, playerPos) < lootDistance)
             {
                 moveDir = (playerPos - transform.position).normalized;
@@ -56,7 +56,7 @@ namespace ProjectT.Gameplay.Items.Loot
         }
         private void OnTriggerStay2D(Collider2D collision)
         {
-            if (collision.gameObject.GetComponent<PlayerLegacyController>())
+            if (collision.gameObject.GetComponent<PlayerMovementExecution>())
             {
                 DetectPickupType();
                 Destroy(gameObject);

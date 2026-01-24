@@ -184,7 +184,7 @@ namespace ProjectT.Gameplay.Player
         public void ForceDead() => ApplyForceState(ForceStateType.Dead);
         #endregion
 
-        #region Force State (Step 7)
+        #region Force State
         /// <summary>
         /// 강제 상태 전이 단일 진입점
         /// - 상태 기반 Gate 조건: Dead/Pause/Hit 상태에 따라 요청을 제한 (숫자 우선순위 비교 아님)

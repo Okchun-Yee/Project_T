@@ -35,9 +35,9 @@ namespace ProjectT.Gameplay.Items.Execution
         {
             base.Awake();
             // 플레이어 트랜스폼이 할당되지 않은 경우 자동으로 할당 (fallback)
-            if(playerTransform == null && PlayerLegacyController.Instance != null)
+            if(playerTransform == null && PlayerMovementExecution.Instance != null)
             {
-                playerTransform = PlayerLegacyController.Instance.transform;
+                playerTransform = PlayerMovementExecution.Instance.transform;
             }
         }
 
@@ -93,7 +93,7 @@ namespace ProjectT.Gameplay.Items.Execution
 
         private void Update()
         {
-            if (PlayerLegacyController.Instance != null)
+            if (PlayerMovementExecution.Instance != null)
             {
                 UpdateNearbyLoots();
                 UpdateClosestLoot();
@@ -134,7 +134,7 @@ namespace ProjectT.Gameplay.Items.Execution
         {
             nearItem.Clear();   // 이전 근처 아이템 리스트 초기화
 
-            Vector3 playerPos = PlayerLegacyController.Instance.transform.position;
+            Vector3 playerPos = PlayerMovementExecution.Instance.transform.position;
             Collider2D[] lootingColliders = Physics2D.OverlapCircleAll(playerPos, lootingRange, lootingLayer);
 
             foreach (Collider2D collider in lootingColliders)
@@ -156,7 +156,7 @@ namespace ProjectT.Gameplay.Items.Execution
                 return;
             }
 
-            Vector3 playerPos = PlayerLegacyController.Instance.transform.position;
+            Vector3 playerPos = PlayerMovementExecution.Instance.transform.position;
             float closestDistance = float.MaxValue;
             ILooting closest = null;
 
@@ -182,10 +182,10 @@ namespace ProjectT.Gameplay.Items.Execution
         // 디버그용 시각화
         private void OnDrawGizmosSelected()
         {
-            if (PlayerLegacyController.Instance != null)
+            if (PlayerMovementExecution.Instance != null)
             {
                 Gizmos.color = Color.red;
-                Gizmos.DrawWireSphere(PlayerLegacyController.Instance.transform.position, lootingRange);
+                Gizmos.DrawWireSphere(PlayerMovementExecution.Instance.transform.position, lootingRange);
             }
         }
     }

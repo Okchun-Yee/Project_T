@@ -34,7 +34,7 @@ namespace ProjectT.Gameplay.Enemies
             Debug.Log($"[EnemyHealth] Took {damage} damage");       // 무기 데미지 체크
 
             // 2) 피격 시  이벤트 호출 (넉백, 색 변경..)
-            knockback.GetKnockedBack(PlayerLegacyController.Instance.transform, knockBackThrust);
+            knockback.GetKnockedBack(PlayerMovementExecution.Instance.transform, knockBackThrust);
             StartCoroutine(flash.FlashRoutine());
 
             // 3) 사망 처리 검사
