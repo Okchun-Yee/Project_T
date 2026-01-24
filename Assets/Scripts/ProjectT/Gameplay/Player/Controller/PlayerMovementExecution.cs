@@ -105,9 +105,7 @@ namespace ProjectT.Gameplay.Player.Controller
             _rb = GetComponent<Rigidbody2D>();
             _anim = GetComponent<Animator>();
             _sprite = GetComponent<SpriteRenderer>();
-            _dash = GetComponent<DashMove>();                            // Dash 컴포넌트 참조
-            _ghostEffect = GetComponent<Ghost>();                    // Ghost 컴포넌트 참조
-            _knockback = GetComponent<Knockback>();                  // Knockback 컴포넌트 참조
+            _dash = GetComponent<DashMove>();                        // Dash 컴포넌트 참조
         }
         private void FixedUpdate()
         {
