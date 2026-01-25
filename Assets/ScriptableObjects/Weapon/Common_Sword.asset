@@ -23,7 +23,7 @@ MonoBehaviour:
   weaponPrefab: {fileID: 4528167299006447994, guid: 72fa1ff43415646428fb94c206bc30c7, type: 3}
   weaponCategory: 0
   skillInfos:
-  - {fileID: 11400000, guid: 204d943ab2f636249b63d7873993ffe7, type: 2}
+  - {fileID: 11400000, guid: 387815451a7fb454aa7e6940a032ac0e, type: 2}
   - {fileID: 11400000, guid: dbc5045bff45579469c148b515ea018c, type: 2}
   weaponCooldown: 0.2
   weaponDamage: 10

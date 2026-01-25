@@ -132,7 +132,16 @@ namespace ProjectT.Gameplay.Player.Controller
         #region Animation Helpers
         public void SetMoveInput(Vector2 moveInput) // Input Manager 키보드 이벤트 구독용 메서드
         {
-            // 이동 입력 잠금 체크 (타이머는 Update에서 감소)
+            // ActionLock 체크 (스킬 시전 중 이동 금지)
+            if (PlayerController.Instance.IsActionLocked(ActionLockFlags.Move))
+            {
+                movement = Vector2.zero;
+                _anim.SetFloat("moveX", 0f);
+                _anim.SetFloat("moveY", 0f);
+                return;
+            }
+            
+            // 기존 대쉬 전용 이동 잠금 체크 (타이머는 Update에서 감소)
             if (_movementLockTime > 0f)
             {
                 movement = Vector2.zero;

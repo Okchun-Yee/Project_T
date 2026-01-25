@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using ProjectT.Data.ScriptableObjects.Weapons;
 using ProjectT.Gameplay.Player;
 using ProjectT.Gameplay.Player.Controller;
+using ProjectT.Gameplay.Player.FSM.Combat;
 using ProjectT.Gameplay.Player.FSM.Locomotion;
 using UnityEngine;
 
@@ -63,7 +64,7 @@ namespace ProjectT.Gameplay.Combat.Aiming
         public void MeleeWeaponMouseFollow()
         {
             // 마우스 추적 종료 조건 (1. 공격 중, 2. 스킬 시전 중 ...)
-            // if ( ) { return; }
+            if(PlayerController.Instance.CombatState == PlayerCombatStateId.Charging) return;
 
             Vector3 mousePos = Input.mousePosition;
             Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(PlayerMovementExecution.Instance.transform.position);

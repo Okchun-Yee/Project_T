@@ -8,6 +8,7 @@ namespace ProjectT.Gameplay.Combat
 {
     public class MeleeCollider : MonoBehaviour
     {
+        [SerializeField] private bool isProjectileDestroyer = false;
         private DamageSource damageSource;
         private HashSet<EnemyHealth> hitEnemies = new HashSet<EnemyHealth>(); // 중복 방지
 
@@ -39,7 +40,7 @@ namespace ProjectT.Gameplay.Combat
                     damageSource.InstantDamage(damageSource.DamageAmount, enemyHealth);
                 }
             }
-            else if (obj != null)
+            else if (obj != null && isProjectileDestroyer)
             {
                 // 투사체 파괴
                 obj.DestroyProjectile();

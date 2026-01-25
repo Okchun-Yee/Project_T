@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13b91cd82b2118c468107497666dba83, type: 3}
+  m_Name: Sword_Slam
+  m_EditorClassIdentifier: 
+  icon: {fileID: 551300363, guid: eeb9a0002cd5d98479a7cffdbf4c0563, type: 3}
+  skillCategory: 0
+  skillCooldown: 5
+  chargingTime: 0.8
+  skillDamage: 170

@@ -26,10 +26,22 @@ namespace ProjectT.Gameplay.Player
     }
 
     /// <summary>
+    /// 액션 잠금 플래그 (스킬 시전 중 특정 행동 금지용)
+    /// </summary>
+    [Flags]
+    public enum ActionLockFlags
+    {
+        None = 0,
+        Move = 1 << 0,          // 이동 금지
+        BasicAttack = 1 << 1,   // 기본 공격 금지
+        Dash = 1 << 2,          // 대쉬 금지
+        Skill = 1 << 3          // 스킬 금지 (선택)
+    }
+
+    /// <summary>
     /// Player Controller
     /// 두 개의 독립적인 FSM(Locomotion, Combat)를 병렬 관리
     /// 
-    /// [Architecture - Step 7]
     /// * Locomotion FSM: Idle, Move, Dodge, Hit, Dead
     /// * Combat FSM: None, Charging, Holding, Attack
     /// * Cross-FSM Coordinator: 두 FSM 간 충돌 정책 적용
@@ -62,6 +74,9 @@ namespace ProjectT.Gameplay.Player
         // 무기 설정 기반 (Binder에서 설정, FSM 전이 조건으로 사용)
         public bool CanChargeAttack { get; set; }
 
+        // 액션 잠금 시스템 (스킬 시전 중 특정 행동 금지)
+        private ActionLockFlags _lockedActions = ActionLockFlags.None;
+        private float _actionLockTime = 0f;
 
         public PlayerLocomotionStateId LocomotionState => _locomotionFsm.CurrentStateId;    // 현재 Locomotion 상태
         public PlayerCombatStateId CombatState => _combatFsm.CurrentStateId;                // 현재 Combat 상태
@@ -120,6 +135,16 @@ namespace ProjectT.Gameplay.Player
         /// </summary>
         private void Update()
         {
+            // 0. 액션 잠금 타이머 감소
+            if (_actionLockTime > 0f)
+            {
+                _actionLockTime -= Time.deltaTime;
+                if (_actionLockTime <= 0f)
+                {
+                    _lockedActions = ActionLockFlags.None;
+                }
+            }
+
             // 게이트 검사
             if (!CanTickFsmThisFrame())
             {
@@ -499,6 +524,8 @@ namespace ProjectT.Gameplay.Player
 
         private void OnAttackStarted()
         {
+            if (IsActionLocked(ActionLockFlags.BasicAttack)) return;
+            
             AttackPressed = true;   // 1프레임 트리거
             AttackHeld = true;      // 유지 입력
         }
@@ -510,8 +537,29 @@ namespace ProjectT.Gameplay.Player
 
         private void OnDodgeInput()
         {
+            if (IsActionLocked(ActionLockFlags.Dash)) return;
+            
             DodgePressed = true;    // 1프레임 트리거
             RequestKeyboardDodge(); // Context 설정
+        }
+        #endregion
+
+        #region Action Lock API
+        /// <summary>
+        /// 특정 액션들을 duration 동안 잠금 (스킬 시전 중 사용)
+        /// </summary>
+        public void LockActions(ActionLockFlags flags, float duration)
+        {
+            _lockedActions |= flags;
+            _actionLockTime = Mathf.Max(_actionLockTime, duration);
+        }
+
+        /// <summary>
+        /// 특정 액션이 잠겨있는지 확인
+        /// </summary>
+        public bool IsActionLocked(ActionLockFlags flag)
+        {
+            return (_lockedActions & flag) != 0;
         }
         #endregion
     }

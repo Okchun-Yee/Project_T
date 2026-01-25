@@ -253,7 +253,7 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
         #endregion
 
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             // weaponCollider == NULL 인 경우는 아직 무기 장착이 이뤄지지 않은 상태이므로 pass
