@@ -28,8 +28,10 @@ namespace ProjectT.Gameplay.Player
 
         private int currentHealth;
         private bool canTakeDamage = true;
-        private Knockback knockback;
-        private Flash flash;
+        
+        private Knockback _knockback;
+        private Flash _flash;
+        private Invincibility _invincibility;
         private PlayerController _playerController;
 
         const string TOWN_TEXT = "GameScene1";
@@ -37,8 +39,9 @@ namespace ProjectT.Gameplay.Player
         protected override void Awake()
         {
             base.Awake();
-            knockback = GetComponent<Knockback>();
-            flash = GetComponent<Flash>();
+            _knockback = GetComponent<Knockback>();
+            _flash = GetComponent<Flash>();
+            _invincibility = GetComponent<Invincibility>();
             currentHealth = maxHealth;
         }
         private void Start()
@@ -73,10 +76,11 @@ namespace ProjectT.Gameplay.Player
         public void TakeDamage(int damageAmount, Transform hitTransform)
         {
             if (!canTakeDamage) { return; }
+            if (_invincibility != null && _invincibility.IsInvincible) { return; }
 
             ScreenShakeManager.Instance.ShakeScreen();
-            knockback.GetKnockedBack(hitTransform, knockBackThrustAmount);
-            StartCoroutine(flash.FlashRoutine());
+            _knockback.GetKnockedBack(hitTransform, knockBackThrustAmount);
+            StartCoroutine(_flash.FlashRoutine());
 
             Debug.Log("[PlayerHealth] Player took damage: " + damageAmount);
             currentHealth -= damageAmount;

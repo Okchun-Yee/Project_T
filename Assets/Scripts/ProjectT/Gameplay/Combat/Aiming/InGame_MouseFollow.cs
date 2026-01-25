@@ -49,7 +49,14 @@ namespace ProjectT.Gameplay.Combat.Aiming
             Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(PlayerMovementExecution.Instance.transform.position);
             float angle = Mathf.Atan2(mousePos.y - playerScreenPoint.y, mousePos.x - playerScreenPoint.x) * Mathf.Rad2Deg;
 
-            transform.rotation = Quaternion.Euler(0, 180, angle);
+            if (mousePos.x < playerScreenPoint.x)
+            {
+                target.transform.rotation = Quaternion.Euler(0, -180, angle);
+            }
+            else
+            {
+                target.transform.rotation = Quaternion.Euler(0, 0, angle);
+            }
         }
 
         // 원거리 무기 마우스 추적

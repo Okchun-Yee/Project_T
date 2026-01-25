@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4263555069581439361}
   - component: {fileID: 4311415483255119588}
   - component: {fileID: 8587280123273114477}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EnemyParabolaProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}

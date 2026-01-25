@@ -15,8 +15,8 @@ TagManager:
   - Item
   - Enemy
   - Player
-  - 
-  - 
+  - Obstacle
+  - PlayerInvincible
   - 
   - 
   - 
