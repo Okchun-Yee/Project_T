@@ -100,7 +100,6 @@ namespace ProjectT.Gameplay.Combat
                     {
                         _damageSource.InstantDamage(_damageSource.DamageAmount, enemyHealth);
                         _damagedEnemies.Add(enemyHealth);
-                        Debug.Log($"[DashTrail] Hit {collision.name} for {_damageSource.DamageAmount} damage");
                     }
                 }
             }

@@ -57,9 +57,6 @@ namespace ProjectT.Gameplay.Weapon
             _chargingType = type;
             _chargeDuration = duration;
             _chargeElapsed = 0f;
-#if UNITY_EDITOR
-            Debug.Log("[ChargingManager] StartCharging called");
-#endif
             _chargingRoutine = ChargingRoutine();
             StartCoroutine(_chargingRoutine);
         }

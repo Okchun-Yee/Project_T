@@ -63,9 +63,6 @@ namespace ProjectT.Gameplay.Items.Loot
             int remaining = inventory.AddItem(weaponData, quantityToAdd, state);
             if (remaining == 0)
             {
-                // 전부 성공적으로 들어감
-                Debug.Log($"[WeaponLoot] Weapon added to inventory: {weaponData.name}");
-                // 4) 획득 후 처리
                 canLoot = false;
                 DestroyItem();
             }

@@ -88,14 +88,11 @@ namespace ProjectT.Gameplay.Items.Loot
             switch (lootType)
             {
                 case AutoLootType.GoldCoin:
-                    Debug.Log("coin picked up");
                     break;
                 case AutoLootType.HealthGlobe:
                     PlayerHealth.Instance.HealPlayer();
-                    Debug.Log("health picked up");
                     break;
                 case AutoLootType.StaminaGlobe:
-                    Debug.Log("stamina picked up");
                     break;
                 default:
                     Debug.LogWarning("Unknown pickup type");

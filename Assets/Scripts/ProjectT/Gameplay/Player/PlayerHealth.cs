@@ -82,7 +82,6 @@ namespace ProjectT.Gameplay.Player
             _knockback.GetKnockedBack(hitTransform, knockBackThrustAmount);
             StartCoroutine(_flash.FlashRoutine());
 
-            Debug.Log("[PlayerHealth] Player took damage: " + damageAmount);
             currentHealth -= damageAmount;
             UIManager.Instance.UpdateHealthSlider();
             DamageRecoveryTime();
