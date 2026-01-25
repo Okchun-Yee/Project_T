@@ -9,6 +9,7 @@ using ProjectT.Gameplay.Skills.Contracts;
 using ProjectT.Gameplay.Combat.Damage;
 using ProjectT.Gameplay.Skills;
 using ProjectT.Data.ScriptableObjects.Skills;
+using ProjectT.Core.Debug;
 
 namespace ProjectT.Gameplay.Weapon
 {
@@ -136,10 +137,13 @@ namespace ProjectT.Gameplay.Weapon
         {
             if (isCooldown)
             {
+                DevLog.Log(DevLogChannels.Weapon, "Attack skipped (cooldown)");
                 return;
             }
+            DevLog.Log(DevLogChannels.Weapon, $"Attack execute start (charged:{charged})");
             if (charged) _AttackCharged();
             else _Attack();
+            DevLog.Log(DevLogChannels.Weapon, $"Attack execute end (charged:{charged})");
         }
 
         // 무기 쿨다운 코루틴

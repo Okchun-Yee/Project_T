@@ -46,7 +46,6 @@ namespace ProjectT.Gameplay.Weapon
             holdingType = type;
             isHolding = true;
             holdDuration = 0f;
-            Debug.Log("[HoldingManager] 홀딩 시작");
 
             holdingMaxTime = maxDuration;
             holdingTimeElapsed = 0f;

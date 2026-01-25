@@ -2,6 +2,7 @@ using ProjectT.Core.FSM;
 using ProjectT.Gameplay.Player.Controller;
 using ProjectT.Gameplay.Player.FSM.Locomotion;
 using UnityEngine;
+using ProjectT.Core.Debug;
 
 namespace ProjectT.Gameplay.Player
 {
@@ -114,16 +115,19 @@ namespace ProjectT.Gameplay.Player
         {
             var prev = args.PrevStateId;
             var next = args.NextStateId;
+            DevLog.Log(DevLogChannels.PlayerBinder, $"Locomotion transition {prev} -> {next}");
 
             // Dodge 진입 시 대기 중인 Dash 실행
             if (next == PlayerLocomotionStateId.Dodge)
             {
+                DevLog.Log(DevLogChannels.PlayerBinder, "Execute pending dash");
                 _execution?.ExecutePendingDash();
             }
 
             // Stop 정책: 이동을 멈춰야 하는 상태로 전이 시 velocity=0
             if (ShouldStopOnEnter(next) || ShouldStopOnExit(prev, next))
             {
+                DevLog.Log(DevLogChannels.PlayerBinder, "Stop movement on locomotion transition");
                 StopMovement();
             }
         }

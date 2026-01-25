@@ -342,8 +342,6 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
 
             // 3. 가중치 기반 랜덤 선택 (최대 3개)
             var choices = SelectWithWeight(candidates, 3);
-
-            Debug.Log($"[Rune] Generated {choices.Count} choices from {candidates.Count} candidates");
             return choices;
         }
 
@@ -386,7 +384,6 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
         private void DebugClearStats()
         {
             ResetRuneStats();
-            Debug.Log("[Rune] Recent appear count cleared");
         }
 
         [ContextMenu("Test: Log Rune Pool")]
@@ -399,7 +396,6 @@ namespace ProjectT.Gameplay.Items.Inventory.Rune
                 return;
             }
 
-            Debug.Log($"[Rune] Total runes in pool: {allRunes.Count}");
             foreach (var rune in allRunes)
             {
                 if (rune != null)

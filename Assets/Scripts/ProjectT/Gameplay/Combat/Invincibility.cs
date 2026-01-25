@@ -51,7 +51,6 @@ namespace ProjectT.Gameplay.Combat
             // Layer 전환 (적 공격 무시, 벽 충돌 유지)
             _isInvincible = true;
             gameObject.layer = _invincibleLayer;
-            Debug.Log($"[Invincibility] ON - Layer changed to {_invincibleLayer} for {duration}s");
             
             yield return new WaitForSeconds(duration);
             
@@ -59,7 +58,6 @@ namespace ProjectT.Gameplay.Combat
             _isInvincible = false;
             gameObject.layer = _originalLayer;
             _invincibilityCoroutine = null;
-            Debug.Log($"[Invincibility] OFF - Layer restored to {_originalLayer}");
         }
     }
 }

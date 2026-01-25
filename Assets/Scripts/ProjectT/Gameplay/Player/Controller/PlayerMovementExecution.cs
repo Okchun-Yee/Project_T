@@ -3,6 +3,7 @@ using UnityEngine;
 using ProjectT.Core;
 using ProjectT.Gameplay.Combat;
 using UnityEngine.InputSystem;
+using ProjectT.Core.Debug;
 
 
 namespace ProjectT.Gameplay.Player.Controller
@@ -227,6 +228,7 @@ namespace ProjectT.Gameplay.Player.Controller
         public void SetPendingDash(DashContext context)
         {
             _pendingDashContext = context;
+            DevLog.Log(DevLogChannels.PlayerRuntime, $"Dash pending set (dir:{context.direction}, force:{context.force}, duration:{context.duration})");
         }
         
         /// <summary>
@@ -240,6 +242,7 @@ namespace ProjectT.Gameplay.Player.Controller
             {
                 return;
             }
+            DevLog.Log(DevLogChannels.PlayerRuntime, "Execute pending dash");
             
             // 2. Context 꺼내기
             DashContext ctx = _pendingDashContext.Value;
@@ -249,6 +252,7 @@ namespace ProjectT.Gameplay.Player.Controller
             {
                 Debug.LogWarning($"[PlayerMovementExecution] Stale dash context discarded " +
                     $"(requested: {ctx.requestedFrame}, current: {Time.frameCount})");
+                DevLog.Log(DevLogChannels.PlayerRuntime, "Dash discarded (stale context)");
                 _pendingDashContext = null;
                 return;
             }
@@ -256,6 +260,7 @@ namespace ProjectT.Gameplay.Player.Controller
             // 4. 실행 불가 조건 체크
             if (_dash.IsDashing || _knockback.isKnockback || PlayerHealth.Instance.isDead)
             {
+                DevLog.Log(DevLogChannels.PlayerRuntime, "Dash aborted (busy or dead)");
                 _pendingDashContext = null;
                 return;
             }
@@ -265,6 +270,7 @@ namespace ProjectT.Gameplay.Player.Controller
             if (dashDirection == Vector2.zero)
             {
                 Debug.LogWarning("[PlayerMovementExecution] Dash direction is zero, using fallback");
+                DevLog.Log(DevLogChannels.PlayerRuntime, "Dash direction fallback applied");
                 dashDirection = _facingLeft ? Vector2.left : Vector2.right;
             }
             
@@ -272,6 +278,7 @@ namespace ProjectT.Gameplay.Player.Controller
             if (ctx.lockMovementDuringDash)
             {
                 _movementLockTime = ctx.duration + 0.1f;
+                DevLog.Log(DevLogChannels.PlayerRuntime, $"Movement locked for {ctx.duration:0.00}s");
             }
             
             // 7. Ghost 효과 (조건부)
@@ -292,6 +299,7 @@ namespace ProjectT.Gameplay.Player.Controller
             }
             // 10. 실제 대시 실행
             _dash.DashMove_(dashDirection, ctx.force, ctx.duration);
+            DevLog.Log(DevLogChannels.PlayerRuntime, "Dash executed");
             
             // 11. Context 소비
             _pendingDashContext = null;

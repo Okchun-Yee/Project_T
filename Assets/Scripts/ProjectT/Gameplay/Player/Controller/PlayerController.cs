@@ -8,6 +8,7 @@ using ProjectT.Gameplay.Player.Input;
 using ProjectT.Gameplay.Weapon;
 using ProjectT.Gameplay.Player.Controller;
 using ProjectT.Core;
+using ProjectT.Core.Debug;
 
 namespace ProjectT.Gameplay.Player
 {
@@ -85,6 +86,7 @@ namespace ProjectT.Gameplay.Player
         // 이전 상태 로깅용
         private PlayerLocomotionStateId _prevL;
         private PlayerCombatStateId _prevC;
+        private bool _wasTickSkipped;
 
         private bool _isBound = false;
 
@@ -92,7 +94,6 @@ namespace ProjectT.Gameplay.Player
         {
             BuildFsm();
             InitializeFsm();
-            CachePrevStates();
             // Notify listeners that FSMs are ready (Binder may be waiting)
             OnFsmBuilt?.Invoke();
         }
@@ -122,12 +123,14 @@ namespace ProjectT.Gameplay.Player
             // 게이트 검사
             if (!CanTickFsmThisFrame())
             {
+                LogTickSkippedIfChanged();
                 ConsumeOneFrameInputs();
                 return;
             }
             ApplyCrossFsmPoliciesPreTick();   // 정책 적용
             _locomotionFsm.Tick();          // 병렬 Tick
             _combatFsm.Tick();
+            LogTickIfStateChanged();
 
             ConsumeOneFrameInputs();           // 1프레임 입력 초기화 (Pressed/Released 소비)
         }
@@ -326,9 +329,6 @@ namespace ProjectT.Gameplay.Player
             InputManager.Instance.OnDodgeInput += OnDodgeInput;
 
             _isBound = true;
-#if UNITY_EDITOR
-            Debug.Log("[PC] Input bound");
-#endif
         }
 
         private void UnbindInput()
@@ -368,6 +368,7 @@ namespace ProjectT.Gameplay.Player
             // Policy 1: Dodge 상태면 Combat 강제 취소
             if (IsDodging() && CombatState != PlayerCombatStateId.None)
             {
+                DevLog.Log(DevLogChannels.PlayerFsm, "Policy: Dodge state cancels combat");
                 CancelCombatWithReason(ChargeCancelReason.Dodge);
             }
 
@@ -375,12 +376,17 @@ namespace ProjectT.Gameplay.Player
             // (Dodge 전이 자체는 Locomotion Guard가 처리)
             if (DodgePressed && IsInCombatChargingOrHolding())
             {
+                DevLog.Log(DevLogChannels.PlayerFsm, "Policy: Dodge input cancels charging/holding");
                 CancelCombatWithReason(ChargeCancelReason.Dodge);
             }
 
             // Policy 3: 입력 차단 (Dodge/Hit 중 Attack 무시)
             if (ShouldBlockAttackInput())
             {
+                if (AttackPressed || AttackHeld)
+                {
+                    DevLog.Log(DevLogChannels.PlayerFsm, "Policy: Attack input blocked");
+                }
                 AttackPressed = false;
                 AttackHeld = false;
             }
@@ -445,10 +451,14 @@ namespace ProjectT.Gameplay.Player
         /// </summary>
         private void ConsumeOneFrameInputs()
         {
+            if (AttackPressed || DodgePressed)
+            {
+                DevLog.Log(DevLogChannels.PlayerFsm, $"Consume inputs (AttackPressed:{AttackPressed}, DodgePressed:{DodgePressed})");
+            }
             AttackPressed = false; // 1프레임 트리거 소비
             DodgePressed = false;  // 1프레임 트리거 소비
         }
-        private void CachePrevStates()
+        private void UpdatePrevStatesToCurrent()
         {
             _prevL = LocomotionState;
             _prevC = CombatState;
@@ -457,7 +467,29 @@ namespace ProjectT.Gameplay.Player
         {
             if (_prevL == LocomotionState && _prevC == CombatState) return;
             // Debug.Log($"[FSM] L:{LocomotionState} C:{CombatState}");  // 상태 전이 확인용 로그
-            CachePrevStates();
+            UpdatePrevStatesToCurrent();
+        }
+        private void LogTickSkippedIfChanged()
+        {
+            bool isSkipped = _isPaused || IsDead;
+            if (isSkipped == _wasTickSkipped) return;
+            if (isSkipped)
+            {
+                DevLog.Log(DevLogChannels.PlayerFsm, $"Tick skipped (paused:{_isPaused} dead:{IsDead})");
+            }
+            else
+            {
+                DevLog.Log(DevLogChannels.PlayerFsm, "Tick resumed");
+            }
+            _wasTickSkipped = isSkipped;
+        }
+
+        private void LogTickIfStateChanged()
+        {
+            if (_prevL == LocomotionState && _prevC == CombatState) return;
+            DevLog.Log(DevLogChannels.PlayerFsm, $"Tick begin L:{_prevL} C:{_prevC}");
+            DevLog.Log(DevLogChannels.PlayerFsm, $"Tick end L:{LocomotionState} C:{CombatState}");
+            UpdatePrevStatesToCurrent();
         }
         #region  Action Handlers
         private void OnMoveInput(Vector2 input)

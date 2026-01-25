@@ -5,6 +5,7 @@ using System;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using ProjectT.Core;
+using ProjectT.Core.Debug;
 
 namespace ProjectT.Gameplay.Player.Input
 {
@@ -102,11 +103,20 @@ namespace ProjectT.Gameplay.Player.Input
         {
             Vector2 moveValue = context.ReadValue<Vector2>();
             OnMoveInput?.Invoke(moveValue);
+            if (moveValue.sqrMagnitude > 0.01f)
+            {
+                DevLog.Log(DevLogChannels.PlayerInput, $"Move input: {moveValue}");
+            }
+            else if (context.canceled)
+            {
+                DevLog.Log(DevLogChannels.PlayerInput, "Move input canceled");
+            }
         }
         // 플레이어 회피 이벤트 매서드
         private void HandleDodge(InputAction.CallbackContext context)
         {
             OnDodgeInput?.Invoke();
+            DevLog.Log(DevLogChannels.PlayerInput, "Dodge input");
         }
         // 플레이어 공격 이벤트 매서드
         private void HandleAttack_Started(InputAction.CallbackContext context)
@@ -117,6 +127,7 @@ namespace ProjectT.Gameplay.Player.Input
                 return;
             }
             OnAttackInput?.Invoke();
+            DevLog.Log(DevLogChannels.PlayerInput, "Attack started");
         }
         private void HandleAttack_Canceled(InputAction.CallbackContext context)
         {
@@ -126,35 +137,42 @@ namespace ProjectT.Gameplay.Player.Input
                 return;
             }
             OnAttackCanceled?.Invoke();
+            DevLog.Log(DevLogChannels.PlayerInput, "Attack canceled");
         }
         // 플레이어 스킬 이벤트 매서드
         private void HandleSkill_Started(int index)
         {
             OnSkillInput?.Invoke(index);
+            DevLog.Log(DevLogChannels.PlayerInput, $"Skill started: {index}");
         }
         private void HandleSkill_Canceled(int index)
         {
             OnSkillCanceled?.Invoke(index);
+            DevLog.Log(DevLogChannels.PlayerInput, $"Skill canceled: {index}");
         }
         // 플레이어 아이템 획득 이벤트 매서드
         private void HandlePickup(InputAction.CallbackContext context)
         {
             OnLootingInput?.Invoke();
+            DevLog.Log(DevLogChannels.PlayerInput, "Looting input");
         }
         // 플레이어 인벤토리 UI 이벤트 매서드
         private void HandleInventoryUI(InputAction.CallbackContext context)
         {
             OnInventoryInput?.Invoke();
+            DevLog.Log(DevLogChannels.PlayerInput, "Inventory toggle input");
         }
         // 플레이어 상호작용 이벤트 매서드
         private void HandleInteract(InputAction.CallbackContext context)
         {
             OnInteractInput?.Invoke();
+            DevLog.Log(DevLogChannels.PlayerInput, "Interact input");
         }
         // 플레이어 인벤토리 전환 이벤트 메서드
         private void HandleSwitchTab(InputAction.CallbackContext context)
         {
             OnSwitchTabInput?.Invoke();
+            DevLog.Log(DevLogChannels.PlayerInput, "Switch tab input");
         }
     }
 }

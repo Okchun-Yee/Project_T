@@ -3,6 +3,7 @@ using ProjectT.Core.FSM;
 using ProjectT.Gameplay.Player.FSM.Combat;
 using ProjectT.Gameplay.Weapon;
 using UnityEngine;
+using ProjectT.Core.Debug;
 
 namespace ProjectT.Gameplay.Player
 {
@@ -146,6 +147,7 @@ namespace ProjectT.Gameplay.Player
         {
             var prev = args.PrevStateId;
             var next = args.NextStateId;
+            DevLog.Log(DevLogChannels.PlayerBinder, $"Combat transition {prev} -> {next}");
 
             // ChargeStarted: prev != Charging && next == Charging
             if (prev != PlayerCombatStateId.Charging && next == PlayerCombatStateId.Charging)
@@ -188,6 +190,7 @@ namespace ProjectT.Gameplay.Player
             ChargeStarted?.Invoke(evt);
 
             // 실행: ChargingManager 시작
+            DevLog.Log(DevLogChannels.PlayerBinder, "Start charging execution");
             StartChargingExecution();
         }
 
@@ -203,17 +206,12 @@ namespace ProjectT.Gameplay.Player
             var cm = ChargingManager.Instance;
             ChargeCancelReason reason = cm != null ? cm.LastCancelReason : ChargeCancelReason.Other;
             float snapshot = cm != null ? cm.ChargeNormalized : 0f;
-#if UNITY_EDITOR
-            UnityEngine.Debug.Log($"[Binder] EmitChargeCanceled prev:{prev} next:{next} reason:{reason} snapshot:{snapshot}");
-#endif
 
             var evt = new ChargeCanceledEvent(reason, snapshot);
             ChargeCanceled?.Invoke(evt);
 
             // 실행: 무기 취소 액션
-#if UNITY_EDITOR
-            UnityEngine.Debug.Log($"[Binder] Calling ActiveWeapon.Fsm_CancelAction()");
-#endif
+            DevLog.Log(DevLogChannels.PlayerBinder, $"Cancel weapon action (reason:{reason})");
             _activeWeapon?.Fsm_CancelAction();
         }
 
@@ -226,24 +224,16 @@ namespace ProjectT.Gameplay.Player
             AttackVariant variant = isCharged ? AttackVariant.Charged : AttackVariant.Normal;
 
             var evt = new AttackStartedEvent(isCharged, variant);
-#if UNITY_EDITOR
-            UnityEngine.Debug.Log($"[Binder] EmitAttackStarted prev:{prevState} isCharged:{isCharged} variant:{variant}");
-#endif
             AttackStarted?.Invoke(evt);
 
             // 차징 루틴 종료는 "Attack 전이 시점"에 수행 (Charging/Holding에서 온 경우)
             if (prevState == PlayerCombatStateId.Charging || prevState == PlayerCombatStateId.Holding)
             {
-#if UNITY_EDITOR
-                UnityEngine.Debug.Log($"[Binder] Ending charging before attack. prevState:{prevState}");
-#endif
                 ChargingManager.Instance?.EndCharging();
             }
 
             // 실행: 무기 공격
-#if UNITY_EDITOR
-            UnityEngine.Debug.Log($"[Binder] Calling ActiveWeapon.Fsm_AttackExecute(charged:{isCharged})");
-#endif
+            DevLog.Log(DevLogChannels.PlayerBinder, $"Execute weapon attack (charged:{isCharged})");
             _activeWeapon?.Fsm_AttackExecute(isCharged);
         }
 
