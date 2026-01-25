@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 2016714996015995755}
   - component: {fileID: 6219016116619994102}
   - component: {fileID: 2952089348323190701}
-  m_Layer: 0
-  m_Name: Aoe
+  m_Layer: 7
+  m_Name: EnemyAOE
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

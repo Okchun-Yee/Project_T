@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 
 namespace ProjectT.Gameplay.Player.Controller
 {
-    #region _Dash
+    #region _DashContext
     /// <summary>
     /// 대시 실행에 필요한 모든 파라미터를 담는 컨텍스트
     /// </summary>
@@ -16,10 +16,12 @@ namespace ProjectT.Gameplay.Player.Controller
         public Vector2 direction;
         public float force;
         public float duration;
+        public float damage;
         public bool useGhostEffect; // Ghost 효과 사용 여부
         public bool useDashTrail;  // Trail 효과 사용 여부
         public int requestedFrame;  // Time.frameCount (오발동 방지용)
         public bool lockMovementDuringDash;  // 대시 지속시간 동안 입력 잠금 여부
+        public bool grantInvincibility;    // 대시 동안 무적 부여 여부 (미사용)
 
         /// <summary>
         /// Dodge용 DashContext 생성 (Ghost 효과 포함, 입력 잠금 없음)
@@ -31,27 +33,31 @@ namespace ProjectT.Gameplay.Player.Controller
                 direction = direction,
                 force = force,
                 duration = duration,
+                damage = 0,                         // 회피는 데미지 없음
                 useGhostEffect = true,
                 useDashTrail = false,
                 requestedFrame = Time.frameCount,
-                lockMovementDuringDash = false  // Dodge는 입력 잠금 없음
+                lockMovementDuringDash = false,     // Dodge는 입력 잠금 없음
+                grantInvincibility = true           // 회피 동안 무적
             };
         }
 
         /// <summary>
         /// 스킬용 DashContext 생성 (Ghost 효과 없음, duration 동안 입력 잠금)
         /// </summary>
-        public static DashContext CreateForSkill(Vector2 direction, float force, float duration)
+        public static DashContext CreateForSkill(Vector2 direction, float force, float duration, float damage = 0)
         {
             return new DashContext
             {
                 direction = direction,
                 force = force,
                 duration = duration,
+                damage = damage,
                 useGhostEffect = false,
                 useDashTrail = true,
                 requestedFrame = Time.frameCount,
-                lockMovementDuringDash = true  // 스킬은 duration 동안 입력 잠금
+                lockMovementDuringDash = true,      // 스킬은 duration 동안 입력 잠금
+                grantInvincibility = true          // 대시 동안 무적 
             };
         }
     }
@@ -71,6 +77,7 @@ namespace ProjectT.Gameplay.Player.Controller
         [SerializeField] private Ghost _ghostEffect;    // Ghost 컴포넌트 참조 추가
         [SerializeField] private Knockback _knockback;  // Knockback 컴포넌트 참조 추가
         [SerializeField] private DashTrail _dashTrail;  // DashTrail 컴포넌트 참조 추가
+        [SerializeField] private Invincibility _invincibility;    // Invincibility 컴포넌트 참조 추가
         
         [Header("Dodge Settings")]
         [SerializeField] private float dodgeForce = 15f;    // 대시 힘
@@ -121,7 +128,7 @@ namespace ProjectT.Gameplay.Player.Controller
             PlayerMovement();           // 물리 프레임 당 플레이어 이동 계산
             PlayerDirection();          // 플레이어 방향 계산
         }
-
+        #region Animation Helpers
         public void SetMoveInput(Vector2 moveInput) // Input Manager 키보드 이벤트 구독용 메서드
         {
             // 이동 입력 잠금 체크 (타이머는 Update에서 감소)
@@ -173,14 +180,7 @@ namespace ProjectT.Gameplay.Player.Controller
             _facingBack = mousePos.y > playerScreenPoint.y;
             _anim?.SetBool("isBack", _facingBack);
         }
-        private void PlayerMovement()
-        {
-            // Execution 안전장치 (최소)
-            if (_dash != null && _dash.IsDashing) return;
-            if (_knockback != null && _knockback.isKnockback) return;
-            if (_isDead) return; // 또는 PlayerHealth.Instance.isDead
-            _rb.MovePosition(_rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
-        }
+        #endregion
 
         #region Helpers
         /// <summary>
@@ -211,6 +211,15 @@ namespace ProjectT.Gameplay.Player.Controller
         }
         #endregion
         
+        #region Movement Execution
+        private void PlayerMovement()
+        {
+            // Execution 안전장치 (최소)
+            if (_dash != null && _dash.IsDashing) return;
+            if (_knockback != null && _knockback.isKnockback) return;
+            if (_isDead) return; // 또는 PlayerHealth.Instance.isDead
+            _rb.MovePosition(_rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
+        }
         /// <summary>
         /// PlayerController에서만 호출되는 내부 메서드
         /// Pending 상태 설정
@@ -274,14 +283,19 @@ namespace ProjectT.Gameplay.Player.Controller
             // 8. Trail 효과 (조건부)
             if (ctx.useDashTrail && _dashTrail != null)
             {
-                _dashTrail.StartTrailEffect(ctx.duration);
+                _dashTrail.StartTrailEffect(ctx.duration, ctx.damage);
             }
-            
-            // 9. 실제 대시 실행
+            // 9. 무적 효과 (조건부)
+            if (ctx.grantInvincibility && _invincibility != null)
+            {
+                _invincibility.StartInvincibility(ctx.duration);
+            }
+            // 10. 실제 대시 실행
             _dash.DashMove_(dashDirection, ctx.force, ctx.duration);
             
-            // 8. Context 소비
+            // 11. Context 소비
             _pendingDashContext = null;
         }
+        #endregion
     }
 }

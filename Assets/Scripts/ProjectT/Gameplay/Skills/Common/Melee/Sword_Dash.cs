@@ -31,16 +31,16 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
             
             // 마우스 방향 계산 (Execution 헬퍼 사용)
             Vector2 mouseDirection = PlayerMovementExecution.Instance.GetMouseDirection();
+            float damage = GetSkillDamage();
+            Debug.Log($"[Sword_Dash]: Dash Skill Activated, Damage {damage}");
             
             // DashContext 생성 및 요청
             _controller.RequestDash(DashContext.CreateForSkill(
                 direction: mouseDirection,
                 force: dashForce,
-                duration: dashDuration
+                duration: dashDuration, 
+                damage: damage
             ));
-            
-            float damage = GetSkillDamage();
-            Debug.Log($"[Sword_Dash]: Dash Skill Activated, Damage {damage}");
         }
     }
 }
