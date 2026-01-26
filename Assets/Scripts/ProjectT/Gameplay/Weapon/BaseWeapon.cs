@@ -18,6 +18,7 @@ namespace ProjectT.Gameplay.Weapon
         // SSOT: "공격 중" 여부는 FSM 상태(CombatState == Attack)로 판단
         // isAttacking 플래그 제거됨
         
+        private const int SkillSlotCount = 3;
         public EquippableItemSO weaponInfo { get; private set; }
 
         private Coroutine CooldownCoroutine;
@@ -63,28 +64,25 @@ namespace ProjectT.Gameplay.Weapon
         }
         private void SkillInitialization(EquippableItemSO info)
         {
-            skillsBySlot = new ISkill[2];
+            skillsBySlot = new ISkill[SkillSlotCount];
             
             ISkill[] skillComponents = GetComponents<ISkill>();
             
-            if (skillComponents.Length < 2) {
-                Debug.LogError($"[BaseWeapon] Weapon initialization FAILED. Expected 2 skill components, found {skillComponents.Length} on {name}");
-                System.Array.Fill(skillsBySlot, null);
-                return;
+            if (skillComponents.Length < SkillSlotCount) {
+                Debug.LogWarning($"[BaseWeapon] Expected {SkillSlotCount} skill components, found {skillComponents.Length} on {name}. Missing slots will be inactive.");
             }
-            
-            if (info.skillInfos.Length < 2) {
-                Debug.LogError($"[BaseWeapon] Weapon initialization FAILED. Expected 2 skillInfos in SO, found {info.skillInfos.Length} on {name}");
-                System.Array.Fill(skillsBySlot, null);
-                return;
+
+            if (info.skillInfos == null || info.skillInfos.Length < SkillSlotCount) {
+                int infoLength = info.skillInfos == null ? 0 : info.skillInfos.Length;
+                Debug.LogWarning($"[BaseWeapon] Expected {SkillSlotCount} skillInfos in SO, found {infoLength} on {name}. Missing slots will be inactive.");
             }
-            
-            for (int slot = 0; slot < 2; slot++) {
-                ISkill skillComponent = skillComponents[slot];
-                SkillSO skillSO = info.skillInfos[slot];
+
+            for (int slot = 0; slot < SkillSlotCount; slot++) {
+                ISkill skillComponent = slot < skillComponents.Length ? skillComponents[slot] : null;
+                SkillSO skillSO = (info.skillInfos != null && slot < info.skillInfos.Length) ? info.skillInfos[slot] : null;
                 
                 if (skillComponent == null) {
-                    Debug.LogError($"[BaseWeapon] Skill component at slot {slot} is null on {name}");
+                    Debug.LogWarning($"[BaseWeapon] Skill component at slot {slot} is missing on {name}");
                     skillsBySlot[slot] = null;
                     continue;
                 }
@@ -104,9 +102,9 @@ namespace ProjectT.Gameplay.Weapon
                 }
             }
             
-            if (skillComponents.Length > 2) {
+            if (skillComponents.Length > SkillSlotCount) {
                 Debug.LogWarning($"[BaseWeapon] Found {skillComponents.Length} skill components on {name}. " +
-                    $"Using first 2. Check if extra components are attached unintentionally.");
+                    $"Using first {SkillSlotCount}. Check if extra components are attached unintentionally.");
             }
         }
 
@@ -162,8 +160,8 @@ namespace ProjectT.Gameplay.Weapon
         }
         public void Skill(int skillIndex)
         {
-            if (skillIndex < 0 || skillIndex >= 2) {
-                Debug.LogError($"[BaseWeapon] Invalid skill slot {skillIndex}, must be 0 or 1 on {name}");
+            if (skillsBySlot == null || skillIndex < 0 || skillIndex >= skillsBySlot.Length) {
+                Debug.LogError($"[BaseWeapon] Invalid skill slot {skillIndex}, must be 0~{SkillSlotCount - 1} on {name}");
                 return;
             }
             

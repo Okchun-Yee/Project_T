@@ -14,9 +14,10 @@ GameObject:
   - component: {fileID: 3441963054075074123}
   - component: {fileID: 8349803799137369422}
   - component: {fileID: 7175670619446454581}
-  - component: {fileID: 680767817891245716}
-  - component: {fileID: 8962713407337821027}
   - component: {fileID: 667304997567885545}
+  - component: {fileID: 3038745899554872539}
+  - component: {fileID: 8962713407337821027}
+  - component: {fileID: 5661204695941401234}
   m_Layer: 0
   m_Name: Sword_Common
   m_TagString: Untagged
@@ -35,7 +36,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -155,34 +156,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   whiteFlashMat: {fileID: 2100000, guid: 946cffe17d03cdd499998ef6b0ddd1d5, type: 2}
   restoreDefaultMatTime: 0.2
---- !u!114 &680767817891245716
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4528167299006447994}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61edccc80671e734b8f50922da36617f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  skillIndex: 0
---- !u!114 &8962713407337821027
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4528167299006447994}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86d33f82a0638e3419c1e78d5dc9d0ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  skillIndex: 0
-  dashForce: 22
-  dashDuration: 0.2
 --- !u!114 &667304997567885545
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197,3 +170,50 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   comboLength: 2
   comboDelay: 0.8
+--- !u!114 &3038745899554872539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4528167299006447994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 344b33f975c1a494788fe246e230d351, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillIndex: 0
+  hitBoxSize: {x: 8.6, y: 1.2}
+  hitBoxOffsetX: 1.4
+  enemyLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  recoveryTime: 0.25
+--- !u!114 &8962713407337821027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4528167299006447994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86d33f82a0638e3419c1e78d5dc9d0ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillIndex: 1
+  dashForce: 22
+  dashDuration: 0.2
+--- !u!114 &5661204695941401234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4528167299006447994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61edccc80671e734b8f50922da36617f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillIndex: 2

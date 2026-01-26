@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 13b91cd82b2118c468107497666dba83, type: 3}
-  m_Name: Sword_Dash-Common
+  m_Name: Sword_Slam
   m_EditorClassIdentifier: 
-  icon: {fileID: 21300000, guid: c0cbc89dbcdeac5418f46823e6663cf9, type: 3}
-  skillCategory: 1
-  skillCooldown: 2
-  chargingTime: 0
-  skillDamage: 120
+  icon: {fileID: 551300363, guid: eeb9a0002cd5d98479a7cffdbf4c0563, type: 3}
+  skillCategory: 0
+  skillCooldown: 7
+  chargingTime: 0.8
+  skillDamage: 170
