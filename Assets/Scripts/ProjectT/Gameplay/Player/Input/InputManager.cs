@@ -48,6 +48,8 @@ namespace ProjectT.Gameplay.Player.Input
             playerControls.Combat.Skill_01.canceled += ctx => HandleSkill_Canceled(0);
             playerControls.Combat.Skill_02.performed += ctx => HandleSkill_Started(1);  // 스킬 2 입력 감지
             playerControls.Combat.Skill_02.canceled += ctx => HandleSkill_Canceled(1);
+            playerControls.Combat.Skill_03.performed += ctx => HandleSkill_Started(2);  // 스킬 3 입력 감지
+            playerControls.Combat.Skill_03.canceled += ctx => HandleSkill_Canceled(2);
             // 플레이어 획득 이벤트 구독
             playerControls.System.Pickup.performed += HandlePickup;                     // 아이템 획득 입력 감지
             // 플레이어 인벤토리 이벤트 구독
@@ -79,6 +81,8 @@ namespace ProjectT.Gameplay.Player.Input
                 playerControls.Combat.Skill_01.canceled -= ctx => HandleSkill_Canceled(0);
                 playerControls.Combat.Skill_02.performed -= ctx => HandleSkill_Started(1);
                 playerControls.Combat.Skill_02.canceled -= ctx => HandleSkill_Canceled(1);
+                playerControls.Combat.Skill_03.performed -= ctx => HandleSkill_Started(2);
+                playerControls.Combat.Skill_03.canceled -= ctx => HandleSkill_Canceled(2);
                 // 플레이어 획득 이벤트 구독 해제
                 playerControls.System.Pickup.performed -= HandlePickup;
                 // 플레이어 인벤토리 이벤트 구독 해제
