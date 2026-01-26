@@ -54,20 +54,25 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
         public override void SubscribeSkillEvents()
         {
             ChargingManager.Instance.OnChargingCompleted += OnChargingCompleted;
+            ChargingManager.Instance.OnChargingCanceled += OnChargingCanceled;
         }
-
         public override void UnsubscribeSkillEvents()
         {
             ChargingManager.Instance.OnChargingCompleted -= OnChargingCompleted;
+            ChargingManager.Instance.OnChargingCanceled -= OnChargingCanceled;
         }
-
         private void OnChargingCompleted(ChargingType type)
         {
-            if (type == ChargingType.Skill)
-            {
-                OnSkill();
-            }
+            if(type != ChargingType.Skill) return;
+            UnsubscribeSkillEvents();
+            ExecuteSkill();
         }
+        private void OnChargingCanceled(ChargingType type)
+        {
+            if(type != ChargingType.Skill) return;
+            UnsubscribeSkillEvents();
+        }
+
 
         protected override void OnSkillActivated()
         {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ProjectT.Data.ScriptableObjects.Items;
 using ProjectT.Data.ScriptableObjects.Skills;
@@ -5,6 +6,7 @@ using ProjectT.Gameplay.Combat.Damage;
 using ProjectT.Gameplay.Player;
 using ProjectT.Gameplay.Skills.Contracts;
 using ProjectT.Gameplay.Weapon;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace ProjectT.Gameplay.Skills
@@ -76,8 +78,26 @@ namespace ProjectT.Gameplay.Skills
         {
             if(IsOnCooldown) return; // 쿨타임 중이면 무시
 
-            StartCooldown();
-            OnSkillActivated();
+            /// <summary>
+            /// 스킬 활성화 진입점
+            /// Perform skill은 ActivateSkill()에서 바로 OnSkill()을 호출
+            /// Charging/Holding 스킬은 ChargingManager/HoldingManager에서 완료 콜백으로 OnSkill()을 호출
+            /// </summary>
+            ExecuteSkill();
+        }
+        /// <summary>
+        /// 실제 발동 단일 진입점
+        /// * 쿨타임 시작 시점은 "발동 시점" 으로 통일
+        /// </summary>
+        protected void ExecuteSkill()
+        {
+            if(IsOnCooldown) return; // 쿨타임 중이면 무시
+
+            StartCooldown();   // 쿨타임 시작
+            OnSkillActivated(); // 파생 클래스에서 구체화된 스킬 발동 매
+
+            // 이벤트 누수/중복 방지
+            UnsubscribeSkillEvents();
         }
 
         protected void StartCooldown()
