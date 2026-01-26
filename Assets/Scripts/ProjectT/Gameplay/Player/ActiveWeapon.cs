@@ -111,13 +111,21 @@ namespace ProjectT.Gameplay.Player
         private void SubscribeSkill(int skillIndex)
         {
             ISkill[] skills = (currentWeapon as BaseWeapon)?.GetSkills();
-            skills?[skillIndex]?.SubscribeSkillEvents();
+            if (skills == null || skillIndex < 0 || skillIndex >= skills.Length)
+            {
+                return;
+            }
+            skills[skillIndex]?.SubscribeSkillEvents();
         }
         // 스킬 구독 해제 매서드
         private void UnsubscribeSkill(int skillIndex)
         {
             ISkill[] skills = (currentWeapon as BaseWeapon)?.GetSkills();
-            skills?[skillIndex]?.UnsubscribeSkillEvents();
+            if (skills == null || skillIndex < 0 || skillIndex >= skills.Length)
+            {
+                return;
+            }
+            skills[skillIndex]?.UnsubscribeSkillEvents();
         }
     }
 }
