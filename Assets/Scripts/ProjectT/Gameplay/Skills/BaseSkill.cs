@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using ProjectT.Data.ScriptableObjects.Items;
 using ProjectT.Data.ScriptableObjects.Skills;
@@ -12,12 +11,29 @@ namespace ProjectT.Gameplay.Skills
 {
     public abstract class BaseSkill : MonoBehaviour, ISkill
     {
-        private bool isOnCooldown = false;
+        /// <summary>
+        /// Cooldown SSOT (Runtime)
+        /// </summary>
+        [SerializeField] private bool _isOnCooldown = false;
+        [SerializeField] private float _cooldownRemaining = 0f;
+
         public SkillSO skillInfo { get; private set; }
         private EquippableItemSO weaponData;
 
         [HideInInspector] public int skillIndex;
 
+        /// <summary>
+        /// Cooldown 프로퍼티 
+        /// </summary>
+        public float CooldownDuration => skillInfo != null ? skillInfo.skillCooldown : 0f;  // SkillSO 기반 쿨다운 시간
+        public float CooldownRemaining => _cooldownRemaining;   // 남은 쿨다운 시간
+        public bool IsOnCooldown => _isOnCooldown;              // 현재 쿨다운 상태
+        public Sprite Icon => skillInfo != null ? skillInfo.icon : null;    // SkillSO 기반 스킬 아이콘. UI용
+
+        private void Update()
+        {
+            TickCooldown(Time.deltaTime);
+        }
         public virtual void Skill_Initialize(SkillSO info, EquippableItemSO weapon)
         {
             if (info == null || weapon == null)
@@ -30,7 +46,7 @@ namespace ProjectT.Gameplay.Skills
         }
         public virtual void ActivateSkill(int index = -1)
         {
-            if (isOnCooldown) return; // 쿨타임 중이면 무시
+            if (IsOnCooldown) return; // 쿨타임 중이면 무시
 
             // 1) 인덱스가 전달되면 skillIndex 업데이트
             if (index >= 0)
@@ -58,20 +74,39 @@ namespace ProjectT.Gameplay.Skills
         }
         public void OnSkill()
         {
-            if (!isOnCooldown)
+            if(IsOnCooldown) return; // 쿨타임 중이면 무시
+
+            StartCooldown();
+            OnSkillActivated();
+        }
+
+        protected void StartCooldown()
+        {
+            _isOnCooldown = true;
+            _cooldownRemaining = CooldownDuration;
+        }
+
+        /// <summary>
+        /// 쿨타임 감소 처리(Update 폴링)
+        /// </summary>
+        protected void TickCooldown(float deltaTime)
+        {
+            if (!_isOnCooldown) return;
+
+            if(_cooldownRemaining <= 0f)
             {
-                StartCoroutine(ActivateRoutine());
+                _isOnCooldown = false;
+                _cooldownRemaining = 0f;
+                return;
+            }
+            _cooldownRemaining -= deltaTime;
+            if(_cooldownRemaining <= 0f)
+            {
+                _isOnCooldown = false;
+                _cooldownRemaining = 0f;
             }
         }
 
-        private IEnumerator ActivateRoutine()
-        {
-            isOnCooldown = true;
-            OnSkillActivated();
-
-            yield return new WaitForSeconds(skillInfo.skillCooldown);
-            isOnCooldown = false;
-        }
         // 스킬 이벤트 구독
         public virtual void SubscribeSkillEvents()
         {

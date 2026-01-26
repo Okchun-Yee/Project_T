@@ -14,6 +14,9 @@ namespace ProjectT.Gameplay.Player
         private int? currentSkillIndex = 0; // 현재 스킬 인덱스
 
         public IWeapon currentWeapon; // 현재 활성화된 무기
+        public event Action<BaseWeapon> OnRuntimeWeaponChanged; // 런타임 무기(BaseWeapon) 준비 완료 알림. *UI 캐싱 참조에 사용.
+        public event Action OnRuntimeWeaponCleared;             // 런타임 무기 제거 알림. *UI 캐싱 참조 정리에 사용.
+
 
         protected override void Awake()
         {
@@ -47,11 +50,22 @@ namespace ProjectT.Gameplay.Player
             // 새로운 무기 설정
             currentWeapon = weapon;     // 현재 무기 설정
             currentSkillIndex = null;   // 현재 스킬 인덱스 초기화 (NULLABLE)
+
+            if(weapon is BaseWeapon bw)
+            {
+                OnRuntimeWeaponChanged?.Invoke(bw); // 무기 변경 알림
+            }
+            else
+            {
+                OnRuntimeWeaponCleared?.Invoke();    // BaseWeapon가 아닌 경우 무기 제거 알림. Runtime 캐싱이 불가
+            }
         }
         // 무기 상태 초기화 매서드
         public void ClearWeapon()
         {
             currentWeapon = null;
+            currentSkillIndex = null;
+            OnRuntimeWeaponCleared?.Invoke();    // 무기 제거 알림
         }
         /// <summary>
         /// FSM에서 공격 진입점
