@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13b91cd82b2118c468107497666dba83, type: 3}
   m_Name: Sword_Blade-Common
   m_EditorClassIdentifier: 
-  icon: {fileID: 21300000, guid: c0cbc89dbcdeac5418f46823e6663cf9, type: 3}
+  icon: {fileID: 21300000, guid: 965621af91967824ab76904b1f5b9aed, type: 3}
   skillCategory: 1
   skillCooldown: 4
   chargingTime: 0
