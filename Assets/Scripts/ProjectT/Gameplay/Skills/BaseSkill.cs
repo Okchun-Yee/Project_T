@@ -6,7 +6,6 @@ using ProjectT.Gameplay.Combat.Damage;
 using ProjectT.Gameplay.Player;
 using ProjectT.Gameplay.Skills.Contracts;
 using ProjectT.Gameplay.Weapon;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace ProjectT.Gameplay.Skills
@@ -21,6 +20,7 @@ namespace ProjectT.Gameplay.Skills
 
         public SkillSO skillInfo { get; private set; }
         private EquippableItemSO weaponData;
+        private PlayerBuffs _buffs;
 
         [HideInInspector] public int skillIndex;
 
@@ -45,6 +45,7 @@ namespace ProjectT.Gameplay.Skills
             }
             this.skillInfo = info;
             this.weaponData = weapon;
+            if(_buffs == null) _buffs = GetComponentInParent<PlayerBuffs>();    // BaseSkill에서 PlayerBuffs 캐싱
         }
         public virtual void ActivateSkill(int index = -1)
         {
@@ -152,9 +153,13 @@ namespace ProjectT.Gameplay.Skills
         public float GetSkillDamage()
         {
             float weaponDamage = GetWeaponDamage();
-            float skillMultiplier = skillInfo.skillDamage / 100f;
+            float coeff  = skillInfo.skillDamage / 100f;
+            
+            if(_buffs == null) _buffs = GetComponentInParent<PlayerBuffs>();
+            float rawDamage = weaponDamage * coeff;
+            float skillDamage = (_buffs != null) ? _buffs.ApplyDamage(rawDamage) : rawDamage;
 
-            return weaponDamage * skillMultiplier;
+            return skillDamage;
         }
 
         // VFX & Projectile에 데미지 설정
