@@ -229,6 +229,11 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
                 slashAnim = Instantiate(slashAnimPrefab[AttackIndex], slashAnimSpawnPoint.position, Quaternion.identity);
                 //slashAnim.transform.parent = this.transform.parent;
             }
+            if(_buffs != null)
+            {
+                float scaleMul = _buffs.RangeMultiplier;
+                slashAnim.transform.localScale *= scaleMul;
+            }
         }
         // 슬래시 방향 회전
         public void SwingUp_Flip()
