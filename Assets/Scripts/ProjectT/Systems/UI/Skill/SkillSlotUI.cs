@@ -33,7 +33,6 @@ namespace ProjectT.Systems.UI.Skill
         {
             if(cooldownOverlay == null) return;
             cooldownOverlay.fillAmount = Mathf.Clamp01(t);
-            Debug.Log($"[SkillSlotUI] Cooldown overlay set to {t}");
         }
     }
 }
