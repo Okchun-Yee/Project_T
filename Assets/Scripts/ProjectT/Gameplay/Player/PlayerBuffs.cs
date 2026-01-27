@@ -1,7 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using ProjectT.Data.ScriptableObjects.Skills;
+using ProjectT.Gameplay.Weapon;
 using UnityEngine;
 
 namespace ProjectT.Gameplay.Player
@@ -13,6 +12,9 @@ namespace ProjectT.Gameplay.Player
     /// </summary>
     public class PlayerBuffs : MonoBehaviour
     {
+        private ActiveWeapon _activeWeapon;
+        private bool _boundActiveWeapon  = false;
+
         [Header("Runtime Buff States")]
         [SerializeField] private bool _hasBuff = false;
         [SerializeField] private float _remaining = 0f;
@@ -34,9 +36,48 @@ namespace ProjectT.Gameplay.Player
         public float DamageMultiplier => _hasBuff ? EvaluateMultiplier(_damageMul) : 1f;
         // 현재 프레임 기준 범위 배율(버프 없으면 1)
         public float RangeMultiplier => _hasBuff ? EvaluateMultiplier(_rangeMul) : 1f;
+        private void OnEnable()
+        {
+            TryBindActiveWeapon();
+        }
+        private void OnDisable()
+        {
+            UnbindActiveWeapon();
+        }
+        private void TryBindActiveWeapon()
+        {
+            if(_boundActiveWeapon) return;
+            if(ActiveWeapon.Instance == null) return;
+
+            _activeWeapon = ActiveWeapon.Instance;
+            _activeWeapon.OnRuntimeWeaponChanged += HandleRuntimeWeaponChanged;
+            _activeWeapon.OnRuntimeWeaponCleared += HandleRuntimeWeaponCleared;
+            _boundActiveWeapon = true;
+        }
+
+        private void UnbindActiveWeapon()
+        {
+            if(!_boundActiveWeapon || _activeWeapon == null) return;
+            _activeWeapon.OnRuntimeWeaponChanged -= HandleRuntimeWeaponChanged;
+            _activeWeapon.OnRuntimeWeaponCleared -= HandleRuntimeWeaponCleared;
+            _activeWeapon = null;
+            _boundActiveWeapon = false;
+        }
+
+        private void HandleRuntimeWeaponChanged(BaseWeapon weapon)
+        {
+            Clear();
+        }
+
+        private void HandleRuntimeWeaponCleared()
+        {
+            Clear();
+        }
 
         private void Update()
         {
+            TryBindActiveWeapon(); // 1회 시도
+            
             if (!_hasBuff) return;
 
             float dt = Time.deltaTime;
