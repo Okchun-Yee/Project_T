@@ -20,7 +20,7 @@ namespace ProjectT.Gameplay.Skills
 
         public SkillSO skillInfo { get; private set; }
         private EquippableItemSO weaponData;
-        private PlayerBuffs _buffs;
+        protected PlayerBuffs _buffs;
 
         [HideInInspector] public int skillIndex;
 
@@ -153,13 +153,12 @@ namespace ProjectT.Gameplay.Skills
         public float GetSkillDamage()
         {
             float weaponDamage = GetWeaponDamage();
-            float coeff  = skillInfo.skillDamage / 100f;
+            float rawDamage = weaponDamage * skillInfo.skillDamage;
             
             if(_buffs == null) _buffs = GetComponentInParent<PlayerBuffs>();
-            float rawDamage = weaponDamage * coeff;
-            float skillDamage = (_buffs != null) ? _buffs.ApplyDamage(rawDamage) : rawDamage;
+            float Damage = (_buffs != null) ? _buffs.ApplyDamage(rawDamage) : rawDamage;
 
-            return skillDamage;
+            return Damage;
         }
 
         // VFX & Projectile에 데미지 설정

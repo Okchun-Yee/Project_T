@@ -12,8 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13b91cd82b2118c468107497666dba83, type: 3}
   m_Name: Bow_Landing
   m_EditorClassIdentifier: 
-  icon: {fileID: 21300000, guid: c0cbc89dbcdeac5418f46823e6663cf9, type: 3}
+  icon: {fileID: 21300000, guid: 1e63dc4d25d50c9489e337d1d31385e9, type: 3}
   skillCategory: 1
   skillCooldown: 3
   chargingTime: 0
-  skillDamage: 120
+  skillDamage: 1.2
+  isBuff: 0
+  buffDuration: 0
+  buffDamageMultiplier: 1
+  buffRangeMultiplier: 1
+  buffSpeedMultiplier: 1
+  buffRampDuration: 0
+  buffRampCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

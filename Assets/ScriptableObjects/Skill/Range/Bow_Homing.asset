@@ -12,8 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13b91cd82b2118c468107497666dba83, type: 3}
   m_Name: Bow_Homing
   m_EditorClassIdentifier: 
-  icon: {fileID: 21300000, guid: c0cbc89dbcdeac5418f46823e6663cf9, type: 3}
+  icon: {fileID: 21300000, guid: 6e5842ade854ad24bb8f07d9ebf6159f, type: 3}
   skillCategory: 1
   skillCooldown: 3
   chargingTime: 0
-  skillDamage: 130
+  skillDamage: 1.3
+  isBuff: 0
+  buffDuration: 0
+  buffDamageMultiplier: 1
+  buffRangeMultiplier: 1
+  buffSpeedMultiplier: 1
+  buffRampDuration: 0
+  buffRampCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
