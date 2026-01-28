@@ -12,8 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13b91cd82b2118c468107497666dba83, type: 3}
   m_Name: Sword_Slam
   m_EditorClassIdentifier: 
-  icon: {fileID: 551300363, guid: eeb9a0002cd5d98479a7cffdbf4c0563, type: 3}
+  icon: {fileID: 21300000, guid: cef00e90a0a7f334983e26d5ce7a506a, type: 3}
   skillCategory: 0
   skillCooldown: 7
   chargingTime: 0.8
-  skillDamage: 170
+  skillDamage: 1.7
+  isBuff: 0
+  buffDuration: 0
+  buffDamageMultiplier: 1
+  buffRangeMultiplier: 1
+  buffSpeedMultiplier: 1
+  buffRampDuration: 0
+  buffRampCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

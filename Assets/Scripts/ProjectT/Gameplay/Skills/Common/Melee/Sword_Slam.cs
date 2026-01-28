@@ -64,6 +64,7 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
         private void OnChargingCompleted(ChargingType type)
         {
             if(type != ChargingType.Skill) return;
+            Debug.Log($"[Sword_Slam] Charging completed. chargingTime: {skillInfo.chargingTime:F2}s");
             UnsubscribeSkillEvents();
             ExecuteSkill();
         }
@@ -76,8 +77,8 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
 
         protected override void OnSkillActivated()
         {
-            // 총 시전 시간 = 캐스팅 + 후딜
-            float totalTime = skillInfo.chargingTime + recoveryTime;
+            // 차징 완료 후 즉시 타격, 후딜만 적용
+            float totalTime = recoveryTime;
             
             // 1. 애니메이션 트리거
             _animator?.SetTrigger("SwordSlam");
@@ -91,16 +92,7 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
             // 3. 무적 활성화
             _invincibility?.StartInvincibility(totalTime);
             
-            // 4. 타격 타이밍 스케줄 (chargingTime 후 실행)
-            StartCoroutine(ExecuteAfterCharging());
-        }
-
-        private IEnumerator ExecuteAfterCharging()
-        {
-            // 캐스팅 시간 대기
-            yield return new WaitForSeconds(skillInfo.chargingTime);
-            
-            // 타격 판정 실행
+            // 4. 차징 완료 직후 타격
             ExecuteHitDetection();
         }
 
@@ -140,7 +132,7 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
             Vector2 facingDir = facingLeft ? Vector2.left : Vector2.right;
             Vector2 center = (Vector2)transform.position + (facingDir * hitBoxOffsetX);
             
-            Gizmos.color = Color.red;
+            Gizmos.color = Color.green;
             Gizmos.DrawWireCube(center, hitBoxSize);
         }
     }

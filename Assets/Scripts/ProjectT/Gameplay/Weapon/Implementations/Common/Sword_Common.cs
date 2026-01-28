@@ -7,7 +7,6 @@ using ProjectT.Gameplay.Combat.Damage;
 using ProjectT.Gameplay.Player;
 using ProjectT.Gameplay.Player.Controller;
 using ProjectT.Gameplay.Weapon.Contracts;
-using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -27,11 +26,16 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
         [Header("Weapon Setting")]
 
         [SerializeField] private Combo comboController; // 콤보 컨트롤러
+
         private Transform weaponColliders;              // 콤보 무기 콜라이더
         private Animator anim;                          // 애니메이션
         private GameObject slashAnim;                   // 현재 활성화된 슬래시 애니메이션 인스턴스
-        private InGame_MouseFollow mouseFollow;         // 마우스 추적 스크립트
-        private Flash flash;                            // 피격시 깜빡임 스크립트
+        private InGame_MouseFollow _mouseFollow;         // 마우스 추적 스크립트
+        private Flash _flash;                            // 피격시 깜빡임 스크립트
+        private PlayerBuffs _buffs;                     // 플레이어 버프 매니저
+        private Vector3 _baseScale;                     // 기본 스케일 저장용
+        private bool _cachedBaseScale = false;          // 기본 스케일 캐싱 여부
+        
         // SSOT: 차징 완료 여부는 FSM 상태(Holding)로 판단, 로컬 플래그 제거됨
 
         private static readonly int HASH_INDEX = Animator.StringToHash("AttackIndex");  // 현재 콤보 인덱스
@@ -49,8 +53,9 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
         private void Awake()
         {
             anim = GetComponent<Animator>();
-            mouseFollow = GetComponent<InGame_MouseFollow>();
-            flash = GetComponent<Flash>();
+            _mouseFollow = GetComponent<InGame_MouseFollow>();
+            _flash = GetComponent<Flash>();
+            _buffs = GetComponentInParent<PlayerBuffs>();
             if (anim == null)
             {
                 // Null 방어 코드
@@ -77,7 +82,15 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
 
             // 안전하게 SetActive 호출
             if (weaponColliders != null)
+            {
+                if(!_cachedBaseScale)
+                {
+                    _baseScale = weaponColliders.localScale;
+                    _cachedBaseScale = true;
+                }
                 weaponColliders.gameObject.SetActive(false); // 시작 시 모든 콜라이더 비활성화
+            }
+                
         }
         private void OnEnable()
         {
@@ -95,7 +108,7 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
         }
         private void Update()
         {
-            mouseFollow.MeleeWeaponMouseFollow();
+            _mouseFollow.MeleeWeaponMouseFollow();
         }
         protected override void OnDisable()
         {
@@ -138,6 +151,16 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
             if (weaponColliders == null) return;
 
             weaponColliders.gameObject.SetActive(index >= 0);
+            // _baseScale 미 캐싱 방어
+            if (!_cachedBaseScale)
+            {
+                _baseScale = weaponColliders.localScale;
+                _cachedBaseScale = true;
+            }
+            // 사거리 버프 적용
+            weaponColliders.localScale = (_buffs != null) ? _buffs.ApplyRange(_baseScale) : _baseScale;
+
+            
             // PlayerController의 FacingLeft를 읽어 콜라이더 좌우 반전 적용 (로컬 스케일 사용)
             bool facingLeft = PlayerMovementExecution.Instance != null && PlayerMovementExecution.Instance.FacingLeft;
             // 추가: 앞/뒤 판별
@@ -151,7 +174,10 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
                 weaponColliders.transform.rotation *= Quaternion.Euler(-180, 0, 0);
 
             DamageSource damageSource = weaponColliders.GetComponent<DamageSource>();
-            damageSource?.SetDamage(weaponInfo.weaponDamage);
+            // 데미지 버프 적용
+            float rawDamage = weaponInfo.weaponDamage;
+            float buffedDamage = (_buffs != null) ? _buffs.ApplyDamage(rawDamage) : rawDamage;
+            damageSource?.SetDamage(buffedDamage);
         }
         // Combo component events
         // 콤보가 진행될 때마다 호출
@@ -203,6 +229,11 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
                 slashAnim = Instantiate(slashAnimPrefab[AttackIndex], slashAnimSpawnPoint.position, Quaternion.identity);
                 //slashAnim.transform.parent = this.transform.parent;
             }
+            if(_buffs != null)
+            {
+                float scaleMul = _buffs.RangeMultiplier;
+                slashAnim.transform.localScale *= scaleMul;
+            }
         }
         // 슬래시 방향 회전
         public void SwingUp_Flip()
@@ -241,7 +272,7 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
             if (ActiveWeapon.Instance == null) return;
             if (type != ChargingType.Attack) return;
             // SSOT: 차징 완료 시 실행 레이어 처리 (플래시 VFX 등)
-            StartCoroutine(flash.FlashRoutine());
+            StartCoroutine(_flash.FlashRoutine());
         }
 
         public void OnChargingProgress(ChargingType type, float elapsed, float duration)

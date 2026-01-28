@@ -106,7 +106,7 @@ namespace ProjectT.Systems.UI.Skill
                     slotUI.SetCooldownOverlay(0f);
                     continue;
                 }
-                float t = 1f - (skill.CooldownRemaining / skill.CooldownDuration);
+                float t = skill.CooldownRemaining / skill.CooldownDuration;
                 slotUI.SetCooldownOverlay(t);
             }
         }
