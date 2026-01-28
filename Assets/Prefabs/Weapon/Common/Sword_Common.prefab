@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8349803799137369422}
   - component: {fileID: 7175670619446454581}
   - component: {fileID: 667304997567885545}
+  - component: {fileID: 7065007673283398658}
   - component: {fileID: 3038745899554872539}
   - component: {fileID: 8962713407337821027}
   - component: {fileID: 5937196587455482079}
@@ -170,6 +171,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   comboLength: 2
   comboDelay: 0.8
+--- !u!114 &7065007673283398658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4528167299006447994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cccce0b0656d8d439c4c5f966590f12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &3038745899554872539
 MonoBehaviour:
   m_ObjectHideFlags: 0

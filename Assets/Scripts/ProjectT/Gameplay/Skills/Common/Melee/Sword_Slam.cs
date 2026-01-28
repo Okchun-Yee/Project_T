@@ -132,7 +132,7 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
             Vector2 facingDir = facingLeft ? Vector2.left : Vector2.right;
             Vector2 center = (Vector2)transform.position + (facingDir * hitBoxOffsetX);
             
-            Gizmos.color = Color.red;
+            Gizmos.color = Color.green;
             Gizmos.DrawWireCube(center, hitBoxSize);
         }
     }
