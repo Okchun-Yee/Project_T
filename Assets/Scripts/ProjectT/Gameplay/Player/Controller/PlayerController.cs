@@ -462,6 +462,11 @@ namespace ProjectT.Gameplay.Player
                 cm?.EndCharging(reason);
             }
 
+            // 인터럽트 시 무기 회전 잠금 해제 (안전장치)
+            ActiveWeapon.Instance?
+                .GetComponent<ProjectT.Gameplay.Weapon.WeaponRotationLockController>()
+                ?.UnlockZ();
+
             if (CombatState != PlayerCombatStateId.None)
             {
                 _combatFsm.ChangeState(PlayerCombatStateId.None);

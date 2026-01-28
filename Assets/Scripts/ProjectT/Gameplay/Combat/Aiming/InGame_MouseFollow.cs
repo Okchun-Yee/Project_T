@@ -65,6 +65,15 @@ namespace ProjectT.Gameplay.Combat.Aiming
         {
             // 마우스 추적 종료 조건 (1. 공격 중, 2. 스킬 시전 중 ...)
             if(PlayerController.Instance.CombatState == PlayerCombatStateId.Charging) return;
+            if (PlayerController.Instance.IsActionLocked(ActionLockFlags.Move) ||
+                PlayerController.Instance.IsActionLocked(ActionLockFlags.BasicAttack) ||
+                PlayerController.Instance.IsActionLocked(ActionLockFlags.Dash) ||
+                PlayerController.Instance.IsActionLocked(ActionLockFlags.Skill)) return;
+
+            var rotationLock = ActiveWeapon.Instance != null
+                ? ActiveWeapon.Instance.GetComponent<ProjectT.Gameplay.Weapon.WeaponRotationLockController>()
+                : null;
+            if (rotationLock != null && rotationLock.IsLocked) return;
 
             Vector3 mousePos = Input.mousePosition;
             Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(PlayerMovementExecution.Instance.transform.position);
