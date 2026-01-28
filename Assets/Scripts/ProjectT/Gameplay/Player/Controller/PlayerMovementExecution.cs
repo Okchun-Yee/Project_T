@@ -4,6 +4,7 @@ using ProjectT.Core;
 using ProjectT.Gameplay.Combat;
 using UnityEngine.InputSystem;
 using ProjectT.Core.Debug;
+using ProjectT.Gameplay.Player.FSM.Combat;
 
 
 namespace ProjectT.Gameplay.Player.Controller
@@ -169,12 +170,16 @@ namespace ProjectT.Gameplay.Player.Controller
         private void PlayerDirection()
         {
             // (스킬 시전 중, 공격 중, 죽음 중) 방향 전환 불가 상태 관리
-            if (_dash.IsDashing ||
-            _knockback.isKnockback ||
-            PlayerHealth.Instance.isDead)
+            if (PlayerController.Instance.CombatState == PlayerCombatStateId.Charging) return;
+            if (_isDead) return;
+
+            if (PlayerController.Instance.IsActionLocked(ActionLockFlags.Dash)
+            || PlayerController.Instance.IsActionLocked(ActionLockFlags.BasicAttack)
+            || PlayerController.Instance.IsActionLocked(ActionLockFlags.Move))
             {
                 return;
             }
+
             Vector3 mousePos = UnityEngine.Input.mousePosition;
             Vector3 playerScreenPoint = Camera.main.WorldToScreenPoint(transform.position);
             if (mousePos.x < playerScreenPoint.x)
