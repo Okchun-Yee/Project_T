@@ -4,6 +4,7 @@ using ProjectT.Data.ScriptableObjects.Skills;
 using ProjectT.Gameplay.Combat;
 using ProjectT.Gameplay.Player;
 using ProjectT.Gameplay.Player.Controller;
+using ProjectT.Gameplay.Skills.Runtime;
 using UnityEngine;
 
 namespace ProjectT.Gameplay.Skills.Common.Melee
@@ -32,7 +33,6 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
             // 마우스 방향 계산 (Execution 헬퍼 사용)
             Vector2 mouseDirection = PlayerMovementExecution.Instance.GetMouseDirection();
             float damage = GetSkillDamage();
-            Debug.Log($"[Sword_Dash]: Dash Skill Activated, Damage {damage}");
             
             // DashContext 생성 및 요청
             _controller.RequestDash(DashContext.CreateForSkill(
@@ -41,6 +41,11 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
                 duration: dashDuration, 
                 damage: damage
             ));
+        }
+
+        public override void Execute(in SkillExecutionContext ctx)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

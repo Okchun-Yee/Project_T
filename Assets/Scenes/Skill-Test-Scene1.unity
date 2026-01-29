@@ -234,19 +234,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3969855821128286577, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
-      insertIndex: 11
-      addedObject: {fileID: 1894328656}
-    - targetCorrespondingSourceObject: {fileID: 6777399498932286074, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1611268574}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
---- !u!1 &1206522242 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6777399498932286074, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
-  m_PrefabInstance: {fileID: 1012185643}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1366688207
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -289,10 +278,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 965325728248112321, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 965325728248112321, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
-      propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1676956121757144753, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
@@ -435,10 +420,6 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5703130974355249600, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5772070343313964122, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -478,10 +459,6 @@ PrefabInstance:
     - target: {fileID: 5793685514988269915, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5913060303810237609, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
-      propertyPath: m_Value
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6616057128853835241, guid: 1a20dcfcd82565e459baa6a8d6aadabe, type: 3}
       propertyPath: m_AnchorMax.y
@@ -727,20 +704,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9096985913030178786, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
   m_PrefabInstance: {fileID: 1012185643}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1611268574
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1206522242}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a56343f490f0d749af237164858092b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _isLocked: 0
-  _lockedZ: 0
 --- !u!1 &1691374211
 GameObject:
   m_ObjectHideFlags: 0
@@ -838,6 +801,10 @@ PrefabInstance:
     - target: {fileID: 3287884442384008939, guid: 1cd9f78105258d746ad7cc24ee0955b9, type: 3}
       propertyPath: m_Name
       value: Enemy_Melee
+      objectReference: {fileID: 0}
+    - target: {fileID: 3287884442384008939, guid: 1cd9f78105258d746ad7cc24ee0955b9, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3356558644656098088, guid: 1cd9f78105258d746ad7cc24ee0955b9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -984,31 +951,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2137351331253322357, guid: 80129a0fcec6f2d4c8e770e2340beaf9, type: 3}
   m_PrefabInstance: {fileID: 1012185643}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1894328656
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1894328624}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 453ba07c7b1012547af64847aaa843e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _hasBuff: 0
-  _remaining: 0
-  _duration: 0
-  _damageMul: 1
-  _rangeMul: 1
-  _rampDuration: 0
-  _elapsed: 0
-  _rampCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -110,11 +110,10 @@ namespace ProjectT.Gameplay.Weapon.Projectiles
                 DestroyProjectile();
                 return;
             }
-            float dmg = GetAssignedDamage();     // BaseVFX에서 설정한 데미지 가져오기
             // 적 체력 컴포넌트에 데미지 적용
             if (damageSource != null)
             {
-                damageSource.InstantDamage(dmg, enemyHealth);   // DamageSource가 있으면 해당 데미지 적용
+                damageSource.InstantDamage(damageSource.DamageAmount, enemyHealth);   // DamageSource가 있으면 해당 데미지 적용
             }
             else
             {
@@ -126,8 +125,13 @@ namespace ProjectT.Gameplay.Weapon.Projectiles
         // 투사체가 플레이어와 충돌 시 호출 (적 투사체일 때)
         private void PlayerHit(PlayerHealth player)
         {
-            int dmg = (int)GetAssignedDamage();        // BaseVFX에서 설정한 데미지 가져오기
-            damageSource?.InstantDamageToPlayer(dmg, player, transform);    // DamageSource가 있으면 해당 데미지 적용
+            if (damageSource == null)
+            {
+                Debug.LogWarning($"Projectile [{gameObject.name}]: No DamageSource component found!");
+                return;
+            }
+            int dmg = (int)damageSource.DamageAmount;
+            damageSource.InstantDamageToPlayer(dmg, player, transform);    // DamageSource가 있으면 해당 데미지 적용
             DestroyProjectile();
         }
         // 투사체 충돌 시 파괴 VFX 생성 및 오브젝트 제거

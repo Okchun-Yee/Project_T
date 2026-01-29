@@ -25,7 +25,7 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
 
         [Header("Weapon Setting")]
 
-        [SerializeField] private Combo comboController; // 콤보 컨트롤러
+        [SerializeField] private Combo comboController;       // 콤보 컨트롤러
 
         private Transform weaponColliders;              // 콤보 무기 콜라이더
         private Animator anim;                          // 애니메이션
