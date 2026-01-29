@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using ProjectT.Gameplay.Combat;
+using ProjectT.Gameplay.Combat.Damage;
 using ProjectT.Gameplay.Enemies;
 using ProjectT.Gameplay.Player;
 using ProjectT.Gameplay.Player.Controller;
@@ -29,13 +30,14 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
         private Animator _animator;
         private Invincibility _invincibility;
         private SpriteRenderer _spriteRenderer;
+        private DamageSource _damageSource;
 
         private void Awake()
         {
             _animator = GetComponentInParent<Animator>();
             _invincibility = GetComponentInParent<Invincibility>();
             _spriteRenderer = GetComponentInParent<SpriteRenderer>();
-            
+            _damageSource = GetComponent<DamageSource>();
             if (_animator == null)
             {
                 Debug.LogError("[Sword_Slam] Animator not found in parent!");
@@ -99,6 +101,12 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
 
         private void ExecuteHitDetection()
         {
+            if (_damageSource == null)
+            {
+                Debug.LogWarning("[Sword_Slam] DamageSource not found on skill object.");
+                return;
+            }
+
             // Facing 방향 결정 (PlayerMovementExecution.FacingLeft 기준)
             bool facingLeft = PlayerMovementExecution.Instance != null && PlayerMovementExecution.Instance.FacingLeft;
             Vector2 facingDir = facingLeft ? Vector2.left : Vector2.right;
@@ -110,7 +118,8 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
             Collider2D[] hits = Physics2D.OverlapBoxAll(center, hitBoxSize, 0f, enemyLayerMask);
             
             float damage = GetSkillDamage();
-            
+            _damageSource.SetDamage(damage);
+
             Debug.Log($"[Sword_Slam] Hit Detection: {hits.Length} enemies, Damage: {damage:F1}");
             
             // 모든 적에게 데미지 전달
@@ -119,7 +128,7 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
                 var enemy = hit.GetComponent<EnemyHealth>();
                 if (enemy != null)
                 {
-                    enemy.TakeDamage(damage);
+                    _damageSource.InstantDamage(_damageSource.DamageAmount, enemy);
                 }
             }
         }

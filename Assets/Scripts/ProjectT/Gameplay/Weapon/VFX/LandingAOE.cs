@@ -67,7 +67,14 @@ namespace ProjectT.Gameplay.Weapon.VFX
 
         protected override void OnVFXInitialized()
         {
-            if (assignedDamage > 0f) damagePerTick = assignedDamage;
+            if (damageSource != null && damageSource.DamageAmount > 0f)
+            {
+                damagePerTick = damageSource.DamageAmount;
+            }
+            else if (assignedDamage > 0f)
+            {
+                damagePerTick = assignedDamage;
+            }
             if (damageCoroutine == null)
             {
                 damageCoroutine = StartCoroutine(AoESequence());
