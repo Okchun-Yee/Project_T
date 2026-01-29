@@ -16,10 +16,10 @@ GameObject:
   - component: {fileID: 7175670619446454581}
   - component: {fileID: 667304997567885545}
   - component: {fileID: 7065007673283398658}
-  - component: {fileID: 3038745899554872539}
+  - component: {fileID: 7684351393668699343}
+  - component: {fileID: 9076410241204738369}
   - component: {fileID: 8962713407337821027}
   - component: {fileID: 5937196587455482079}
-  - component: {fileID: 7684351393668699343}
   m_Layer: 0
   m_Name: Sword_Common
   m_TagString: Untagged
@@ -184,7 +184,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cccce0b0656d8d439c4c5f966590f12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3038745899554872539
+--- !u!114 &7684351393668699343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4528167299006447994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e4f08ae7bc3a664991d36a867180b3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageAmount: 1
+--- !u!114 &9076410241204738369
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -199,8 +212,8 @@ MonoBehaviour:
   _isOnCooldown: 0
   _cooldownRemaining: 0
   skillIndex: 0
-  hitBoxSize: {x: 8.6, y: 1.2}
-  hitBoxOffsetX: 1.4
+  hitBoxSize: {x: 8.4, y: 1.2}
+  hitBoxOffsetX: 2.6
   enemyLayerMask:
     serializedVersion: 2
     m_Bits: 128
@@ -252,16 +265,3 @@ MonoBehaviour:
     radius: 2
     ellipseRadii: {x: 0.8, y: 0.2}
     startOrbitAngleDeg: 12
---- !u!114 &7684351393668699343
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4528167299006447994}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e4f08ae7bc3a664991d36a867180b3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damageAmount: 1

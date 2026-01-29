@@ -1,14 +1,33 @@
 using ProjectT.Data.ScriptableObjects.Skills;
 using ProjectT.Gameplay.Skills.Runtime;
+using ProjectT.Gameplay.VFX;
 using UnityEngine;
 
 namespace ProjectT.Gameplay.Skills.Common.Melee
 {
     public class Sword_Blade : BaseSkill
     {
+        [Header("Spin VFX")]
+        [SerializeField] private SpinVfxActor spinActorPrefab;
+        [SerializeField] private Transform pivotPrefab;
+        [SerializeField] private int slotCount = 4;
+        [SerializeField] private SpinVfxConfig spinConfig;
         public override void Execute(in SkillExecutionContext ctx)
         {
-            throw new System.NotImplementedException();
+            if (spinActorPrefab == null || pivotPrefab == null)
+            {
+                Debug.LogWarning("SwordSpinSkill: SpinVFX prefab or pivot is missing.");
+                return;
+            }
+
+            // 1. Actor 생성
+            var actor = Instantiate(spinActorPrefab, ctx.spinHubRoot);
+
+            // 2. 스킬 전용 Pivot + 슬롯 구성
+            actor.ConfigurePivotAndSlots(pivotPrefab, slotCount);
+
+            // 3. 재생
+            actor.Play(ctx.owner, spinConfig);
         }
 
         protected override void OnSkillActivated()
