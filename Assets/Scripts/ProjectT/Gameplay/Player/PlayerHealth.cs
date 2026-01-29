@@ -34,7 +34,7 @@ namespace ProjectT.Gameplay.Player
         private Invincibility _invincibility;
         private PlayerController _playerController;
 
-        const string TOWN_TEXT = "GameScene1";
+        const string TOWN_TEXT = "";
         readonly int DEATH_HASH = Animator.StringToHash("Death");
         protected override void Awake()
         {
@@ -77,7 +77,7 @@ namespace ProjectT.Gameplay.Player
         {
             if (!canTakeDamage) { return; }
             if (_invincibility != null && _invincibility.IsInvincible) { return; }
-
+            Debug.Log($"[TakeDamage] dmg={damageAmount}, from={hitTransform.name}, layer={LayerMask.LayerToName(hitTransform.gameObject.layer)}, root={hitTransform.transform.root.name}");
             ScreenShakeManager.Instance.ShakeScreen();
             _knockback.GetKnockedBack(hitTransform, knockBackThrustAmount);
             StartCoroutine(_flash.FlashRoutine());

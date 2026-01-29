@@ -3,7 +3,7 @@ using UnityEngine;
 [System.Serializable]
 public class OrbitSlot
 {
-    public Transform pivot;      // Slot_*
-    public Transform visual;     // Visual_*
-    [HideInInspector] public float phaseDeg;
+    public Transform _pivot;      // Slot_*
+    public Transform _visual;     // Visual_*
+    [HideInInspector] public float _phaseDeg;
 }
