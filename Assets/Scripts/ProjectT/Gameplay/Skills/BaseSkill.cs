@@ -5,6 +5,7 @@ using ProjectT.Data.ScriptableObjects.Skills;
 using ProjectT.Gameplay.Combat.Damage;
 using ProjectT.Gameplay.Player;
 using ProjectT.Gameplay.Skills.Contracts;
+using ProjectT.Gameplay.Skills.Runtime;
 using ProjectT.Gameplay.Weapon;
 using UnityEngine;
 
@@ -95,7 +96,9 @@ namespace ProjectT.Gameplay.Skills
             if(IsOnCooldown) return; // 쿨타임 중이면 무시
 
             StartCooldown();   // 쿨타임 시작
-            OnSkillActivated(); // 파생 클래스에서 구체화된 스킬 발동 매
+            OnSkillActivated(); // 파생 클래스에서 구체화된 스킬 발동
+
+            if(skillInfo.hasSpinVfx) PlayerController.Instance.ExecuteSkill(this); // SpinVFX용 실행
 
             // 이벤트 누수/중복 방지
             UnsubscribeSkillEvents();
@@ -173,5 +176,6 @@ namespace ProjectT.Gameplay.Skills
         // 추상 매서드 정리
         // 파생 클래스에서 구체화할 스킬 매서드
         protected abstract void OnSkillActivated();
+        public abstract void Execute(in SkillExecutionContext ctx);
     }
 }

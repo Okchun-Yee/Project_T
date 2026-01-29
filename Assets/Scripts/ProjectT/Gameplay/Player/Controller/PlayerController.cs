@@ -9,6 +9,8 @@ using ProjectT.Gameplay.Weapon;
 using ProjectT.Gameplay.Player.Controller;
 using ProjectT.Core;
 using ProjectT.Core.Debug;
+using ProjectT.Gameplay.Skills.Runtime;
+using ProjectT.Gameplay.Skills;
 
 namespace ProjectT.Gameplay.Player
 {
@@ -64,13 +66,18 @@ namespace ProjectT.Gameplay.Player
 
         [Header("Debug")]
         [SerializeField] private bool _logStateChanges;
+        [Header("Combat Roots")]
+        [SerializeField] private Transform _combatRoot;
+        [SerializeField] private Transform _spinHubRoot; // Player/Combat/SpinHub
+
+        private SkillExecutionContext _skillCtx;
 
         // 외부 접근용 프로퍼티 (입력 상태)
         public Vector2 MoveInput { get; private set; }
         public bool AttackPressed { get; private set; }
         public bool AttackHeld { get; private set; }
         public bool DodgePressed { get; private set; }
-        
+
         // 무기 설정 기반 (Binder에서 설정, FSM 전이 조건으로 사용)
         public bool CanChargeAttack { get; set; }
 
@@ -80,17 +87,17 @@ namespace ProjectT.Gameplay.Player
 
         public PlayerLocomotionStateId LocomotionState => _locomotionFsm.CurrentStateId;    // 현재 Locomotion 상태
         public PlayerCombatStateId CombatState => _combatFsm.CurrentStateId;                // 현재 Combat 상태
-        
+
         /// <summary>
         /// Combat FSM 인스턴스 (Binder가 OnStateChanged 콜백을 구독하기 위해 노출)
         /// </summary>
         public StateMachine<PlayerCombatStateId, PlayerFsmContext> CombatFsm => _combatFsm;
-        
+
         /// <summary>
         /// Locomotion FSM 인스턴스 (Binder가 OnStateChanged 콜백을 구독하기 위해 노출)
         /// </summary>
         public StateMachine<PlayerLocomotionStateId, PlayerFsmContext> LocomotionFsm => _locomotionFsm;
-        
+
         private PlayerFsmContext _ctx;  // FSM 공유 컨텍스트
         private StateMachine<PlayerLocomotionStateId, PlayerFsmContext> _locomotionFsm;
         private StateMachine<PlayerCombatStateId, PlayerFsmContext> _combatFsm;
@@ -110,12 +117,13 @@ namespace ProjectT.Gameplay.Player
             BuildFsm();
             InitializeFsm();
             // Notify listeners that FSMs are ready (Binder may be waiting)
+            _skillCtx = new SkillExecutionContext(transform, _spinHubRoot);
             OnFsmBuilt?.Invoke();
         }
         private void OnEnable()
         {
             InputManager.Ready += TryBindInput;
-            
+
             // InputManager가 이미 준비된 경우 즉시 바인딩 시도
             if (InputManager.Instance != null)
             {
@@ -173,7 +181,7 @@ namespace ProjectT.Gameplay.Player
         public void SetPaused(bool paused)
         {
             _isPaused = paused;
-            
+
             // Pause 진입 시 Charging/Holding 취소
             if (paused && IsInCombatChargingOrHolding())
             {
@@ -208,7 +216,7 @@ namespace ProjectT.Gameplay.Player
         public void ForceDead() => ApplyForceState(ForceStateType.Dead);
         #endregion
 
-        #region Dash Request
+        #region Request
         /// <summary>
         /// 대시 요청 단일 진입점 (외부 스킬/시스템용)
         /// Execution에 Context를 위임하고 FSM 전이 요청
@@ -221,7 +229,7 @@ namespace ProjectT.Gameplay.Player
             {
                 execution.SetPendingDash(context);
             }
-            
+
             // 2. FSM 전이 요청
             SetLocomotion(PlayerLocomotionStateId.Dodge);
         }
@@ -234,12 +242,18 @@ namespace ProjectT.Gameplay.Player
         {
             PlayerMovementExecution execution = GetComponent<PlayerMovementExecution>();
             if (execution == null) return;
-            
+
             RequestDash(Controller.DashContext.CreateForDodge(
                 direction: execution.GetDirection(),
                 force: execution.DodgeForce,
                 duration: execution.DodgeDuration
             ));
+        }
+
+        public void ExecuteSkill(BaseSkill skill)
+        {
+            if (skill == null) return;
+            skill.Execute(_skillCtx);
         }
         #endregion
 
@@ -343,7 +357,8 @@ namespace ProjectT.Gameplay.Player
         private void TryBindInput()
         {
             if (_isBound) return;
-            if (InputManager.Instance == null) {
+            if (InputManager.Instance == null)
+            {
                 Debug.LogWarning("[PC] InputManager Instance is null, cannot bind input.");
                 return;
             }
@@ -419,7 +434,7 @@ namespace ProjectT.Gameplay.Player
         #endregion
 
         #region Cross-FSM Coordinator (Step 6)
-        
+
         /// <summary>
         /// Locomotion이 Dodge 상태인지
         /// </summary>
@@ -435,7 +450,7 @@ namespace ProjectT.Gameplay.Player
         /// </summary>
         private bool IsInCombatChargingOrHolding()
         {
-            return CombatState == PlayerCombatStateId.Charging 
+            return CombatState == PlayerCombatStateId.Charging
                 || CombatState == PlayerCombatStateId.Holding;
         }
 
@@ -530,7 +545,7 @@ namespace ProjectT.Gameplay.Player
         private void OnAttackStarted()
         {
             if (IsActionLocked(ActionLockFlags.BasicAttack)) return;
-            
+
             AttackPressed = true;   // 1프레임 트리거
             AttackHeld = true;      // 유지 입력
         }
@@ -543,7 +558,7 @@ namespace ProjectT.Gameplay.Player
         private void OnDodgeInput()
         {
             if (IsActionLocked(ActionLockFlags.Dash)) return;
-            
+
             DodgePressed = true;    // 1프레임 트리거
             RequestKeyboardDodge(); // Context 설정
         }

@@ -24,7 +24,7 @@ namespace ProjectT.Gameplay.VFX
         [SerializeField] private SpinVfxConfig defaultConfig = default;
 
         [Header("Dubug Test")]
-        [SerializeField] private bool autoPlayOnStart = false;  
+        [SerializeField] private bool autoPlayOnStart = false;
         [SerializeField] private bool autoRotation = true;
 
         private Transform _owner;
@@ -58,12 +58,6 @@ namespace ProjectT.Gameplay.VFX
                 Play(transform, defaultConfig);
             }
         }
-        private void OnDestroy()
-        {
-#if UNITY_EDITOR
-            if (!Application.isPlaying) return;
-#endif
-        }
 
         /// <summary>
         /// 회전 VFX를 재생한다.
@@ -74,6 +68,7 @@ namespace ProjectT.Gameplay.VFX
             _cfg = Sanitize(cfg);
             _elapsed = 0f;
             _isPlaying = true;
+            _orbitAngleDeg = _cfg.startOrbitAngleDeg;
 
             SetupSlotPhases();  // 위성 배치 각도 자동 분배
             // 초기 배치
@@ -85,7 +80,7 @@ namespace ProjectT.Gameplay.VFX
 
             // 타원이면 초기 위치 세팅
             if (_cfg.orbitMode == OrbitMode.Ellipse)
-                ApplyEllipseOrbit(0f);
+                ApplyEllipseOrbit(1f);
 
             ResetOrbitRotation();
             ResetVisualRotation();
@@ -96,7 +91,8 @@ namespace ProjectT.Gameplay.VFX
                 for (int i = 0; i < particlesToPlay.Length; i++)
                 {
                     if (particlesToPlay[i] == null) continue;
-                    particlesToPlay[i].Play(true);
+                    var instance = Instantiate(particlesToPlay[i], transform.position, Quaternion.identity);
+                    instance.Play(true);
                 }
             }
         }
@@ -153,7 +149,7 @@ namespace ProjectT.Gameplay.VFX
                 Stop(immediate: true);
         }
 
-        
+
         private void UpdateFollowPosition(bool force)
         {
             if (!_cfg.followOwner) return;
@@ -222,6 +218,9 @@ namespace ProjectT.Gameplay.VFX
 
             int n = slots.Length;
             float step = 360f / n;
+            float tiltRad = _cfg.startOrbitAngleDeg * Mathf.Deg2Rad;
+            float cosT = Mathf.Cos(tiltRad);
+            float sinT = Mathf.Sin(tiltRad);
 
             for (int i = 0; i < n; i++)
             {
@@ -231,7 +230,12 @@ namespace ProjectT.Gameplay.VFX
                 float phase = step * i;
                 float ang = (_orbitAngleDeg + phase) * Mathf.Deg2Rad;
 
-                s._pivot.localPosition = new Vector3(a * Mathf.Cos(ang), b * Mathf.Sin(ang), 0);
+                float x = a * Mathf.Cos(ang);
+                float y = b * Mathf.Sin(ang);
+                float xr = (x * cosT) - (y * sinT);
+                float yr = (x * sinT) + (y * cosT);
+
+                s._pivot.localPosition = new Vector3(xr, yr, 0);
             }
         }
         public void SetEllipseRadii(Vector2 radii)
@@ -405,6 +409,31 @@ namespace ProjectT.Gameplay.VFX
         {
             slotPivot = newPivotPrefab;
         }
+
+        public void ConfigurePivotAndSlots(Transform pivotPrefab, int slotCount)
+        {
+            // 1. Pivot 프리팹 설정
+            SetSlotPivotPrefab(pivotPrefab);
+
+            // 2. 슬롯 개수 맞추기 (1개씩 증감)
+            int current = slots?.Length ?? 0;
+
+            while (current < slotCount)
+            {
+                AddSlot();
+                current++;
+            }
+
+            while (current > slotCount)
+            {
+                RemoveSlot();
+                current--;
+            }
+
+            // 3. 위상 자동 분배
+            SetupSlotPhases();
+        }
+
         #endregion
     }
 }

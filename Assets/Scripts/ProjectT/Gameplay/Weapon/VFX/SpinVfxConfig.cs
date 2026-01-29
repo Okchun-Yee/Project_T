@@ -30,6 +30,9 @@ namespace ProjectT.Gameplay.VFX
 
         public float radius;            // 회전 반경 (중심에서 VFX까지 거리)
         public Vector2 ellipseRadii;    // 타원 궤도 반경 (orbitMode가 Ellipse일 때 유효)
+
+        [Header("Orbit Offset")]
+        public float startOrbitAngleDeg; // ★ 추가
         public static SpinVfxConfig Default => new SpinVfxConfig
         {
             duration = 0.6f,
@@ -44,6 +47,7 @@ namespace ProjectT.Gameplay.VFX
             orbitSpeedDeg = 360f,
             radius = 0.6f,
             ellipseRadii = new Vector2(0.8f, 0.4f),
+            startOrbitAngleDeg = 0f,
         };
     }
 }

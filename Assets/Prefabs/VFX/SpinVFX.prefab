@@ -77,10 +77,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   orbitRoot: {fileID: 1456203337227974170}
-  slots:
-  - _pivot: {fileID: 0}
-    _visual: {fileID: 0}
-    _phaseDeg: 0
+  slots: []
   slotPivot: {fileID: 0}
   autoDistributePhase: 1
   particlesToPlay: []
@@ -95,4 +92,5 @@ MonoBehaviour:
     orbitSpeedDeg: 360
     radius: 4
     ellipseRadii: {x: 3, y: 1}
-  autoPlayOnStart: 1
+  autoPlayOnStart: 0
+  autoRotation: 1

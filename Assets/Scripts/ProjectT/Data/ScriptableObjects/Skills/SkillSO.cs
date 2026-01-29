@@ -29,5 +29,8 @@ namespace ProjectT.Data.ScriptableObjects.Skills
         [Tooltip("Ramp Curve. Empty means linear.")]
         public AnimationCurve buffRampCurve;    // 버프 수치: 점진적 증가 곡선
 
+        [Header("VFX Settings")]
+        public bool hasSpinVfx = false;          // Spin VFX 사용 여부
+
     }
 }

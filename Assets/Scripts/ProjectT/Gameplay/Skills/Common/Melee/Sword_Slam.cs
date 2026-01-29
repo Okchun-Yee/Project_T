@@ -4,6 +4,7 @@ using ProjectT.Gameplay.Combat;
 using ProjectT.Gameplay.Enemies;
 using ProjectT.Gameplay.Player;
 using ProjectT.Gameplay.Player.Controller;
+using ProjectT.Gameplay.Skills.Runtime;
 using ProjectT.Gameplay.Weapon;
 using UnityEngine;
 
@@ -134,6 +135,11 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
             
             Gizmos.color = Color.green;
             Gizmos.DrawWireCube(center, hitBoxSize);
+        }
+
+        public override void Execute(in SkillExecutionContext ctx)
+        {
+            throw new NotImplementedException();
         }
     }
 }

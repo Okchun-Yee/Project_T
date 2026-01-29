@@ -4,6 +4,7 @@ using ProjectT.Data.ScriptableObjects.Skills;
 using ProjectT.Gameplay.Combat;
 using ProjectT.Gameplay.Player;
 using ProjectT.Gameplay.Player.Controller;
+using ProjectT.Gameplay.Skills.Runtime;
 using UnityEngine;
 
 namespace ProjectT.Gameplay.Skills.Common.Melee
@@ -41,6 +42,11 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
                 duration: dashDuration, 
                 damage: damage
             ));
+        }
+
+        public override void Execute(in SkillExecutionContext ctx)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
