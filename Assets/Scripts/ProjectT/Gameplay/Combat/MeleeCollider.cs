@@ -8,9 +8,18 @@ namespace ProjectT.Gameplay.Combat
 {
     public class MeleeCollider : MonoBehaviour
     {
+        private enum HitMode
+        {
+            SinglePerEnable = 0,
+            CooldownPerTarget = 1,
+        }
+
         [SerializeField] private bool isProjectileDestroyer = false;
+        [SerializeField] private HitMode hitMode = HitMode.SinglePerEnable;
+        [SerializeField] private float targetHitCooldown = 0.2f;
         private DamageSource damageSource;
-        private HashSet<EnemyHealth> hitEnemies = new HashSet<EnemyHealth>(); // 중복 방지
+        private HashSet<EnemyHealth> hitEnemies = new HashSet<EnemyHealth>(); // 중복 방지 (SinglePerEnable)
+        private Dictionary<EnemyHealth, float> nextHitTimeByTarget = new Dictionary<EnemyHealth, float>(); // CooldownPerTarget
 
         private void Awake()
         {
@@ -21,6 +30,7 @@ namespace ProjectT.Gameplay.Combat
         {
             // 콜라이더 활성화 시 히트 목록 초기화
             hitEnemies.Clear();
+            nextHitTimeByTarget.Clear();
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
@@ -29,21 +39,59 @@ namespace ProjectT.Gameplay.Combat
             Projectile obj = collision.GetComponent<Projectile>();
             // 모두 NULL인 경우 return
             if (enemyHealth == null && obj == null) return;
-            if (enemyHealth != null){
-                // 이미 맞은 적은 다시 맞지 않도록 방지
-                if (hitEnemies.Contains(enemyHealth)) return;
-                hitEnemies.Add(enemyHealth);
 
-                // 데미지 처리
-                if (damageSource != null)
-                {
-                    damageSource.InstantDamage(damageSource.DamageAmount, enemyHealth);
-                }
-            }
-            else if (obj != null && isProjectileDestroyer)
+            if (enemyHealth != null)
             {
-                // 투사체 파괴
+                TryHitEnemy(enemyHealth);
+                return;
+            }
+
+            if (obj != null && isProjectileDestroyer)
+            {
                 obj.DestroyProjectile();
+            }
+        }
+
+        private void OnTriggerStay2D(Collider2D collision)
+        {
+            if (hitMode != HitMode.CooldownPerTarget) return;
+
+            EnemyHealth enemyHealth = collision.GetComponent<EnemyHealth>();
+            if (enemyHealth == null) return;
+
+            TryHitEnemy(enemyHealth);
+        }
+
+        private void OnTriggerExit2D(Collider2D collision)
+        {
+            if (hitMode != HitMode.CooldownPerTarget) return;
+
+            EnemyHealth enemyHealth = collision.GetComponent<EnemyHealth>();
+            if (enemyHealth == null) return;
+
+            nextHitTimeByTarget.Remove(enemyHealth);
+        }
+
+        private void TryHitEnemy(EnemyHealth enemyHealth)
+        {
+            if (damageSource == null || enemyHealth == null) return;
+
+            switch (hitMode)
+            {
+                case HitMode.SinglePerEnable:
+                    if (hitEnemies.Contains(enemyHealth)) return;
+                    hitEnemies.Add(enemyHealth);
+                    damageSource.InstantDamage(damageSource.DamageAmount, enemyHealth);
+                    break;
+
+                case HitMode.CooldownPerTarget:
+                    float now = Time.time;
+                    if (nextHitTimeByTarget.TryGetValue(enemyHealth, out float nextTime) && now < nextTime)
+                        return;
+
+                    nextHitTimeByTarget[enemyHealth] = now + Mathf.Max(0f, targetHitCooldown);
+                    damageSource.InstantDamage(damageSource.DamageAmount, enemyHealth);
+                    break;
             }
         }
     }
