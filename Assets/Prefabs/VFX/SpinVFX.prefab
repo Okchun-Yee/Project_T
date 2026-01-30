@@ -92,5 +92,6 @@ MonoBehaviour:
     orbitSpeedDeg: 360
     radius: 4
     ellipseRadii: {x: 3, y: 1}
+    startOrbitAngleDeg: 0
   autoPlayOnStart: 0
   autoRotation: 1
