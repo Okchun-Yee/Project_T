@@ -14,9 +14,10 @@ namespace ProjectT.Gameplay.Combat
             CooldownPerTarget = 1,
         }
 
-        [SerializeField] private bool isProjectileDestroyer = false;
-        [SerializeField] private HitMode hitMode = HitMode.SinglePerEnable;
-        [SerializeField] private float targetHitCooldown = 0.2f;
+        [SerializeField] private bool isProjectileDestroyer = false;            // 투사체 파괴 기능 활성화 여부
+        [SerializeField] private HitMode hitMode = HitMode.SinglePerEnable;     // 히트 모드
+        [SerializeField] private float targetHitCooldown = 0.2f;                // 모든 적 Hit 쿨타임
+        [SerializeField] private bool destroyOnlyEnemyProjectiles = true;       // 적 투사체만 파괴
         private DamageSource damageSource;
         private HashSet<EnemyHealth> hitEnemies = new HashSet<EnemyHealth>(); // 중복 방지 (SinglePerEnable)
         private Dictionary<EnemyHealth, float> nextHitTimeByTarget = new Dictionary<EnemyHealth, float>(); // CooldownPerTarget
@@ -48,7 +49,10 @@ namespace ProjectT.Gameplay.Combat
 
             if (obj != null && isProjectileDestroyer)
             {
-                obj.DestroyProjectile();
+                if (!destroyOnlyEnemyProjectiles || obj.IsEnemyProjectile)
+                {
+                    obj.DestroyProjectile();
+                }
             }
         }
 
