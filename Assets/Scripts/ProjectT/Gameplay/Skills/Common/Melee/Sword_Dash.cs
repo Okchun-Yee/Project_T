@@ -45,7 +45,7 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
 
         public override void Execute(in SkillExecutionContext ctx)
         {
-            throw new System.NotImplementedException();
+            return;
         }
     }
 }

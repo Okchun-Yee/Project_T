@@ -166,7 +166,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92ce6dff7a30a944ab6adcf44afd0c69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isOnCooldown: 0
+  _cooldownRemaining: 0
   skillIndex: 0
+  arrowPrefab: {fileID: 791695264422601474, guid: 6cd41e3381de2d74bb94adb2229d3951, type: 3}
+  arrowSpawnPoints:
+  - {fileID: 5174122284578942938}
+  projectileRange: 12
 --- !u!114 &1425826965004956644
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179,6 +185,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c654b9222437834bb599b7635297c6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isOnCooldown: 0
+  _cooldownRemaining: 0
   skillIndex: 1
 --- !u!114 &7214009543156719024
 MonoBehaviour:
@@ -192,6 +200,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c654b9222437834bb599b7635297c6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isOnCooldown: 0
+  _cooldownRemaining: 0
   skillIndex: 2
 --- !u!1 &6785881110019486014
 GameObject:

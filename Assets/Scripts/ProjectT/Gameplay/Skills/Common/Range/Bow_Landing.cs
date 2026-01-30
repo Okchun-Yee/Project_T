@@ -8,7 +8,7 @@ namespace ProjectT.Gameplay.Skills.Common.Range
     {
         public override void Execute(in SkillExecutionContext ctx)
         {
-            throw new System.NotImplementedException();
+            return;
         }
 
         protected override void OnSkillActivated()
