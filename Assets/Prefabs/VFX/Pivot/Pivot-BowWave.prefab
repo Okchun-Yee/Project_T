@@ -292,7 +292,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c28e6d052fa4e3488aadf3bb271410c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isProjectileDestroyer: 1
+  isProjectileDestroyer: 0
+  hitMode: 1
+  targetHitCooldown: 0.2
 --- !u!1 &5997627627878917253
 GameObject:
   m_ObjectHideFlags: 0
