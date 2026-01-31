@@ -6,6 +6,7 @@ using ProjectT.Gameplay.Combat;
 using ProjectT.Systems.Camera;
 using ProjectT.Systems.UI;
 using ProjectT.Gameplay.Enemies;
+using ProjectT.Gameplay.Weapon;
 
 
 namespace ProjectT.Gameplay.Player
@@ -110,7 +111,8 @@ namespace ProjectT.Gameplay.Player
                 // Step 7: FSM 강제 전이는 PlayerController 단일 경로
                 _playerController?.ForceDead();
                 
-                Destroy(ActiveWeapon.Instance.gameObject);
+                // 무기 해제는 무기 시스템 경유 (SSOT 유지)
+                WeaponManager.Instance?.UnequipWeapon();
 
                 currentHealth = 0;
                 GetComponent<Animator>().SetTrigger(DEATH_HASH);
