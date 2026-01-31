@@ -116,7 +116,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5503831008349423104}
   m_Layer: 11
-  m_Name: Pivot-Sword
+  m_Name: Pivot-Sword_Buff
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace ProjectT.Gameplay.Skills.Common.Melee
 {
-    public class Sword_Blade : BaseSkill
+    public class Sword_Spining : BaseSkill
     {
         [Header("Spin VFX")]
         [SerializeField] private SpinVfxActor spinActorPrefab;
