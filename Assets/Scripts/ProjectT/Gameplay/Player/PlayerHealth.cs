@@ -126,7 +126,7 @@ namespace ProjectT.Gameplay.Player
             Debug.Log("[PlayerHealth] Player has died. Loading town scene.");
             Destroy(gameObject);
             SceneTransitionExecution.Instance?.Request(
-                new SceneTransitionRequest(TOWN_TEXT, targetGameMode: GameMode.Town));
+                new SceneTransitionRequest(TOWN_TEXT, targetGameMode: GameModeList.Town));
         }
         private IEnumerator DamageRecoveryRoutine()
         {

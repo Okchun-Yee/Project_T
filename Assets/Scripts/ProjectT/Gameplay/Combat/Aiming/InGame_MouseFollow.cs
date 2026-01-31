@@ -38,9 +38,9 @@ namespace ProjectT.Gameplay.Combat.Aiming
             }
         }
 
-        public void OnGameModeChanged(GameMode mode)
+        public void OnGameModeChanged(GameModeList mode)
         {
-            _isGameplayMode = mode == GameMode.Gameplay;
+            _isGameplayMode = mode == GameModeList.Gameplay;
         }
 
         private void Update()

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ProjectT.Systems.GameMode
 {
-    public enum GameMode
+    public enum GameModeList
     {
         Gameplay = 0,
         Town = 1,
@@ -13,13 +13,13 @@ namespace ProjectT.Systems.GameMode
 
     public class GameModeSystem : Singleton<GameModeSystem>
     {
-        public event Action<GameMode> OnModeChanged;
-        [SerializeField] private GameMode currentMode = GameMode.Gameplay;
+        public event Action<GameModeList> OnModeChanged;
+        [SerializeField] private GameModeList currentMode = GameModeList.Gameplay;
 
-        public GameMode CurrentMode => currentMode;
-        public bool IsGameplay => currentMode == GameMode.Gameplay;
+        public GameModeList CurrentMode => currentMode;
+        public bool IsGameplay => currentMode == GameModeList.Gameplay;
 
-        public void SetMode(GameMode mode)
+        public void SetMode(GameModeList mode)
         {
             if (currentMode == mode) return;
             currentMode = mode;

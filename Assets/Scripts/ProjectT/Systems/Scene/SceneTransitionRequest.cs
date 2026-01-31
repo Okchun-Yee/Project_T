@@ -6,11 +6,11 @@ namespace ProjectT.Systems.Scene
     {
         public string sceneName;
         public string entryId;
-        public GameMode targetGameMode;
+        public GameModeList targetGameMode;
         public bool useFade;
         public bool resetTimeScale;
 
-        public SceneTransitionRequest(string sceneName, string entryId = null, GameMode targetGameMode = GameMode.Gameplay,
+        public SceneTransitionRequest(string sceneName, string entryId = null, GameModeList targetGameMode = GameModeList.Gameplay,
             bool useFade = true, bool resetTimeScale = true)
         {
             this.sceneName = sceneName;

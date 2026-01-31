@@ -11,7 +11,7 @@ namespace ProjectT.Systems.Scene
         {
             Debug.Log("Play Button Clicked");
             SceneTransitionExecution.Instance?.Request(
-                new SceneTransitionRequest(TOWN_TEXT, targetGameMode: GameMode.Town));
+                new SceneTransitionRequest(TOWN_TEXT, targetGameMode: GameModeList.Town));
         }
         public void Quit()
         {
