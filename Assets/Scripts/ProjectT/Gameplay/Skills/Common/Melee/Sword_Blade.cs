@@ -1,4 +1,6 @@
 using ProjectT.Data.ScriptableObjects.Skills;
+using ProjectT.Gameplay.Combat.Damage;
+using ProjectT.Gameplay.Player;
 using ProjectT.Gameplay.Skills.Runtime;
 using ProjectT.Gameplay.VFX;
 using UnityEngine;
@@ -12,6 +14,7 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
         [SerializeField] private Transform pivotPrefab;
         [SerializeField] private int slotCount = 4;
         [SerializeField] private SpinVfxConfig spinConfig;
+        private float damage;
         public override void Execute(in SkillExecutionContext ctx)
         {
             if (spinActorPrefab == null || pivotPrefab == null)
@@ -22,9 +25,11 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
 
             // 1. Actor 생성
             var actor = Instantiate(spinActorPrefab, ctx.spinHubRoot);
-
             // 2. 스킬 전용 Pivot + 슬롯 구성
             actor.ConfigurePivotAndSlots(pivotPrefab, slotCount);
+
+            foreach (var ds in actor.GetComponentsInChildren<DamageSource>(true))
+                ds.SetDamage(damage);
 
             // 3. 재생
             actor.Play(ctx.owner, spinConfig);
@@ -32,8 +37,8 @@ namespace ProjectT.Gameplay.Skills.Common.Melee
 
         protected override void OnSkillActivated()
         {
-            float damage = GetSkillDamage();
-            Debug.Log($"[Sword]: Blade Skill Activated, Damage {damage} ");
+            damage = GetSkillDamage();
+            PlayerController.Instance.LockActions(ActionLockFlags.Dash, spinConfig.duration);
         }
     }
 }
