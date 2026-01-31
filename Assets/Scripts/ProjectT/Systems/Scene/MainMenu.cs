@@ -1,6 +1,5 @@
-using UnityEditor.SearchService;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using ProjectT.Systems.GameMode;
 
 namespace ProjectT.Systems.Scene
 {
@@ -11,7 +10,8 @@ namespace ProjectT.Systems.Scene
         public void Play()
         {
             Debug.Log("Play Button Clicked");
-            SceneManager.LoadScene(TOWN_TEXT);
+            SceneTransitionExecution.Instance?.Request(
+                new SceneTransitionRequest(TOWN_TEXT, targetGameMode: GameMode.Town));
         }
         public void Quit()
         {

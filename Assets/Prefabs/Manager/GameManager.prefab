@@ -345,6 +345,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1779465464001118429}
   - component: {fileID: 7243743956971597898}
+  - component: {fileID: 2074223012093057900}
+  - component: {fileID: 7635969496331107391}
+  - component: {fileID: 4987907069758911844}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -387,6 +390,44 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthSlider: {fileID: 8755261619593199696}
   hpText: {fileID: 6196970703727095740}
+--- !u!114 &2074223012093057900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 231650511897631691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e22cb0a11e8143918fd7ee1f5be97564, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  transitionLockFlags: 15
+--- !u!114 &7635969496331107391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 231650511897631691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89aa0a05b9ad4fdd9c3822c1edda6d58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentMode: 0
+--- !u!114 &4987907069758911844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 231650511897631691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ff3865581c041fdb6e8b4be44003b9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &252319311744840595
 GameObject:
   m_ObjectHideFlags: 0

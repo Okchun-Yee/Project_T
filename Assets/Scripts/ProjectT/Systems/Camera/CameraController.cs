@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using Cinemachine;
 using ProjectT.Core;
 using ProjectT.Gameplay.Player.Controller;
 
@@ -9,7 +6,7 @@ namespace ProjectT.Systems.Camera
 {
     public class CameraController : Singleton<CameraController>
     {
-        private CinemachineVirtualCamera cinemachineVirtualCamera;
+        [SerializeField] private Transform followTarget;
 
         private void Start()
         {
@@ -17,8 +14,11 @@ namespace ProjectT.Systems.Camera
         }
         public void SetPlayerCameraFollow()
         {
-            cinemachineVirtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
-            cinemachineVirtualCamera.Follow = PlayerMovementExecution.Instance.transform;
+            if (followTarget == null && PlayerMovementExecution.Instance != null)
+            {
+                followTarget = PlayerMovementExecution.Instance.transform;
+            }
+            CameraSystem.Instance?.BindFollow(followTarget);
         }
     }
 }

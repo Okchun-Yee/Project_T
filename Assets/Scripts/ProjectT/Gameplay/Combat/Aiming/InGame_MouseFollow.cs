@@ -4,8 +4,8 @@ using ProjectT.Gameplay.Player;
 using ProjectT.Gameplay.Player.Controller;
 using ProjectT.Gameplay.Player.FSM.Combat;
 using ProjectT.Gameplay.Player.FSM.Locomotion;
+using ProjectT.Systems.GameMode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 
 /// <summary>
@@ -15,12 +15,37 @@ using UnityEngine.SceneManagement;
 /// </summary>
 namespace ProjectT.Gameplay.Combat.Aiming
 {
-    public class InGame_MouseFollow : MonoBehaviour
+    public class InGame_MouseFollow : MonoBehaviour, IGameModeListener
     {
         [Header("Target Object")]
         [SerializeField] private GameObject target;
+        private bool _isGameplayMode = true;
+
+        private void OnEnable()
+        {
+            if (GameModeSystem.Instance != null)
+            {
+                GameModeSystem.Instance.OnModeChanged += OnGameModeChanged;
+                OnGameModeChanged(GameModeSystem.Instance.CurrentMode);
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (GameModeSystem.Instance != null)
+            {
+                GameModeSystem.Instance.OnModeChanged -= OnGameModeChanged;
+            }
+        }
+
+        public void OnGameModeChanged(GameMode mode)
+        {
+            _isGameplayMode = mode == GameMode.Gameplay;
+        }
+
         private void Update()
-        {   
+        {
+            if (!_isGameplayMode) return;
             if(target != null)
             {
                 MouseFollow();

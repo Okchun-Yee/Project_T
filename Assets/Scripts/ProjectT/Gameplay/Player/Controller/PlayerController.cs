@@ -84,6 +84,7 @@ namespace ProjectT.Gameplay.Player
         // 액션 잠금 시스템 (스킬 시전 중 특정 행동 금지)
         private ActionLockFlags _lockedActions = ActionLockFlags.None;
         private float _actionLockTime = 0f;
+        private ActionLockFlags _transitionLockedActions = ActionLockFlags.None;
 
         public PlayerLocomotionStateId LocomotionState => _locomotionFsm.CurrentStateId;    // 현재 Locomotion 상태
         public PlayerCombatStateId CombatState => _combatFsm.CurrentStateId;                // 현재 Combat 상태
@@ -579,7 +580,23 @@ namespace ProjectT.Gameplay.Player
         /// </summary>
         public bool IsActionLocked(ActionLockFlags flag)
         {
-            return (_lockedActions & flag) != 0;
+            return ((_lockedActions | _transitionLockedActions) & flag) != 0;
+        }
+        
+        /// <summary>
+        /// 씬 전환 등 시스템 레벨 잠금 (명시적 해제 필요)
+        /// </summary>
+        public void AcquireTransitionLock(ActionLockFlags flags)
+        {
+            _transitionLockedActions |= flags;
+        }
+
+        /// <summary>
+        /// 씬 전환 잠금 해제
+        /// </summary>
+        public void ReleaseTransitionLock(ActionLockFlags flags)
+        {
+            _transitionLockedActions &= ~flags;
         }
         #endregion
     }

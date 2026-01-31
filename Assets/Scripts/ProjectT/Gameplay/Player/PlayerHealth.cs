@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections;
 using ProjectT.Core;
 using ProjectT.Gameplay.Combat;
@@ -7,6 +6,8 @@ using ProjectT.Systems.Camera;
 using ProjectT.Systems.UI;
 using ProjectT.Gameplay.Enemies;
 using ProjectT.Gameplay.Weapon;
+using ProjectT.Systems.GameMode;
+using ProjectT.Systems.Scene;
 
 
 namespace ProjectT.Gameplay.Player
@@ -124,7 +125,8 @@ namespace ProjectT.Gameplay.Player
             yield return new WaitForSeconds(2f);
             Debug.Log("[PlayerHealth] Player has died. Loading town scene.");
             Destroy(gameObject);
-            SceneManager.LoadScene(TOWN_TEXT);
+            SceneTransitionExecution.Instance?.Request(
+                new SceneTransitionRequest(TOWN_TEXT, targetGameMode: GameMode.Town));
         }
         private IEnumerator DamageRecoveryRoutine()
         {
