@@ -1,12 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+
 using ProjectT.Data.ScriptableObjects.Weapons;
 using ProjectT.Gameplay.Player;
 using ProjectT.Gameplay.Player.Controller;
 using ProjectT.Gameplay.Player.FSM.Combat;
 using ProjectT.Gameplay.Player.FSM.Locomotion;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 /// <summary>
@@ -21,7 +20,7 @@ namespace ProjectT.Gameplay.Combat.Aiming
         [Header("Target Object")]
         [SerializeField] private GameObject target;
         private void Update()
-        {
+        {   
             if(target != null)
             {
                 MouseFollow();

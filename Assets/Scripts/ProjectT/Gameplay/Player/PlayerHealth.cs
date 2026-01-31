@@ -6,7 +6,6 @@ using ProjectT.Gameplay.Combat;
 using ProjectT.Systems.Camera;
 using ProjectT.Systems.UI;
 using ProjectT.Gameplay.Enemies;
-using ProjectT.Gameplay.Player.Controller;
 
 
 namespace ProjectT.Gameplay.Player
@@ -34,7 +33,7 @@ namespace ProjectT.Gameplay.Player
         private Invincibility _invincibility;
         private PlayerController _playerController;
 
-        const string TOWN_TEXT = "";
+        const string TOWN_TEXT = "GameScene1";
         readonly int DEATH_HASH = Animator.StringToHash("Death");
         protected override void Awake()
         {
