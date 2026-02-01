@@ -18,7 +18,11 @@ namespace ProjectT.Systems.Camera
             {
                 followTarget = PlayerMovementExecution.Instance.transform;
             }
-            CameraSystem.Instance?.BindFollow(followTarget);
+            
+            if (followTarget != null)
+            {
+                CameraSystem.Instance?.BindFollow(followTarget);
+            }
         }
     }
 }
