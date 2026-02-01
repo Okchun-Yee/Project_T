@@ -47,7 +47,7 @@ namespace ProjectT.Gameplay.Combat
                 return;
             }
 
-            if (obj != null && isProjectileDestroyer)
+            if (isProjectileDestroyer)
             {
                 if (!destroyOnlyEnemyProjectiles || obj.IsEnemyProjectile)
                 {
