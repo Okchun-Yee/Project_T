@@ -124,9 +124,10 @@ namespace ProjectT.Gameplay.Player
         {
             yield return new WaitForSeconds(2f);
             Debug.Log("[PlayerHealth] Player has died. Loading town scene.");
-            Destroy(gameObject);
             SceneTransitionExecution.Instance?.Request(
                 new SceneTransitionRequest(TOWN_TEXT, targetGameMode: GameModeList.Town));
+            yield return new WaitForSeconds(0.5f); // 전환 시작 대기
+            Destroy(gameObject);
         }
         private IEnumerator DamageRecoveryRoutine()
         {
