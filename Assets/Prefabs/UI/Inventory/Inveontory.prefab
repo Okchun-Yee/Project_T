@@ -887,6 +887,7 @@ MonoBehaviour:
   itemImage: {fileID: 1044531812499303279}
   title: {fileID: 2582268610512536118}
   description: {fileID: 6066791842460711155}
+  effects: {fileID: 0}
 --- !u!1 &3633986217661457376
 GameObject:
   m_ObjectHideFlags: 0
@@ -1535,8 +1536,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6637401660508538666}
   m_HandleRect: {fileID: 531884587110547685}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
