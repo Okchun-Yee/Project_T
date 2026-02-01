@@ -93,8 +93,8 @@ namespace ProjectT.Gameplay.Weapon.Implementations.Common
         {
             GameObject newArrow = Instantiate(arrowPrefab, arrowSpawnPoint.position, ActiveWeapon.Instance.transform.rotation);
 
-            newArrow.GetComponent<Projectile>().UpdateProjectileRange(weaponInfo.weaponRange);
-            newArrow.GetComponent<Projectile>().Initialize(weaponInfo.weaponDamage); // Initialize로 데미지 설정
+            newArrow.GetComponent<Projectile>()?.UpdateProjectileRange(weaponInfo.weaponRange);
+            newArrow.GetComponent<Projectile>()?.Initialize(weaponInfo.weaponDamage); // Initialize로 데미지 설정
         }
         #if UNITY_EDITOR
         private void OnDrawGizmos()

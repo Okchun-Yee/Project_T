@@ -59,8 +59,8 @@ namespace ProjectT.Gameplay.Skills.Common.Range
         {
             GameObject newArrow = Instantiate(arrowPrefab, spawnPoint.position, ActiveWeapon.Instance.transform.rotation);
 
-            newArrow.GetComponent<Projectile>().UpdateProjectileRange(projectileRange);
-            newArrow.GetComponent<Projectile>().Initialize(GetSkillDamage());
+            newArrow.GetComponent<Projectile>()?.UpdateProjectileRange(projectileRange);
+            newArrow.GetComponent<Projectile>()?.Initialize(GetSkillDamage());
         }
     }
 }
