@@ -1,12 +1,13 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections;
 using ProjectT.Core;
 using ProjectT.Gameplay.Combat;
 using ProjectT.Systems.Camera;
 using ProjectT.Systems.UI;
 using ProjectT.Gameplay.Enemies;
-using ProjectT.Gameplay.Player.Controller;
+using ProjectT.Gameplay.Weapon;
+using ProjectT.Systems.GameMode;
+using ProjectT.Systems.Scene;
 
 
 namespace ProjectT.Gameplay.Player
@@ -34,7 +35,7 @@ namespace ProjectT.Gameplay.Player
         private Invincibility _invincibility;
         private PlayerController _playerController;
 
-        const string TOWN_TEXT = "";
+        const string TOWN_TEXT = "GameScene1";
         readonly int DEATH_HASH = Animator.StringToHash("Death");
         protected override void Awake()
         {
@@ -111,7 +112,8 @@ namespace ProjectT.Gameplay.Player
                 // Step 7: FSM 강제 전이는 PlayerController 단일 경로
                 _playerController?.ForceDead();
                 
-                Destroy(ActiveWeapon.Instance.gameObject);
+                // 무기 해제는 무기 시스템 경유 (SSOT 유지)
+                WeaponManager.Instance?.UnequipWeapon();
 
                 currentHealth = 0;
                 GetComponent<Animator>().SetTrigger(DEATH_HASH);
@@ -122,8 +124,10 @@ namespace ProjectT.Gameplay.Player
         {
             yield return new WaitForSeconds(2f);
             Debug.Log("[PlayerHealth] Player has died. Loading town scene.");
+            SceneTransitionExecution.Instance?.Request(
+                new SceneTransitionRequest(TOWN_TEXT, targetGameMode: GameModeList.Town));
+            yield return new WaitForSeconds(0.5f); // 전환 시작 대기
             Destroy(gameObject);
-            SceneManager.LoadScene(TOWN_TEXT);
         }
         private IEnumerator DamageRecoveryRoutine()
         {

@@ -17,6 +17,12 @@ namespace ProjectT.Gameplay.Skills.Common.Range
         private float arrowInterval = 0.2f; // 화살 발사 간격
         private Animator _animator;
         readonly int FIRE_HASH = Animator.StringToHash("Attack");
+
+        public float ArrowInterval
+        {
+            get => arrowInterval;
+            set => arrowInterval = Mathf.Max(0.1f, value);      // 최소 간격 0.1초
+        }
         private void Awake()
         {
             _animator = GetComponent<Animator>();
@@ -31,7 +37,7 @@ namespace ProjectT.Gameplay.Skills.Common.Range
             var controller = PlayerController.Instance;
             if (controller != null)
             {
-                float lockDuration = Mathf.Max(0f, numberOfArrows * arrowInterval);
+                float lockDuration = numberOfArrows * ArrowInterval;    // Action lock duration : 화살의 수 * 화살 발사 간격
                 controller.LockActions(ActionLockFlags.Move | ActionLockFlags.BasicAttack | ActionLockFlags.Dash, lockDuration);
             }
             _animator.SetTrigger(FIRE_HASH);
@@ -45,7 +51,7 @@ namespace ProjectT.Gameplay.Skills.Common.Range
                 {
                     SpawnArrow(spawnPoint);
                 }
-                yield return new WaitForSeconds(arrowInterval);
+                yield return new WaitForSeconds(ArrowInterval);
             }
         }
 
@@ -53,8 +59,8 @@ namespace ProjectT.Gameplay.Skills.Common.Range
         {
             GameObject newArrow = Instantiate(arrowPrefab, spawnPoint.position, ActiveWeapon.Instance.transform.rotation);
 
-            newArrow.GetComponent<Projectile>().UpdateProjectileRange(projectileRange);
-            newArrow.GetComponent<Projectile>().Initialize(GetSkillDamage());
+            newArrow.GetComponent<Projectile>()?.UpdateProjectileRange(projectileRange);
+            newArrow.GetComponent<Projectile>()?.Initialize(GetSkillDamage());
         }
     }
 }

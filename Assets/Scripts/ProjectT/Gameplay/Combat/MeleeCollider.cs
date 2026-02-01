@@ -47,12 +47,9 @@ namespace ProjectT.Gameplay.Combat
                 return;
             }
 
-            if (isProjectileDestroyer)
+            if (obj != null && isProjectileDestroyer && (!destroyOnlyEnemyProjectiles || obj.IsEnemyProjectile))
             {
-                if (!destroyOnlyEnemyProjectiles || obj.IsEnemyProjectile)
-                {
-                    obj.DestroyProjectile();
-                }
+                obj.DestroyProjectile();
             }
         }
 

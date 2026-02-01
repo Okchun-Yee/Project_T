@@ -23,22 +23,26 @@ namespace ProjectT.Gameplay.Weapon.Projectiles
         private void FixedUpdate()
         {
             // 간격동안 계속 타겟 재탐색
-            _retargetTimer -= Time.fixedDeltaTime;
-            if (_target == null && _retargetTimer <= 0f)
+            if (_target == null)
             {
-                _target = FindClosestEnemy();
-                _retargetTimer = retargetInterval;
+                _retargetTimer -= Time.fixedDeltaTime;
+                if (_target == null && _retargetTimer <= 0f)
+                {
+                    _target = FindClosestEnemy();
+                    _retargetTimer = retargetInterval;
+                }
             }
 
-            if (_target == null) { if (_rb != null) _rb.angularVelocity = 0f; return; }
+            if (_target == null)
+            {
+                if (_rb != null) _rb.angularVelocity = 0f;
+                return;
+            }
 
             var dir = (_target.position - transform.position).normalized;
             float rotationAmount = Vector3.Cross(dir, transform.right).z;
 
-            if (_rb != null)
-                _rb.angularVelocity = -rotationAmount * rotationSpeed;
-            else
-                transform.Rotate(0f, 0f, -rotationAmount * rotationSpeed * Time.fixedDeltaTime);
+            _rb.angularVelocity = -rotationAmount * rotationSpeed;
         }
 
         private Transform FindClosestEnemy()
