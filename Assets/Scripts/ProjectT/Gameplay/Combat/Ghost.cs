@@ -73,7 +73,7 @@ namespace ProjectT.Gameplay.Combat
             float elapsed = 0f;
             Color startColor = ghostRenderer.color;
         
-            while (elapsed < ghostLifetime)
+            while (elapsed < ghostLifetime && ghostObject != null)
             {
                 elapsed += Time.deltaTime;
                 float alpha = Mathf.Lerp(startColor.a, 0f, elapsed / ghostLifetime);

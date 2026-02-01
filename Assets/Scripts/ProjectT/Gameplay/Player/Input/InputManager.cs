@@ -24,7 +24,7 @@ namespace ProjectT.Gameplay.Player.Input
         public event Action OnSwitchTabInput;               // 임시 UI 2 입력 이벤트
         private PlayerControls playerControls;
         private float _dodgeCooldown;
-        private const float DODGE_COOLDOWN = 0.2f; // 회피 쿨다운 시간
+        private const float DODGE_COOLDOWN = 0.4f; // 회피 쿨다운 시간
 
         public static event Action Ready;                   // InputManager 준비 완료 이벤트
 
