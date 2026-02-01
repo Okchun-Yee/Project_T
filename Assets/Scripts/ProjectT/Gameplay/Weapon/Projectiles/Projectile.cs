@@ -24,6 +24,10 @@ namespace ProjectT.Gameplay.Weapon.Projectiles
         private Vector3 startPosition;                                  // 투사체 시작 위치 (사거리 계산용)
         public Action<Vector3, EnemyHealth> OnEnemyHit;                 // 적 충돌 시 이벤트 (충돌 위치, 적 체력 컴포넌트)
         public Action<Vector3> OnEnvironmentHit;                        // 환경 충돌 시 이벤트 (충돌 위치)
+
+        // 프로퍼티: 적 투사체 여부
+        public bool IsEnemyProjectile => isEnemyProjectile;
+        
         protected override void Start()
         {
             base.Start();

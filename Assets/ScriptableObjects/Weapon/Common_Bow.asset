@@ -25,7 +25,7 @@ MonoBehaviour:
   skillInfos:
   - {fileID: 11400000, guid: 5a812241de5e88744bf34ebe941b57fd, type: 2}
   - {fileID: 11400000, guid: cec20ad17e7977b4996c16b870744ecb, type: 2}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 5ace4ade4a96c2247ba2e8b864c8acc6, type: 2}
   weaponCooldown: 0.4
   weaponDamage: 10
   weaponRange: 12

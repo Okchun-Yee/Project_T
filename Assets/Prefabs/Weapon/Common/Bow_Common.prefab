@@ -15,8 +15,8 @@ GameObject:
   - component: {fileID: 3570901123239009782}
   - component: {fileID: 3140986886846166577}
   - component: {fileID: 5832694299564333205}
-  - component: {fileID: 1425826965004956644}
   - component: {fileID: 7214009543156719024}
+  - component: {fileID: 8116251568981097046}
   m_Layer: 0
   m_Name: Bow_Common
   m_TagString: Untagged
@@ -166,20 +166,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92ce6dff7a30a944ab6adcf44afd0c69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isOnCooldown: 0
+  _cooldownRemaining: 0
   skillIndex: 0
---- !u!114 &1425826965004956644
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4509015558917212406}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c654b9222437834bb599b7635297c6a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  skillIndex: 1
+  arrowPrefab: {fileID: 791695264422601474, guid: 6cd41e3381de2d74bb94adb2229d3951, type: 3}
+  arrowSpawnPoints:
+  - {fileID: 5174122284578942938}
+  projectileRange: 12
+  numberOfArrows: 3
 --- !u!114 &7214009543156719024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,7 +186,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c654b9222437834bb599b7635297c6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isOnCooldown: 0
+  _cooldownRemaining: 0
   skillIndex: 2
+--- !u!114 &8116251568981097046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4509015558917212406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7133b3eda886f74459cdd15d9abb178c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isOnCooldown: 0
+  _cooldownRemaining: 0
+  skillIndex: 0
+  spinActorPrefab: {fileID: 5538916249639753250, guid: 9bc70d1e35ae05b4ebddccab64627c11, type: 3}
+  pivotPrefab: {fileID: 5503831008349423104, guid: a1389e5a2acb4524dbf581379f4ec7d2, type: 3}
+  slotCount: 8
+  spinConfig:
+    duration: 4
+    selfSpeedDeg: 120
+    followOwner: 1
+    localOffset: {x: 0, y: 0}
+    useUnscaledTime: 0
+    clockwise: 0
+    orbitMode: 1
+    orbitSpeedDeg: 360
+    radius: 2
+    ellipseRadii: {x: 0, y: 0}
+    startOrbitAngleDeg: 0
 --- !u!1 &6785881110019486014
 GameObject:
   m_ObjectHideFlags: 0
