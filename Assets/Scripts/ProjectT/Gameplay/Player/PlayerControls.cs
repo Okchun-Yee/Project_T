@@ -307,6 +307,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Menu"",
+                    ""type"": ""Button"",
+                    ""id"": ""1e40d2a0-d484-4eb3-afa9-c59f0210a093"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -353,6 +362,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""SwitchTab"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f9ec4272-0293-4072-92f5-bee202aecd11"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Menu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -392,6 +412,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_System_InventoryUI = m_System.FindAction("InventoryUI", throwIfNotFound: true);
         m_System_Interact = m_System.FindAction("Interact", throwIfNotFound: true);
         m_System_SwitchTab = m_System.FindAction("SwitchTab", throwIfNotFound: true);
+        m_System_Menu = m_System.FindAction("Menu", throwIfNotFound: true);
     }
 
     ~@PlayerControls()
@@ -714,6 +735,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_System_InventoryUI;
     private readonly InputAction m_System_Interact;
     private readonly InputAction m_System_SwitchTab;
+    private readonly InputAction m_System_Menu;
     /// <summary>
     /// Provides access to input actions defined in input action map "System".
     /// </summary>
@@ -741,6 +763,10 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "System/SwitchTab".
         /// </summary>
         public InputAction @SwitchTab => m_Wrapper.m_System_SwitchTab;
+        /// <summary>
+        /// Provides access to the underlying input action "System/Menu".
+        /// </summary>
+        public InputAction @Menu => m_Wrapper.m_System_Menu;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -779,6 +805,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @SwitchTab.started += instance.OnSwitchTab;
             @SwitchTab.performed += instance.OnSwitchTab;
             @SwitchTab.canceled += instance.OnSwitchTab;
+            @Menu.started += instance.OnMenu;
+            @Menu.performed += instance.OnMenu;
+            @Menu.canceled += instance.OnMenu;
         }
 
         /// <summary>
@@ -802,6 +831,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @SwitchTab.started -= instance.OnSwitchTab;
             @SwitchTab.performed -= instance.OnSwitchTab;
             @SwitchTab.canceled -= instance.OnSwitchTab;
+            @Menu.started -= instance.OnMenu;
+            @Menu.performed -= instance.OnMenu;
+            @Menu.canceled -= instance.OnMenu;
         }
 
         /// <summary>
@@ -941,5 +973,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSwitchTab(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Menu" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMenu(InputAction.CallbackContext context);
     }
 }

@@ -182,7 +182,8 @@ namespace ProjectT.Gameplay.Player
         public void SetPaused(bool paused)
         {
             _isPaused = paused;
-
+            Time.timeScale = paused ? 0f : 1f;  // 게임 정지/재개
+            
             // Pause 진입 시 Charging/Holding 취소
             if (paused && IsInCombatChargingOrHolding())
             {

@@ -21,7 +21,11 @@ namespace ProjectT.Gameplay.Player.Input
         public event Action OnLootingInput;                  // 아이템 획득 입력 이벤트
         public event Action OnInventoryInput;               // 인벤토리 UI 입력 이벤트
         public event Action OnInteractInput;                // 상호작용 입력 이벤트
-        public event Action OnSwitchTabInput;               // 임시 UI 2 입력 이벤트
+        public event Action OnSwitchTabInput;               // 활성 인벤토리 교체 입력 이벤트
+        public event Action OnMenuInput;                    // 메뉴 입력 이벤트
+
+
+        // fields
         private PlayerControls playerControls;
         private float _dodgeCooldown;
         private const float DODGE_COOLDOWN = 0.4f; // 회피 쿨다운 시간
@@ -58,8 +62,9 @@ namespace ProjectT.Gameplay.Player.Input
             playerControls.System.InventoryUI.performed += HandleInventoryUI;           // 인벤토리 UI 입력 감지
             // 플레이어 상호작용 이벤트 구독
             playerControls.System.Interact.performed += HandleInteract;                   // 상호작용 입력 감지
-            // 플레이어 임시 UI 2 이벤트 구독
-            playerControls.System.SwitchTab.performed += HandleSwitchTab;                   // 임시 UI 2 입력 감지
+            // 플레이어 활성 인벤토리 교체 이벤트 구독
+            playerControls.System.SwitchTab.performed += HandleSwitchTab;                   // 활성 인벤토리 교체 입력 감지
+            playerControls.System.Menu.performed += HandleMenu;                             // 메뉴 입력 감지
 
             Ready?.Invoke();    // InputManager 준비 완료 알림
         }
@@ -96,7 +101,7 @@ namespace ProjectT.Gameplay.Player.Input
                 // 플레이어 상호작용 이벤트 구독 해제
                 playerControls.System.Interact.performed -= HandleInteract;
                 playerControls.System.SwitchTab.performed -= HandleSwitchTab;
-
+                playerControls.System.Menu.performed -= HandleMenu;
                 playerControls.Disable();
             }
         }
@@ -189,6 +194,12 @@ namespace ProjectT.Gameplay.Player.Input
         {
             OnSwitchTabInput?.Invoke();
             DevLog.Log(DevLogChannels.PlayerInput, "Switch tab input");
+        }
+        // 플레이어 메뉴 이벤트 메서드
+        private void HandleMenu(InputAction.CallbackContext context)
+        {
+            OnMenuInput?.Invoke();
+            DevLog.Log(DevLogChannels.PlayerInput, "Menu input");
         }
     }
 }
