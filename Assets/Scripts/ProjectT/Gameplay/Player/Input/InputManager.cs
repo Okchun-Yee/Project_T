@@ -23,6 +23,8 @@ namespace ProjectT.Gameplay.Player.Input
         public event Action OnInteractInput;                // 상호작용 입력 이벤트
         public event Action OnSwitchTabInput;               // 임시 UI 2 입력 이벤트
         private PlayerControls playerControls;
+        private float _dodgeCooldown;
+        private const float DODGE_COOLDOWN = 0.2f; // 회피 쿨다운 시간
 
         public static event Action Ready;                   // InputManager 준비 완료 이벤트
 
@@ -60,6 +62,10 @@ namespace ProjectT.Gameplay.Player.Input
             playerControls.System.SwitchTab.performed += HandleSwitchTab;                   // 임시 UI 2 입력 감지
 
             Ready?.Invoke();    // InputManager 준비 완료 알림
+        }
+        private void Update()
+        {
+            _dodgeCooldown -= Time.deltaTime;
         }
 
         // 이벤트 구독 해제
@@ -119,8 +125,14 @@ namespace ProjectT.Gameplay.Player.Input
         // 플레이어 회피 이벤트 매서드
         private void HandleDodge(InputAction.CallbackContext context)
         {
+            if(_dodgeCooldown > 0f)
+            {
+                DevLog.Log(DevLogChannels.PlayerInput, "Dodge input on cooldown");
+                return;
+            }
             OnDodgeInput?.Invoke();
             DevLog.Log(DevLogChannels.PlayerInput, "Dodge input");
+            _dodgeCooldown = DODGE_COOLDOWN;  // 0.3초 등
         }
         // 플레이어 공격 이벤트 매서드
         private void HandleAttack_Started(InputAction.CallbackContext context)
